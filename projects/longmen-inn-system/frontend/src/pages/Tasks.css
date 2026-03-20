@@ -1,0 +1,269 @@
+/* 任务管理页面样式 - 江湖风 */
+.tasks-page {
+  /* 继承自 theme.css 的 page-container */
+}
+
+/* 任务榜标题装饰 */
+.tasks-page .page-title-wrapper {
+  position: relative;
+}
+
+.tasks-page .page-title-wrapper::before,
+.tasks-page .page-title-wrapper::after {
+  content: '◆';
+  color: var(--color-gold);
+  font-size: 12px;
+  margin: 0 12px;
+  opacity: 0.6;
+}
+
+/* 任务状态标签 - 令牌风格 */
+.tasks-page .ant-tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.tasks-page .ant-tag .anticon {
+  color: inherit !important;
+}
+
+.tasks-page .ant-tag span {
+  color: inherit !important;
+}
+
+/* 优先级标签 - 特殊样式 */
+.tasks-page .priority-tag {
+  position: relative;
+  padding-left: 16px;
+}
+
+.tasks-page .priority-tag::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* 表格行悬停效果 - 宣纸晕染 */
+.tasks-page .data-table .ant-table-tbody > tr:hover > td {
+  background: linear-gradient(90deg, rgba(178, 34, 34, 0.05) 0%, rgba(245, 230, 200, 0.3) 100%);
+}
+
+/* 表格选中行 */
+.tasks-page .data-table .ant-table-tbody > tr.ant-table-row-selected > td {
+  background: rgba(178, 34, 34, 0.08);
+}
+
+/* 操作按钮样式 - 朱砂印 */
+.tasks-page .ant-btn-text {
+  transition: all 0.3s ease;
+}
+
+.tasks-page .ant-btn-text:hover {
+  background: rgba(139, 0, 0, 0.08);
+  color: var(--color-primary-dark);
+}
+
+/* 搜索框 - 案台风格 */
+.tasks-page .ant-input-affix-wrapper {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  transition: all 0.3s ease;
+}
+
+.tasks-page .ant-input-affix-wrapper:hover {
+  border-color: var(--color-border-primary);
+}
+
+.tasks-page .ant-input-affix-wrapper:focus,
+.tasks-page .ant-input-affix-wrapper-focused {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
+}
+
+/* 选择器 - 木牌风格 */
+.tasks-page .ant-select .ant-select-selector {
+  border: 2px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  background: var(--color-bg-primary) !important;
+}
+
+.tasks-page .ant-select-focused .ant-select-selector {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1) !important;
+}
+
+/* 分页器样式优化 - 页码令牌 */
+.tasks-page .ant-pagination {
+  font-family: var(--font-family-serif);
+}
+
+.tasks-page .ant-pagination-item {
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-sm);
+  transition: all 0.3s ease;
+}
+
+.tasks-page .ant-pagination-item:hover {
+  border-color: var(--color-primary);
+}
+
+.tasks-page .ant-pagination-item:hover a {
+  color: var(--color-primary);
+}
+
+.tasks-page .ant-pagination-item-active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.tasks-page .ant-pagination-item-active a {
+  color: white;
+}
+
+.tasks-page .ant-pagination-prev .ant-pagination-item-link,
+.tasks-page .ant-pagination-next .ant-pagination-item-link {
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-sm);
+}
+
+.tasks-page .ant-pagination-prev:hover .ant-pagination-item-link,
+.tasks-page .ant-pagination-next:hover .ant-pagination-item-link {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* 任务名称链接 */
+.tasks-page .task-name-link {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.tasks-page .task-name-link:hover {
+  color: var(--color-primary);
+}
+
+/* 负责人头像 */
+.tasks-page .assignee-avatar {
+  border: 2px solid var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.tasks-page .assignee-avatar:hover {
+  border-color: var(--color-primary);
+  transform: scale(1.1);
+}
+
+/* 项目标签 - 木牌风格 */
+.tasks-page .project-tag {
+  background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-family-serif);
+  font-size: 12px;
+}
+
+/* 截止日期 - 沙漏风格 */
+.tasks-page .due-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-family-serif);
+}
+
+.tasks-page .due-date.overdue {
+  color: var(--color-error);
+}
+
+.tasks-page .due-date.urgent {
+  color: var(--color-warning);
+}
+
+/* 统计卡片特殊样式 */
+.tasks-page .stat-card-icon {
+  background: linear-gradient(135deg, rgba(178, 34, 34, 0.1) 0%, rgba(139, 0, 0, 0.05) 100%);
+  border: 1px solid rgba(178, 34, 34, 0.2);
+}
+
+/* 发布任务按钮 - 令牌风格 */
+.tasks-page .publish-task-btn {
+  background: linear-gradient(135deg, #B22222 0%, #8B0000 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+  font-family: var(--font-family-serif);
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tasks-page .publish-task-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.tasks-page .publish-task-btn:hover::before {
+  left: 100%;
+}
+
+.tasks-page .publish-task-btn:hover {
+  background: linear-gradient(135deg, #CD5C5C 0%, #B22222 100%);
+  box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 筛选栏 - 案台风格 */
+.tasks-page .filter-bar {
+  background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+
+.tasks-page .filter-bar::before {
+  content: '筛选';
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  background: var(--color-bg-secondary);
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-family-serif);
+}
+
+/* 内容卡片标题 */
+.tasks-page .content-card-title {
+  position: relative;
+  padding-left: 12px;
+}
+
+.tasks-page .content-card-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 16px;
+  background: var(--color-primary-gradient);
+  border-radius: 2px;
+}

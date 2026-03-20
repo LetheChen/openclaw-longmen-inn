@@ -1,0 +1,139 @@
+.task-wall {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(178, 34, 34, 0.12);
+}
+
+.task-wall-loading,
+.task-wall-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.task-wall-header-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+  color: #F5DEB3;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #B22222;
+}
+
+.task-wall-body {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.task-wall-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #E8DCC8;
+  background: #FFFAF0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.task-wall-row:hover {
+  background: #F5E6D3;
+}
+
+.task-wall-row:last-child {
+  border-bottom: none;
+}
+
+.col-no {
+  flex: 0 0 130px;
+  font-family: 'Courier New', monospace;
+  color: #8B4513;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.col-title {
+  flex: 1;
+  min-width: 180px;
+  color: #2C1810;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 12px;
+}
+
+.col-creator,
+.col-assignee {
+  flex: 0 0 90px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.name-text {
+  color: #5D4037;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.col-status {
+  flex: 0 0 70px;
+  text-align: center;
+}
+
+.col-time {
+  flex: 0 0 80px;
+  color: #8B7355;
+  font-size: 12px;
+  text-align: right;
+}
+
+@media (max-width: 1200px) {
+  .col-title {
+    min-width: 150px;
+  }
+  
+  .col-creator,
+  .col-assignee {
+    flex: 0 0 70px;
+  }
+  
+  .name-text {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .task-wall-header-row,
+  .task-wall-row {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  
+  .col-no {
+    flex: 0 0 100px;
+  }
+  
+  .col-title {
+    min-width: 120px;
+  }
+  
+  .col-creator,
+  .col-assignee {
+    flex: 0 0 32px;
+  }
+  
+  .name-text {
+    display: none;
+  }
+  
+  .col-time {
+    flex: 0 0 60px;
+  }
+}

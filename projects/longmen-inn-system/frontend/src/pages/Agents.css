@@ -1,0 +1,325 @@
+/* 伙计管理页面样式 - 江湖风 */
+.agents-page {
+  /* 继承自 theme.css 的 page-container */
+}
+
+/* 伙计堂标题装饰 */
+.agents-page .page-title-wrapper {
+  position: relative;
+}
+
+.agents-page .page-title-wrapper::before,
+.agents-page .page-title-wrapper::after {
+  content: '◆';
+  color: var(--color-gold);
+  font-size: 12px;
+  margin: 0 12px;
+  opacity: 0.6;
+}
+
+/* 刷新按钮 */
+.agents-page .refresh-btn {
+  border-radius: 6px;
+  font-family: var(--font-family-serif);
+  transition: all 0.3s ease;
+}
+
+.agents-page .refresh-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* 招募伙计按钮 - 令牌风格 */
+.agents-page .add-agent-btn {
+  background: linear-gradient(135deg, #B22222 0%, #8B0000 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+  font-family: var(--font-family-serif);
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.agents-page .add-agent-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.agents-page .add-agent-btn:hover::before {
+  left: 100%;
+}
+
+.agents-page .add-agent-btn:hover {
+  background: linear-gradient(135deg, #CD5C5C 0%, #B22222 100%);
+  box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 伙计卡片 - 木牌风格 */
+.agents-page .agent-card {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.agents-page .agent-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--color-primary-gradient);
+}
+
+.agents-page .agent-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-primary);
+  border-color: var(--color-border-primary);
+}
+
+/* 卡片头部 */
+.agents-page .agent-card-header {
+  background: linear-gradient(135deg, rgba(139, 0, 0, 0.05) 0%, rgba(139, 0, 0, 0.02) 100%);
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+/* 伙计头像 */
+.agents-page .agent-avatar {
+  transition: all 0.3s ease;
+}
+
+.agents-page .agent-card:hover .agent-avatar {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.2);
+}
+
+/* 状态标签 - 令牌风格 */
+.agents-page .ant-tag {
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+/* 职责描述 - 竹简风格 */
+.agents-page .role-description {
+  background: linear-gradient(180deg, #f6ffed 0%, #f0f9eb 100%);
+  border: 1px solid #b7eb8f;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.agents-page .role-description::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #52c41a;
+  border-radius: 8px 0 0 8px;
+}
+
+/* 伙计统计 - 令牌风格 */
+.agents-page .agent-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 14px 0;
+  background: linear-gradient(180deg, #F5E6C8 0%, #EBD5B3 100%);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #D4C4A8;
+}
+
+/* 座右铭 - 卷轴风格 */
+.agents-page .agent-motto {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, #fff7f0 0%, #fff0e6 100%);
+  border-radius: 8px;
+  border: 1px solid #ffd8bf;
+  position: relative;
+}
+
+.agents-page .agent-motto::before,
+.agents-page .agent-motto::after {
+  content: '"';
+  font-size: 18px;
+  color: var(--color-primary);
+  opacity: 0.5;
+}
+
+/* 联系按钮 - 令牌风格 */
+.agents-page .contact-btn {
+  background: linear-gradient(135deg, #B22222 0%, #8B0000 100%);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.agents-page .contact-btn:hover {
+  background: linear-gradient(135deg, #CD5C5C 0%, #B22222 100%);
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+}
+
+/* 分配任务按钮 */
+.agents-page .assign-btn {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.agents-page .assign-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* 搜索框 - 案台风格 */
+.agents-page .ant-input-affix-wrapper {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  transition: all 0.3s ease;
+}
+
+.agents-page .ant-input-affix-wrapper:hover {
+  border-color: var(--color-border-primary);
+}
+
+.agents-page .ant-input-affix-wrapper:focus,
+.agents-page .ant-input-affix-wrapper-focused {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
+}
+
+/* 选择器 - 木牌风格 */
+.agents-page .ant-select .ant-select-selector {
+  border: 2px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  background: var(--color-bg-primary) !important;
+}
+
+.agents-page .ant-select-focused .ant-select-selector {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1) !important;
+}
+
+/* 筛选栏 - 案台风格 */
+.agents-page .filter-bar {
+  background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+
+.agents-page .filter-bar::before {
+  content: '筛选';
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  background: var(--color-bg-secondary);
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-family-serif);
+}
+
+/* 统计卡片 */
+.agents-page .stat-card {
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.agents-page .stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-primary-gradient);
+}
+
+.agents-page .stat-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-border-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.agents-page .stat-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 24px;
+  background: linear-gradient(135deg, rgba(178, 34, 34, 0.1) 0%, rgba(139, 0, 0, 0.05) 100%);
+  color: var(--color-primary);
+  border: 1px solid rgba(178, 34, 34, 0.2);
+}
+
+.agents-page .stat-card-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  font-family: var(--font-family-serif);
+}
+
+.agents-page .stat-card-title {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  margin-top: var(--spacing-xs);
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+/* 卡片网格 */
+.agents-page .card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* 卡片主体 */
+.agents-page .card-item-body {
+  padding: var(--spacing-md);
+}
+
+/* 卡片底部 */
+.agents-page .card-item-footer {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* 空状态 */
+.agents-page .empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-primary);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-lg);
+}

@@ -1,0 +1,232 @@
+/* 任务墙 - 江湖布告栏风格 */
+.kanban-board {
+  width: 100%;
+  overflow-x: auto;
+  padding: 16px;
+  background: 
+    linear-gradient(180deg, rgba(245, 230, 200, 0.3) 0%, rgba(245, 230, 200, 0.1) 100%),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 30px,
+      rgba(139, 69, 19, 0.03) 30px,
+      rgba(139, 69, 19, 0.03) 31px
+    );
+  border-radius: 8px;
+  position: relative;
+}
+
+/* 布告栏边框 */
+.kanban-board::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border: 2px solid rgba(139, 69, 19, 0.2);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* 四角装饰 */
+.kanban-board::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-top: 3px solid #8B4513;
+  border-left: 3px solid #8B4513;
+  border-radius: 4px 0 0 0;
+}
+
+.kanban-board::-webkit-scrollbar {
+  height: 10px;
+}
+
+.kanban-board::-webkit-scrollbar-track {
+  background: rgba(139, 69, 19, 0.1);
+  border-radius: 5px;
+}
+
+.kanban-board::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8B4513 0%, #A0522D 100%);
+  border-radius: 5px;
+  border: 2px solid rgba(245, 230, 200, 0.5);
+}
+
+.kanban-columns {
+  min-width: fit-content;
+  display: flex;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* 任务列 - 木牌/告示牌风格 */
+.kanban-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+  max-width: 280px;
+  background: linear-gradient(180deg, #FFF8E7 0%, #F5E6C8 100%);
+  border: 2px solid #8B4513;
+  border-radius: 8px;
+  max-height: calc(100vh - 280px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+}
+
+/* 木牌顶部挂绳 */
+.kanban-column::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 10px;
+  background: linear-gradient(180deg, #5c3a1e 0%, #8B4513 100%);
+  border-radius: 2px;
+}
+
+/* 木牌钉子 */
+.kanban-column::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle at 30% 30%, #DAA520, #B8860B);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.kanban-column.drag-over {
+  background: linear-gradient(180deg, rgba(178, 34, 34, 0.1) 0%, rgba(245, 230, 200, 0.2) 100%);
+  border: 2px dashed #B22222;
+  box-shadow: 0 0 20px rgba(178, 34, 34, 0.2);
+}
+
+/* 列头部 - 木牌标题 */
+.kanban-column-header {
+  padding: 14px 12px 10px;
+  background: linear-gradient(180deg, #8B4513 0%, #6b3410 100%);
+  border-bottom: 2px solid #5c3a1e;
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* 标题文字 */
+.kanban-column-header .ant-typography {
+  color: #FFF8E7 !important;
+  font-family: 'Noto Serif SC', serif !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 2px !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 状态图标 */
+.kanban-column-header .anticon {
+  color: #FFD700 !important;
+  font-size: 14px;
+}
+
+/* 数量徽章 */
+.kanban-column-header .ant-badge-count {
+  background: linear-gradient(135deg, #B22222 0%, #8B0000 100%) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  font-family: 'Noto Serif SC', serif !important;
+}
+
+.kanban-column-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 23px,
+      rgba(139, 69, 19, 0.05) 23px,
+      rgba(139, 69, 19, 0.05) 24px
+    );
+}
+
+.kanban-column-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.kanban-column-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kanban-column-content::-webkit-scrollbar-thumb {
+  background: rgba(139, 69, 19, 0.3);
+  border-radius: 3px;
+}
+
+/* 列底部 */
+.kanban-column-footer {
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(139, 69, 19, 0.05) 0%, rgba(139, 69, 19, 0.1) 100%);
+  border-top: 1px dashed rgba(139, 69, 19, 0.3);
+  border-radius: 0 0 6px 6px;
+}
+
+/* 添加任务按钮 - 令牌风格 */
+.add-task-button {
+  background: transparent !important;
+  border: 1px dashed rgba(139, 69, 19, 0.4) !important;
+  color: #8B4513 !important;
+  font-family: 'Noto Serif SC', serif !important;
+  transition: all 0.3s ease !important;
+}
+
+.add-task-button:hover {
+  background: rgba(178, 34, 34, 0.08) !important;
+  border-color: #B22222 !important;
+  color: #B22222 !important;
+}
+
+.add-task-button .anticon {
+  color: inherit !important;
+}
+
+/* 任务卡片拖拽样式 */
+.kanban-column-content > div > div[draggable="true"] {
+  cursor: grab;
+}
+
+.kanban-column-content > div > div[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+/* 空状态 */
+.kanban-column-content .ant-empty {
+  margin: 32px 0;
+}
+
+.kanban-column-content .ant-empty-description {
+  color: #8B4513 !important;
+  font-family: 'Noto Serif SC', serif !important;
+  font-size: 12px !important;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .kanban-column {
+    min-width: 260px;
+    max-width: 300px;
+  }
+}

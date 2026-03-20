@@ -1,0 +1,49 @@
+.task-card {
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  background: #fff;
+}
+
+.task-card:hover {
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.1);
+  border-color: #d9d9d9;
+}
+
+.task-card.clickable {
+  cursor: pointer;
+}
+
+.task-card.clickable:hover {
+  transform: translateY(-2px);
+}
+
+.task-card .ant-card-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-card .ant-progress-bg {
+  transition: all 0.3s ease;
+}
+
+/* 状态颜色适配 */
+.task-card.status-pending {
+  border-left: 3px solid #8c8c8c;
+}
+
+.task-card.status-in_progress {
+  border-left: 3px solid #1890ff;
+}
+
+.task-card.status-review {
+  border-left: 3px solid #faad14;
+}
+
+.task-card.status-completed {
+  border-left: 3px solid #52c41a;
+}
+
+.task-card.status-blocked {
+  border-left: 3px solid #ff4d4f;
+}

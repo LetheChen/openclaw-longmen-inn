@@ -1,0 +1,123 @@
+/* OpenClaw 页面样式 - 遵循统一设计规范 */
+
+.openclaw-page {
+  /* 页面特定样式 */
+}
+
+/* 统计卡片特殊样式 */
+.openclaw-page .stat-card {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  border: 1px solid var(--color-border);
+}
+
+.openclaw-page .stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.openclaw-page .stat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.openclaw-page .stat-card-icon {
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-tertiary);
+}
+
+.openclaw-page .stat-card-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.2;
+}
+
+.openclaw-page .stat-card-title {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* 内容卡片 */
+.openclaw-page .content-card {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.openclaw-page .content-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+}
+
+.openclaw-page .content-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.openclaw-page .content-card-body {
+  padding: var(--spacing-lg);
+}
+
+/* 空状态 */
+.openclaw-page .empty-state {
+  text-align: center;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  color: var(--color-text-tertiary);
+}
+
+.openclaw-page .empty-state p {
+  margin: var(--spacing-sm) 0;
+  font-size: 14px;
+}
+
+/* 表格样式 */
+.openclaw-page .data-table .ant-table-thead > tr > th {
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.openclaw-page .data-table .ant-table-tbody > tr:hover > td {
+  background: var(--color-bg-hover);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .openclaw-page .stat-card {
+    padding: var(--spacing-md);
+  }
+  
+  .openclaw-page .stat-card-value {
+    font-size: 24px;
+  }
+  
+  .openclaw-page .content-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+}

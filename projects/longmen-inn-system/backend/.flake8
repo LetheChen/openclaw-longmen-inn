@@ -1,0 +1,33 @@
+[flake8]
+# 最大行长度
+max-line-length = 100
+
+# 忽略的错误代码
+ignore = 
+    E501,  # 行过长（由Black处理）
+    W503,  # 换行符在行首（与Black风格冲突）
+    E203,  # 冒号前空格（与Black风格冲突）
+    E402,  # 导入未在顶部（常见于条件导入）
+
+# 排除的目录
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    .tox,
+    .eggs,
+    *.egg,
+    migrations,
+    alembic,
+    tests/*,
+
+# 每个文件的复杂度上限
+max-complexity = 12
+
+# 每行最多导入数量
+max-imports = 20
+
+# 文档字符串检查
+docstring-convention = google

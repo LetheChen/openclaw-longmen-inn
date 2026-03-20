@@ -1,0 +1,40 @@
+[flake8]
+# 最大行长度（与black一致）
+max-line-length = 88
+
+# 忽略的规则
+# E203: 空格在切片前（与black冲突）
+# W503: 二元运算符前换行（与black冲突）
+# E501: 行过长（由black处理）
+ignore = E203, W503, E501
+
+# 排除的目录
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    .tox,
+    build,
+    dist,
+    *.egg-info,
+    .mypy_cache,
+    .pytest_cache,
+    migrations,
+    alembic
+
+# 每个文件的最大复杂度
+max-complexity = 10
+
+# 文档字符串检查
+docstring-convention = google
+
+# 导入排序检查
+import-order-style = google
+
+# 显示统计信息
+show-source = true
+statistics = true
+
+# 计数错误
+count = true

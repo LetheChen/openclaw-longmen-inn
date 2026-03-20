@@ -1,0 +1,72 @@
+.project-card {
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+  overflow: hidden;
+}
+
+.project-card:hover {
+  box-shadow: 0 4px 16px rgba(139, 0, 0, 0.12);
+  transform: translateY(-2px);
+  border-color: #d9d9d9;
+}
+
+.project-card.clickable {
+  cursor: pointer;
+}
+
+.project-card .ant-card-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 进度条样式 */
+.project-card .ant-progress-bg {
+  transition: all 0.3s ease;
+}
+
+/* 封面图片 */
+.project-card .project-cover {
+  height: 120px;
+  background: linear-gradient(135deg, #8B0000 0%, #FFD700 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: white;
+  margin: -24px -24px 16px -24px;
+}
+
+/* 状态标签 */
+.project-card .status-tag {
+  transition: all 0.2s ease;
+}
+
+.project-card .status-tag:hover {
+  transform: scale(1.05);
+}
+
+/* 统计信息 */
+.project-card .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #666;
+  font-size: 12px;
+}
+
+.project-card .stat-item:hover {
+  color: #8B0000;
+}
+
+/* 负责人信息 */
+.project-card .owner-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-card .owner-info:hover {
+  opacity: 0.8;
+}

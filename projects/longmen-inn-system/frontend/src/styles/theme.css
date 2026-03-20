@@ -1,0 +1,806 @@
+/**
+ * 龙门客栈业务管理系统 - 江湖风设计规范
+ * ================================
+ * 设计主题：江湖客栈、武侠风情、古风韵味
+ * 主色调：朱砂红、墨黑、宣纸黄
+ * 元素：折扇、酒旗、灯笼、木牌、印章、卷轴、水墨
+ */
+
+/* ========== 导入古风字体 ========== */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+
+/* ========== CSS 变量定义 ========== */
+:root {
+  /* 江湖主题色 */
+  --color-primary: #B22222;           /* 朱砂红 - 客栈招牌色 */
+  --color-primary-light: #CD5C5C;     /* 浅朱砂 */
+  --color-primary-dark: #8B0000;      /* 深朱砂 */
+  --color-primary-gradient: linear-gradient(135deg, #B22222 0%, #8B0000 100%);
+  
+  /* 古风辅助色 */
+  --color-ink: #1a1a1a;               /* 墨黑 */
+  --color-ink-light: #333333;         /* 淡墨 */
+  --color-paper: #F5E6C8;             /* 宣纸黄 */
+  --color-paper-light: #FFF8E7;       /* 浅宣纸 */
+  --color-wood: #8B4513;              /* 木色 */
+  --color-wood-light: #A0522D;        /* 浅木色 */
+  --color-wood-dark: #654321;         /* 深木色 */
+  --color-gold: #DAA520;              /* 金色 - 招牌用 */
+  --color-gold-light: #FFD700;        /* 亮金 */
+  --color-jade: #2E8B57;              /* 玉绿 */
+  --color-cinnabar: #E34234;          /* 朱磦 */
+  --color-indigo: #4A6741;            /* 靛青 */
+  
+  /* 状态色 */
+  --color-success: #228B22;           /* 竹青 */
+  --color-warning: #FF8C00;           /* 橙黄 */
+  --color-error: #DC143C;             /* 猩红 */
+  --color-info: #4682B4;              /* 钢蓝 */
+  
+  /* 文字色 */
+  --color-text-primary: #1a1a1a;      /* 墨色 */
+  --color-text-secondary: #4a4a4a;    /* 淡墨 */
+  --color-text-tertiary: #7a7a7a;     /* 清墨 */
+  --color-text-disabled: #a0a0a0;     /* 灰墨 */
+  --color-text-gold: #B8860B;         /* 金文 */
+  
+  /* 背景色 */
+  --color-bg-primary: #FFF8E7;        /* 宣纸白 */
+  --color-bg-secondary: #F5E6C8;      /* 古纸黄 */
+  --color-bg-tertiary: #EBD5B3;       /* 旧纸色 */
+  --color-bg-hover: #FFF5E0;          /* 暖纸色 */
+  --color-bg-ink: #1a1a1a;            /* 墨底 */
+  
+  /* 边框色 */
+  --color-border: #D4C4A8;            /* 古铜边 */
+  --color-border-light: #E8DCC8;      /* 浅边 */
+  --color-border-primary: rgba(178, 34, 34, 0.3);  /* 朱砂边 */
+  --color-border-wood: #8B4513;       /* 木框 */
+  
+  /* 阴影 - 古风灯笼光晕效果 */
+  --shadow-sm: 0 2px 8px rgba(139, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(139, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 32px rgba(139, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-primary: 0 4px 20px rgba(178, 34, 34, 0.25);
+  --shadow-gold: 0 4px 16px rgba(218, 165, 32, 0.3);
+  --shadow-wood: 0 4px 12px rgba(139, 69, 19, 0.2);
+  
+  /* 圆角 - 古朴方圆 */
+  --radius-sm: 4px;                   /* 小圆角 */
+  --radius-md: 8px;                   /* 中圆角 */
+  --radius-lg: 12px;                  /* 大圆角 */
+  --radius-xl: 16px;                  /* 超大圆角 */
+  
+  /* 间距 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* 过渡 */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* 字体 */
+  --font-family-serif: 'Noto Serif SC', 'SimSun', 'STSong', serif;
+  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ========== 全局字体设置 ========== */
+body {
+  font-family: var(--font-family-serif);
+  background-color: var(--color-bg-secondary);
+}
+
+/* ========== 页面基础布局 ========== */
+.page-container {
+  padding: var(--spacing-lg);
+  min-height: calc(100vh - 64px);
+  background: var(--color-bg-secondary);
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(178, 34, 34, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(218, 165, 32, 0.03) 0%, transparent 50%);
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: var(--spacing-md);
+  }
+}
+
+/* ========== 页面标题区域 - 客栈招牌风格 ========== */
+.page-header {
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--color-border);
+  position: relative;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 120px;
+  height: 2px;
+  background: var(--color-primary-gradient);
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-family: var(--font-family-serif);
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.page-title-icon {
+  font-size: 28px;
+  color: var(--color-primary);
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.1));
+}
+
+.page-subtitle {
+  color: var(--color-text-tertiary);
+  font-size: 14px;
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+/* ========== 统计卡片 - 木牌风格 ========== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.stat-card {
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-primary-gradient);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-border-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.stat-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 24px;
+  background: linear-gradient(135deg, rgba(178, 34, 34, 0.1) 0%, rgba(139, 0, 0, 0.05) 100%);
+  color: var(--color-primary);
+  border: 1px solid rgba(178, 34, 34, 0.2);
+}
+
+.stat-card-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  font-family: var(--font-family-serif);
+}
+
+.stat-card-title {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  margin-top: var(--spacing-xs);
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+/* ========== 内容卡片 - 卷轴风格 ========== */
+.content-card {
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.content-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-primary) 20%, 
+    var(--color-gold) 50%, 
+    var(--color-primary) 80%, 
+    transparent 100%
+  );
+  opacity: 0.6;
+}
+
+.content-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
+}
+
+.content-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+.content-card-body {
+  padding: var(--spacing-lg);
+}
+
+/* ========== 筛选栏 - 案台风格 ========== */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  align-items: center;
+  padding: var(--spacing-md);
+  background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--color-border);
+}
+
+/* ========== 数据表格 - 账簿风格 ========== */
+.data-table .ant-table-thead > tr > th {
+  background: linear-gradient(180deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  border-bottom: 2px solid var(--color-border);
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+.data-table .ant-table-tbody > tr:hover > td {
+  background: var(--color-bg-hover);
+}
+
+.data-table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+/* ========== 项目/Agent卡片网格 - 木牌风格 ========== */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.card-item {
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  position: relative;
+}
+
+.card-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--color-primary-gradient);
+}
+
+.card-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-primary);
+  border-color: var(--color-border-primary);
+}
+
+.card-item-header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-light);
+  background: linear-gradient(180deg, var(--color-bg-secondary) 0%, transparent 100%);
+}
+
+.card-item-body {
+  padding: var(--spacing-md);
+}
+
+.card-item-footer {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ========== 状态标签 - 印章风格 ========== */
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-family-serif);
+  border: 1px solid currentColor;
+}
+
+/* ========== 进度条 - 血条风格 ========== */
+.progress-bar .ant-progress-bg {
+  background: linear-gradient(90deg, #B22222 0%, #8B0000 100%) !important;
+  box-shadow: 0 0 8px rgba(178, 34, 34, 0.3);
+}
+
+/* ========== 按钮样式 - 令牌风格 ========== */
+.btn-primary {
+  background: var(--color-primary-gradient);
+  border: none;
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-family-serif);
+  letter-spacing: 2px;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #CD5C5C 0%, #B22222 100%);
+  box-shadow: var(--shadow-md);
+}
+
+/* Ant Design 按钮覆盖 */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #B22222 0%, #8B0000 100%);
+  border: none;
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #CD5C5C 0%, #B22222 100%) !important;
+}
+
+/* ========== 空状态 - 留白意境 ========== */
+.empty-state {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-family-serif);
+}
+
+/* ========== 输入框 - 宣纸风格 ========== */
+.ant-input,
+.ant-input-number {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-family-serif);
+}
+
+.ant-input:focus,
+.ant-input-number:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(178, 34, 34, 0.1);
+}
+
+/* ========== 选择器 - 竹简风格 ========== */
+.ant-select-selector {
+  background: var(--color-bg-primary) !important;
+  border: 1px solid var(--color-border) !important;
+  font-family: var(--font-family-serif) !important;
+}
+
+.ant-select-focused .ant-select-selector {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(178, 34, 34, 0.1) !important;
+}
+
+/* ========== 标签页 - 折扇风格 ========== */
+.ant-tabs-tab {
+  font-family: var(--font-family-serif) !important;
+  letter-spacing: 1px;
+}
+
+.ant-tabs-tab-active {
+  color: var(--color-primary) !important;
+}
+
+.ant-tabs-ink-bar {
+  background: var(--color-primary) !important;
+}
+
+/* ========== 徽章 - 令箭风格 ========== */
+.ant-badge-count {
+  background: var(--color-primary) !important;
+  font-family: var(--font-family-serif);
+}
+
+/* ========== 标签 - 封条风格 ========== */
+.ant-tag {
+  font-family: var(--font-family-serif);
+  border-radius: 4px;
+}
+
+/* ========== 头像 - 画像风格 ========== */
+.ant-avatar {
+  border: 2px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ========== 开关 - 门闩风格 ========== */
+.ant-switch-checked {
+  background: var(--color-primary) !important;
+}
+
+/* ========== 响应式工具类 ========== */
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-title {
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+}
+
+/* ========== 特殊装饰元素 ========== */
+/* 印章效果 */
+.seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 4px;
+  font-family: var(--font-family-serif);
+  font-weight: 600;
+  letter-spacing: 2px;
+  box-shadow: 0 2px 8px rgba(178, 34, 34, 0.3);
+}
+
+/* 金边装饰 */
+.gold-border {
+  border: 2px solid var(--color-gold);
+  box-shadow: var(--shadow-gold);
+}
+
+/* 木纹背景 */
+.wood-texture {
+  background: linear-gradient(180deg, #8B4513 0%, #A0522D 50%, #8B4513 100%);
+}
+
+/* 水墨效果 */
+.ink-wash {
+  background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.05) 0%, transparent 70%);
+}
+
+/* ========== 卷轴装饰 ========== */
+.scroll-decoration {
+  position: relative;
+  background: var(--color-bg-primary);
+  border-left: 4px solid var(--color-wood);
+  border-right: 4px solid var(--color-wood);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.scroll-decoration::before,
+.scroll-decoration::after {
+  content: '';
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  height: 8px;
+  background: linear-gradient(90deg, 
+    var(--color-wood-dark) 0%, 
+    var(--color-wood) 20%, 
+    var(--color-wood-light) 50%, 
+    var(--color-wood) 80%, 
+    var(--color-wood-dark) 100%
+  );
+}
+
+.scroll-decoration::before {
+  top: 0;
+  border-radius: 4px 4px 0 0;
+}
+
+.scroll-decoration::after {
+  bottom: 0;
+  border-radius: 0 0 4px 4px;
+}
+
+/* ========== 客栈招牌风格 ========== */
+.inn-signboard {
+  background: linear-gradient(180deg, #8B0000 0%, #B22222 50%, #8B0000 100%);
+  border: 3px solid var(--color-gold);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--color-gold-light);
+  font-family: var(--font-family-serif);
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 4px 12px rgba(139, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.inn-signboard::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 1px solid rgba(218, 165, 32, 0.3);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+
+/* ========== 酒旗风格 ========== */
+.wine-banner {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  background: linear-gradient(90deg, #B22222 0%, #CD5C5C 50%, #B22222 100%);
+  color: white;
+  font-family: var(--font-family-serif);
+  font-weight: 600;
+  letter-spacing: 2px;
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+  box-shadow: 0 2px 8px rgba(178, 34, 34, 0.3);
+}
+
+/* ========== 灯笼效果 ========== */
+.lantern-glow {
+  box-shadow: 
+    0 0 20px rgba(178, 34, 34, 0.3),
+    0 0 40px rgba(178, 34, 34, 0.2),
+    0 0 60px rgba(178, 34, 34, 0.1);
+}
+
+/* ========== 令牌/木牌风格 ========== */
+.wooden-token {
+  background: linear-gradient(135deg, #D4C4A8 0%, #E8DCC8 50%, #D4C4A8 100%);
+  border: 2px solid var(--color-wood);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-family-serif);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-wood);
+  position: relative;
+}
+
+.wooden-token::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border: 1px dashed rgba(139, 69, 19, 0.3);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* ========== 折扇风格 ========== */
+.fan-shape {
+  background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-paper) 100%);
+  border-radius: 50% 50% 0 0 / 20% 20% 0 0;
+  border: 2px solid var(--color-border);
+  border-bottom: none;
+  position: relative;
+}
+
+.fan-shape::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 8px;
+  background: var(--color-wood);
+  border-radius: 0 0 4px 4px;
+}
+
+/* ========== 水墨画框 ========== */
+.ink-frame {
+  border: 3px double var(--color-ink);
+  padding: var(--spacing-md);
+  background: var(--color-bg-primary);
+  position: relative;
+}
+
+.ink-frame::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 1px solid var(--color-border);
+  pointer-events: none;
+}
+
+/* ========== 云纹装饰 ========== */
+.cloud-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='30' viewBox='0 0 60 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 15 Q15 5 20 15 T30 15 T40 15 T50 15' fill='none' stroke='%23D4C4A8' stroke-width='1' opacity='0.3'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom;
+}
+
+/* ========== 回纹边框 ========== */
+.border-pattern {
+  border-image: repeating-linear-gradient(
+    45deg,
+    var(--color-border),
+    var(--color-border) 5px,
+    transparent 5px,
+    transparent 10px
+  ) 1;
+}
+
+/* ========== 古风分割线 ========== */
+.divider-traditional {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: var(--spacing-lg) 0;
+}
+
+.divider-traditional::before,
+.divider-traditional::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+}
+
+.divider-traditional::before {
+  margin-right: var(--spacing-md);
+}
+
+.divider-traditional::after {
+  margin-left: var(--spacing-md);
+}
+
+.divider-traditional .divider-icon {
+  color: var(--color-gold);
+  font-size: 16px;
+}
+
+/* ========== 铜钱装饰 ========== */
+.coin-decoration {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--color-gold);
+  background: var(--color-bg-primary);
+  box-shadow: inset 0 0 4px rgba(218, 165, 32, 0.3);
+}
+
+/* ========== 竹简风格列表 ========== */
+.bamboo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bamboo-list li {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-left: 3px solid var(--color-wood);
+  margin-bottom: var(--spacing-xs);
+  background: linear-gradient(90deg, rgba(139, 69, 19, 0.05) 0%, transparent 100%);
+  font-family: var(--font-family-serif);
+}
+
+.bamboo-list li::before {
+  content: '❖';
+  color: var(--color-primary);
+  margin-right: var(--spacing-sm);
+}
+
+/* ========== 毛笔字效果 ========== */
+.brush-text {
+  font-family: var(--font-family-serif);
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.brush-text::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-ink), transparent);
+  opacity: 0.3;
+}
+
+/* ========== 动画效果 ========== */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(178, 34, 34, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(178, 34, 34, 0.5); }
+}
+
+@keyframes ink-spread {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-ink {
+  animation: ink-spread 0.5s ease-out;
+}

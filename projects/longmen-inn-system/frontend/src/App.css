@@ -1,0 +1,164 @@
+/* 龙门客栈业务管理系统 - App 主样式 */
+
+/* 布局样式 */
+.site-layout {
+  min-height: 100vh;
+}
+
+.site-content {
+  margin: 24px 16px;
+  padding: 24px;
+  min-height: 280px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Logo 样式 */
+.logo {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0;
+  padding: 0 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 头部样式 */
+.site-header {
+  background: #fff;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  z-index: 1;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 侧边栏样式 */
+.site-sider {
+  background: #001529;
+  box-shadow: 2px 0 8px rgba(0, 21, 41, 0.08);
+}
+
+/* 菜单样式 */
+.ant-menu-dark {
+  background: #001529;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background: #1890ff;
+}
+
+/* 卡片样式 */
+.stat-card {
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 表格样式 */
+.ant-table {
+  background: #fff;
+  border-radius: 8px;
+}
+
+/* 按钮样式 */
+.ant-btn {
+  border-radius: 6px;
+}
+
+/* 输入框样式 */
+.ant-input {
+  border-radius: 6px;
+}
+
+/* 模态框样式 */
+.ant-modal-content {
+  border-radius: 8px;
+}
+
+/* 分页样式 */
+.ant-pagination {
+  margin-top: 16px;
+}
+
+/* 标签样式 */
+.ant-tag {
+  border-radius: 4px;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .site-content {
+    margin: 16px 8px;
+    padding: 16px;
+  }
+  
+  .site-header {
+    padding: 0 16px;
+  }
+  
+  .header-right {
+    gap: 8px;
+  }
+}
+
+/* 暗色主题支持 */
+@media (prefers-color-scheme: dark) {
+  /* 可以添加暗色主题样式 */
+}
+
+/* 打印样式 */
+@media print {
+  .site-header,
+  .site-sider {
+    display: none;
+  }
+  
+  .site-content {
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+}

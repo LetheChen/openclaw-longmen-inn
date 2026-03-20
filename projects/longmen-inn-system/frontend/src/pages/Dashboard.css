@@ -1,0 +1,591 @@
+/* Dashboard 页面样式 - 江湖客栈风格 */
+
+.dashboard-page {
+  /* 页面特定样式 */
+}
+
+/* 页面标题区域 - 客栈招牌 */
+.page-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.inn-icon {
+  font-size: 48px;
+  color: var(--color-primary);
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.15));
+}
+
+/* 客栈招牌装饰 - 灯笼风格 */
+.inn-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #B22222 0%, #8B0000 100%);
+  border-radius: 50%;
+  border: 3px solid #DAA520;
+  box-shadow: 
+    0 4px 16px rgba(178, 34, 34, 0.3),
+    0 0 30px rgba(178, 34, 34, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+/* 灯笼穗子 */
+.inn-decoration::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 15px;
+  background: linear-gradient(180deg, #DAA520 0%, #B8860B 100%);
+  border-radius: 0 0 2px 2px;
+}
+
+.decoration-text {
+  color: #FFD700;
+  font-family: var(--font-family-serif);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 统计卡片 - 木牌风格 */
+.stat-card {
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 木牌顶部装饰 */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--color-primary-gradient);
+}
+
+/* 木牌挂绳效果 */
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 20px;
+  width: 8px;
+  height: 8px;
+  background: var(--color-wood);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-border-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.stat-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 24px;
+  background: linear-gradient(135deg, rgba(178, 34, 34, 0.1) 0%, rgba(139, 0, 0, 0.05) 100%);
+  color: var(--color-primary);
+  border: 1px solid rgba(178, 34, 34, 0.2);
+}
+
+.stat-card-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-family: var(--font-family-serif);
+}
+
+.stat-card-body {
+  padding-left: 8px;
+}
+
+.stat-card-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  font-family: var(--font-family-serif);
+}
+
+.stat-card-title {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  margin-top: var(--spacing-xs);
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+/* 内容卡片 - 卷轴风格 */
+.content-card {
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  overflow: visible;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 卷轴顶部装饰条 */
+.content-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-primary) 20%, 
+    var(--color-gold) 50%, 
+    var(--color-primary) 80%, 
+    transparent 100%
+  );
+  opacity: 0.6;
+}
+
+/* 卷轴侧边装饰 */
+.content-card::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 3px;
+  background: linear-gradient(180deg, 
+    transparent 0%, 
+    var(--color-wood) 20%, 
+    var(--color-wood-light) 50%, 
+    var(--color-wood) 80%, 
+    transparent 100%
+  );
+  opacity: 0.5;
+}
+
+.content-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
+  position: relative;
+}
+
+/* 标题装饰 */
+.content-card-header::before {
+  content: '◆';
+  position: absolute;
+  left: 12px;
+  color: var(--color-gold);
+  font-size: 8px;
+  opacity: 0.6;
+}
+
+.content-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+  padding-left: 16px;
+}
+
+.content-card-body {
+  padding: var(--spacing-lg);
+  overflow: visible;
+}
+
+/* 印章标签 */
+.seal-tag {
+  background: linear-gradient(135deg, #B22222 0%, #8B0000 100%) !important;
+  color: #FFF8E7 !important;
+  border: none !important;
+  font-family: var(--font-family-serif) !important;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(178, 34, 34, 0.3);
+  position: relative;
+}
+
+/* 印章边框效果 */
+.seal-tag::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border: 1px dashed rgba(255, 248, 231, 0.3);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* 刷新按钮 - 令牌风格 */
+.refresh-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-family-serif);
+  font-size: 14px;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.refresh-btn:hover {
+  background: rgba(178, 34, 34, 0.08);
+  border-color: rgba(178, 34, 34, 0.2);
+}
+
+/* 伙计卡片网格 - 修复对齐 */
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--spacing-md);
+  align-items: stretch;
+  padding: 8px;
+  overflow: visible;
+}
+
+.agent-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--color-bg-secondary);
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: visible;
+}
+
+/* 全边框 - 木牌风格 */
+.agent-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(var(--radius-md) + 2px);
+  background: linear-gradient(
+    135deg,
+    #8B4513 0%,
+    #A0522D 25%,
+    #D2691E 50%,
+    #A0522D 75%,
+    #8B4513 100%
+  );
+  z-index: -1;
+}
+
+/* 内层填充 */
+.agent-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  z-index: 0;
+}
+
+/* 确保内容在填充之上 */
+.agent-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.agent-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(139, 69, 19, 0.2);
+}
+
+.agent-card:hover::before {
+  background: linear-gradient(
+    135deg,
+    #A0522D 0%,
+    #CD853F 25%,
+    #DEB887 50%,
+    #CD853F 75%,
+    #A0522D 100%
+  );
+}
+
+/* 忙碌状态 - 流光边框 */
+.agent-card.busy {
+  transform: scale(1.01);
+}
+
+/* 流光边框 */
+.agent-card.busy::before {
+  inset: -3px;
+  background: linear-gradient(
+    90deg,
+    #8B4513 0%,
+    #B22222 20%,
+    #DAA520 40%,
+    #B22222 60%,
+    #8B4513 80%,
+    #B22222 100%
+  );
+  background-size: 200% 100%;
+  animation: borderFlowLight 3s linear infinite;
+}
+
+/* 流光动画 */
+@keyframes borderFlowLight {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.agent-card-avatar {
+  flex-shrink: 0;
+}
+
+.agent-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-card-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-serif);
+  font-size: 15px;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.agent-card-status {
+  font-size: 12px;
+  font-family: var(--font-family-serif);
+}
+
+/* 龙门令 - 铜钱风格 */
+.agent-card-lml {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-serif);
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.15) 0%, rgba(218, 165, 32, 0.05) 100%);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(218, 165, 32, 0.4);
+  position: relative;
+}
+
+/* 铜钱孔 */
+.agent-card-lml::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--color-bg-primary);
+  border-radius: 50%;
+  border: 1px solid rgba(218, 165, 32, 0.5);
+  margin-right: 4px;
+}
+
+/* 空状态 - 留白意境 */
+.empty-agents {
+  padding: 40px;
+  text-align: center;
+}
+
+/* 统计行 */
+.stats-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  position: relative;
+}
+
+/* 云纹装饰 */
+.stats-row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-border) 20%, 
+    var(--color-gold) 50%, 
+    var(--color-border) 80%, 
+    transparent 100%
+  );
+}
+
+.stat-item {
+  text-align: center;
+  flex: 1;
+  position: relative;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--font-family-serif);
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(180deg, 
+    transparent 0%, 
+    var(--color-border) 30%, 
+    var(--color-border) 70%, 
+    transparent 100%
+  );
+}
+
+/* 进度条 - 血条/气条风格 */
+.dashboard-page .ant-progress-circle-path {
+  stroke-linecap: round;
+}
+
+.dashboard-page .ant-progress-circle-trail {
+  stroke: var(--color-bg-tertiary);
+}
+
+/* 业绩榜特殊装饰 */
+.dashboard-page .content-card:nth-child(2) .content-card-body {
+  background: linear-gradient(180deg, var(--color-bg-primary) 0%, rgba(218, 165, 32, 0.05) 100%);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .page-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+  
+  .inn-decoration {
+    width: 60px;
+    height: 60px;
+    align-self: flex-end;
+  }
+  
+  .inn-decoration::after {
+    height: 12px;
+    bottom: -12px;
+  }
+  
+  .decoration-text {
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+  
+  .inn-icon {
+    font-size: 36px;
+  }
+  
+  .agents-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-row {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .stat-divider {
+    width: 60%;
+    height: 1px;
+  }
+}
+
+/* 动画效果 */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(178, 34, 34, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 24px rgba(178, 34, 34, 0.5);
+  }
+}
+
+.inn-decoration {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* 水墨晕染效果 */
+.ink-wash-bg {
+  position: relative;
+}
+
+.ink-wash-bg::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}

@@ -1,0 +1,62 @@
+.agent-card {
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+}
+
+.agent-card:hover {
+  box-shadow: 0 4px 16px rgba(139, 0, 0, 0.12);
+  transform: translateY(-2px);
+  border-color: #d9d9d9;
+}
+
+.agent-card.clickable {
+  cursor: pointer;
+}
+
+.agent-card .ant-avatar {
+  transition: all 0.3s ease;
+}
+
+.agent-card:hover .ant-avatar {
+  transform: scale(1.05);
+}
+
+.agent-card .ant-progress-bg {
+  transition: all 0.5s ease;
+}
+
+/* 等级徽章动画 */
+.agent-card .level-badge {
+  transition: all 0.3s ease;
+}
+
+.agent-card:hover .level-badge {
+  transform: scale(1.1);
+}
+
+/* 技能标签样式 */
+.agent-card .skill-tag {
+  transition: all 0.2s ease;
+}
+
+.agent-card .skill-tag:hover {
+  transform: scale(1.05);
+}
+
+/* 状态指示器脉冲动画 */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(82, 196, 26, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(82, 196, 26, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(82, 196, 26, 0);
+  }
+}
+
+.agent-card .status-online {
+  animation: pulse 2s infinite;
+}

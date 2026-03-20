@@ -1,0 +1,257 @@
+/* 项目管理页面样式 - 江湖风 */
+.projects-page {
+  /* 继承自 theme.css 的 page-container */
+}
+
+/* 项目堂标题装饰 */
+.projects-page .page-title-wrapper {
+  position: relative;
+}
+
+.projects-page .page-title-wrapper::before,
+.projects-page .page-title-wrapper::after {
+  content: '◆';
+  color: var(--color-gold);
+  font-size: 12px;
+  margin: 0 12px;
+  opacity: 0.6;
+}
+
+/* 立项按钮 - 令牌风格 */
+.projects-page .create-project-btn {
+  background: linear-gradient(135deg, #B22222 0%, #8B0000 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+  font-family: var(--font-family-serif);
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.projects-page .create-project-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.projects-page .create-project-btn:hover::before {
+  left: 100%;
+}
+
+.projects-page .create-project-btn:hover {
+  background: linear-gradient(135deg, #CD5C5C 0%, #B22222 100%);
+  box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 项目卡片 - 木牌风格 */
+.projects-page .project-card {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.projects-page .project-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--color-primary-gradient);
+}
+
+.projects-page .project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-primary);
+  border-color: var(--color-border-primary);
+}
+
+/* 进度条 - 血条风格 */
+.projects-page .project-progress .ant-progress-bg {
+  background: linear-gradient(90deg, #B22222 0%, #8B0000 100%) !important;
+  box-shadow: 0 0 8px rgba(178, 34, 34, 0.3);
+}
+
+.projects-page .project-progress.ant-progress-status-success .ant-progress-bg {
+  background: linear-gradient(90deg, #228B22 0%, #2E8B57 100%) !important;
+}
+
+/* 状态标签 - 令牌风格 */
+.projects-page .ant-tag {
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+/* 搜索框 - 案台风格 */
+.projects-page .ant-input-affix-wrapper {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  transition: all 0.3s ease;
+}
+
+.projects-page .ant-input-affix-wrapper:hover {
+  border-color: var(--color-border-primary);
+}
+
+.projects-page .ant-input-affix-wrapper:focus,
+.projects-page .ant-input-affix-wrapper-focused {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
+}
+
+/* 选择器 - 木牌风格 */
+.projects-page .ant-select .ant-select-selector {
+  border: 2px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  background: var(--color-bg-primary) !important;
+}
+
+.projects-page .ant-select-focused .ant-select-selector {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1) !important;
+}
+
+/* 筛选栏 - 案台风格 */
+.projects-page .filter-bar {
+  background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+
+.projects-page .filter-bar::before {
+  content: '筛选';
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  background: var(--color-bg-secondary);
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-family-serif);
+}
+
+/* 查看详情按钮 */
+.projects-page .view-detail-btn {
+  transition: all 0.3s ease;
+}
+
+.projects-page .view-detail-btn:hover {
+  color: var(--color-primary-dark) !important;
+  transform: translateX(4px);
+}
+
+/* 编辑按钮 */
+.projects-page .edit-btn {
+  transition: all 0.3s ease;
+}
+
+.projects-page .edit-btn:hover {
+  background: rgba(139, 0, 0, 0.08);
+  color: var(--color-primary-dark);
+}
+
+/* 统计卡片 */
+.projects-page .stat-card {
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.projects-page .stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-primary-gradient);
+}
+
+.projects-page .stat-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-border-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.projects-page .stat-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 24px;
+  background: linear-gradient(135deg, rgba(178, 34, 34, 0.1) 0%, rgba(139, 0, 0, 0.05) 100%);
+  color: var(--color-primary);
+  border: 1px solid rgba(178, 34, 34, 0.2);
+}
+
+.projects-page .stat-card-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  font-family: var(--font-family-serif);
+}
+
+.projects-page .stat-card-title {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  margin-top: var(--spacing-xs);
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+/* 卡片网格 */
+.projects-page .card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* 卡片头部 */
+.projects-page .card-item-header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-light);
+  background: linear-gradient(180deg, var(--color-bg-secondary) 0%, transparent 100%);
+}
+
+/* 卡片主体 */
+.projects-page .card-item-body {
+  padding: var(--spacing-md);
+}
+
+/* 卡片底部 */
+.projects-page .card-item-footer {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* 空状态 */
+.projects-page .empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-primary);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-lg);
+}

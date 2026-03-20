@@ -1,0 +1,42 @@
+.stat-card {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 16px rgba(139, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.stat-card.clickable {
+  cursor: pointer;
+}
+
+.stat-card .ant-statistic-content {
+  line-height: 1.2;
+}
+
+/* 主题色适配 */
+.stat-card[style*="#8B0000"] {
+  --theme-color: #8B0000;
+}
+
+.stat-card[style*="#FFD700"] {
+  --theme-color: #FFD700;
+}
+
+.stat-card[style*="#52c41a"] {
+  --theme-color: #52c41a;
+}
+
+.stat-card[style*="#1890ff"] {
+  --theme-color: #1890ff;
+}
+
+.stat-card[style*="#faad14"] {
+  --theme-color: #faad14;
+}
+
+.stat-card[style*="#722ed1"] {
+  --theme-color: #722ed1;
+}

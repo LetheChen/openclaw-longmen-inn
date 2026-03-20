@@ -1,0 +1,77 @@
+# 龙门客栈 .gitignore
+# 版本: v1.0
+
+# === 数据库文件（本地开发数据，不上传）===
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+# 但保留模板文件
+!data/templates/*.db
+
+# === 运行时数据目录 ===
+data/runtime/
+*.tmp
+*.temp
+
+# === 依赖目录 ===
+node_modules/
+__pycache__/
+*.pyc
+.pyo
+.pyd
+.Python
+venv/
+env/
+.venv/
+
+# === 环境变量与敏感文件 ===
+.env
+.env.*
+*.env
+.env.local
+.env.*.local
+secrets.json
+credentials.json
+*.pem
+*.key
+
+# === IDE与编辑器 ===
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# === 构建产物 ===
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# === 日志文件 ===
+*.log
+logs/
+
+# === 个人工作记忆（可选排除）===
+# 如果不想公开个人工作记忆，取消下面的注释：
+# roles/*/MEMORY_LOG.md
+
+# === 测试覆盖率 ===
+htmlcov/
+.coverage
+.pytest_cache/
+coverage.xml
+
+# === 打包文件 ===
+*.zip
+*.tar.gz
+*.rar
+
+# === 本地备份目录 ===
+backups/
+
+# === 本地任务看板（如包含敏感项目信息，可排除）===
+# LEDGER.md

@@ -1,0 +1,161 @@
+[MASTER]
+# Python解析器
+init-hook='import sys; sys.path.append("backend")'
+
+# 并行检查
+jobs=4
+
+# 持久化缓存
+persistent=yes
+
+# 加载插件
+load-plugins=
+    pylint.extensions.docparams,
+    pylint.extensions.docstyle,
+    pylint.extensions.mccabe
+
+[MESSAGES CONTROL]
+# 禁用以下检查
+# C0103: 命名不规范（太严格）
+# C0111: 缺少文档字符串（由flake8处理）
+# R0903: 类方法太少（Pydantic模型会触发）
+# R0913: 参数太多（FastAPI依赖注入会触发）
+# W0613: 未使用参数（FastAPI路径参数会触发）
+# W0511: TODO/FIXME警告
+# R0801: 重复代码（过于严格）
+disable=
+    C0103,
+    C0111,
+    R0903,
+    R0913,
+    W0613,
+    W0511,
+    R0801,
+    missing-docstring,
+    invalid-name,
+    too-few-public-methods,
+    too-many-arguments,
+    unused-argument,
+    fixme,
+    duplicate-code
+
+[REPORTS]
+# 输出格式
+output-format=colorized
+
+# 包含消息ID
+msg-template={path}:{line}:{column}: {msg_id}: {msg} ({symbol})
+
+# 报告类型
+reports=yes
+
+# 评分
+score=yes
+
+[REFACTORING]
+# 最大嵌套块数
+max-nested-blocks=5
+
+[BASIC]
+# 良好名称
+good-names=
+    i,
+    j,
+    k,
+    n,
+    x,
+    y,
+    z,
+    ex,
+    Run,
+    _,
+    id,
+    pk,
+    db,
+    qs,
+    fn
+
+# 正则表达式
+argument-rgx=[a-z_][a-z0-9_]{0,30}$
+variable-rgx=[a-z_][a-z0-9_]{0,30}$
+const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+function-rgx=[a-z_][a-z0-9_]{0,50}$
+method-rgx=[a-z_][a-z0-9_]{0,50}$
+attr-rgx=[a-z_][a-z0-9_]{0,30}$
+class-attribute-rgx=([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$
+inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
+class-rgx=[A-Z_][a-zA-Z0-9]+$
+module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
+
+[FORMAT]
+# 最大行长度
+max-line-length=88
+
+# 缩进
+indent-string='    '
+indent-after-paren=4
+
+# 空行
+expected-line-ending-format=LF
+
+[TYPECHECK]
+# 忽略的类型
+ignored-classes=
+    sqlalchemy.orm.Session,
+    sqlalchemy.engine.Engine,
+    sqlalchemy.ext.asyncio.AsyncSession,
+    fastapi.Request,
+    fastapi.Response,
+    pydantic.BaseModel,
+    alembic.config.Config
+
+# 忽略的成员
+ignored-modules=
+    alembic,
+    alembic.context,
+    alembic.op,
+    sqlalchemy
+
+[SIMILARITIES]
+# 最小相似行数
+min-similarity-lines=6
+
+# 忽略导入
+ignore-imports=yes
+
+[VARIABLES]
+# 允许的未使用变量
+dummy-variables-rgx=_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?)$|dummy
+
+[CLASSES]
+# 有效类方法
+defining-attr-methods=__init__, __new__, setUp
+
+[DESIGN]
+# 最大参数数
+max-args=8
+
+# 最大分支数
+max-branches=15
+
+# 最大语句数
+max-statements=50
+
+# 最大父类数
+max-parents=7
+
+# 最大属性数
+max-attributes=20
+
+# 最大布尔表达式数
+max-bool-expr=5
+
+# 最大公共方法数
+max-public-methods=20
+
+# 最大返回数
+max-returns=6
+
+[EXCEPTIONS]
+# 覆盖的内置异常
+overriding-builtins-exclude=AttributeError,NotImplementedError

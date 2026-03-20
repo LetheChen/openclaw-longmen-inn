@@ -1,0 +1,421 @@
+/* 排行榜页面样式 - 江湖风 */
+.ranking-page {
+  /* 继承自 theme.css 的 page-container */
+}
+
+/* 英雄榜标题装饰 */
+.ranking-page .page-title-wrapper {
+  position: relative;
+}
+
+.ranking-page .page-title-wrapper::before,
+.ranking-page .page-title-wrapper::after {
+  content: '◆';
+  color: var(--color-gold);
+  font-size: 12px;
+  margin: 0 12px;
+  opacity: 0.6;
+}
+
+/* 升级规则按钮 */
+.ranking-page .rules-btn {
+  border-radius: 6px;
+  font-family: var(--font-family-serif);
+  transition: all 0.3s ease;
+}
+
+.ranking-page .rules-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* TOP3 领奖台 */
+.ranking-page .top3-podium {
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff0f0 100%);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.ranking-page .top3-podium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-gold) 20%, 
+    var(--color-primary) 50%, 
+    var(--color-gold) 80%, 
+    transparent 100%
+  );
+}
+
+.ranking-page .podium-container {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 24px;
+  align-items: flex-end;
+}
+
+.ranking-page .podium-item {
+  text-align: center;
+  padding: 24px 20px;
+  background: var(--color-bg-primary);
+  border-radius: 16px;
+  border: 3px solid;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  min-width: 200px;
+  flex: 0 0 auto;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.ranking-page .podium-item:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+}
+
+.ranking-page .podium-rank-icon {
+  margin-bottom: 12px;
+}
+
+.ranking-page .podium-icon {
+  font-size: 32px;
+}
+
+.ranking-page .podium-icon.podium-gold {
+  color: #FFD700;
+  filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.4));
+}
+
+.ranking-page .podium-icon.podium-silver {
+  color: #C0C0C0;
+  filter: drop-shadow(0 2px 4px rgba(192, 192, 192, 0.4));
+}
+
+.ranking-page .podium-icon.podium-bronze {
+  color: #CD7F32;
+  filter: drop-shadow(0 2px 4px rgba(205, 127, 50, 0.4));
+}
+
+.ranking-page .podium-avatar {
+  border: 4px solid;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.ranking-page .podium-name {
+  font-family: var(--font-family-serif);
+}
+
+.ranking-page .podium-nickname {
+  margin-top: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--font-family-serif);
+  background: linear-gradient(180deg, #F5E6C8 0%, #EBD5B3 100%);
+  border-color: #D4C4A8;
+}
+
+.ranking-page .podium-score {
+  margin-top: 16px;
+}
+
+.ranking-page .podium-longmenling {
+  font-size: 26px;
+  color: #8B0000;
+  font-family: var(--font-family-serif);
+}
+
+.ranking-page .podium-trophy-icon {
+  color: #FFD700;
+  margin-right: 6px;
+}
+
+.ranking-page .podium-label {
+  font-size: 12px;
+  font-family: var(--font-family-serif);
+}
+
+.ranking-page .podium-level {
+  margin-top: 12px;
+}
+
+.ranking-page .podium-level-tag {
+  border-radius: 4px;
+  font-family: var(--font-family-serif);
+}
+
+.ranking-page .podium-tasks {
+  font-size: 12px;
+  margin-left: 8px;
+  font-family: var(--font-family-serif);
+}
+
+.ranking-page .podium-base {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 0 0 13px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.15;
+}
+
+.ranking-page .podium-rank-number {
+  font-size: 72px;
+  font-weight: 700;
+  color: white;
+  font-family: var(--font-family-serif);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* 排行榜表格卡片 */
+.ranking-page .ranking-table-card {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  overflow: hidden;
+}
+
+.ranking-page .ranking-table-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-primary) 20%, 
+    var(--color-gold) 50%, 
+    var(--color-primary) 80%, 
+    transparent 100%
+  );
+  opacity: 0.6;
+}
+
+/* 排行榜标签页 */
+.ranking-page .ranking-tabs {
+  padding: 0 24px;
+}
+
+.ranking-page .ranking-tabs .ant-tabs-nav {
+  margin-bottom: 16px;
+}
+
+.ranking-page .ranking-tabs .ant-tabs-tab {
+  font-family: var(--font-family-serif);
+  font-size: 14px;
+}
+
+.ranking-page .ranking-tabs .ant-tabs-tab-active {
+  color: var(--color-primary);
+}
+
+.ranking-page .ranking-tabs .ant-tabs-ink-bar {
+  background: var(--color-primary);
+}
+
+/* 搜索框 */
+.ranking-page .ranking-search {
+  padding: 0 24px 16px;
+}
+
+.ranking-page .ranking-search-input {
+  width: 260px;
+  border-radius: 6px;
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-primary);
+  font-family: var(--font-family-serif);
+}
+
+.ranking-page .ranking-search-input:hover,
+.ranking-page .ranking-search-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
+}
+
+/* 排名单元格 */
+.ranking-page .rank-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ranking-page .rank-icon {
+  font-size: 20px;
+}
+
+.ranking-page .rank-icon.rank-1 {
+  color: #FFD700;
+  filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.4));
+}
+
+.ranking-page .rank-icon.rank-2 {
+  color: #C0C0C0;
+  filter: drop-shadow(0 2px 4px rgba(192, 192, 192, 0.4));
+}
+
+.ranking-page .rank-icon.rank-3 {
+  color: #CD7F32;
+  filter: drop-shadow(0 2px 4px rgba(205, 127, 50, 0.4));
+}
+
+.ranking-page .rank-number {
+  font-weight: bold;
+  color: #8c8c8c;
+  width: 20px;
+  text-align: center;
+  font-family: var(--font-family-serif);
+}
+
+/* 头像 */
+.ranking-page .ranking-avatar {
+  border: 2px solid var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.ranking-page .ranking-avatar:hover {
+  border-color: var(--color-primary);
+  transform: scale(1.1);
+}
+
+/* 称号标签 */
+.ranking-page .nickname-tag {
+  font-size: 11px;
+  padding: 0px 4px;
+  font-family: var(--font-family-serif);
+  background: linear-gradient(180deg, #F5E6C8 0%, #EBD5B3 100%);
+  border-color: #D4C4A8;
+}
+
+/* 等级标签 */
+.ranking-page .level-tag {
+  font-size: 11px;
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+/* 龙门令单元格 */
+.ranking-page .longmenling-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ranking-page .longmenling-icon {
+  color: #FFD700;
+  font-size: 18px;
+  filter: drop-shadow(0 2px 2px rgba(255, 215, 0, 0.3));
+}
+
+.ranking-page .longmenling-value {
+  font-size: 18px;
+  color: #8B0000;
+  font-family: var(--font-family-serif);
+}
+
+/* 趋势单元格 */
+.ranking-page .trend-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ranking-page .trend-up {
+  color: #228B22;
+}
+
+.ranking-page .trend-down {
+  color: #DC143C;
+}
+
+.ranking-page .trend-same {
+  color: #8c8c8c;
+}
+
+.ranking-page .trend-text {
+  font-family: var(--font-family-serif);
+}
+
+.ranking-page .trend-text.trend-up {
+  color: #228B22;
+}
+
+.ranking-page .trend-text.trend-down {
+  color: #DC143C;
+}
+
+.ranking-page .trend-text.trend-same {
+  color: #8c8c8c;
+}
+
+/* 数据表格 */
+.ranking-page .ranking-table .ant-table-thead > tr > th {
+  background: linear-gradient(180deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  border-bottom: 2px solid var(--color-border);
+  font-family: var(--font-family-serif);
+  letter-spacing: 1px;
+}
+
+.ranking-page .ranking-table .ant-table-tbody > tr:hover > td {
+  background: linear-gradient(90deg, rgba(178, 34, 34, 0.05) 0%, rgba(245, 230, 200, 0.3) 100%);
+}
+
+.ranking-page .ranking-table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+/* 分页器 */
+.ranking-page .ranking-table .ant-pagination {
+  font-family: var(--font-family-serif);
+}
+
+.ranking-page .ranking-table .ant-pagination-item {
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-sm);
+  transition: all 0.3s ease;
+}
+
+.ranking-page .ranking-table .ant-pagination-item:hover {
+  border-color: var(--color-primary);
+}
+
+.ranking-page .ranking-table .ant-pagination-item:hover a {
+  color: var(--color-primary);
+}
+
+.ranking-page .ranking-table .ant-pagination-item-active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.ranking-page .ranking-table .ant-pagination-item-active a {
+  color: white;
+}
+
+/* 空状态 */
+.ranking-page .empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-primary);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  margin: var(--spacing-lg);
+}

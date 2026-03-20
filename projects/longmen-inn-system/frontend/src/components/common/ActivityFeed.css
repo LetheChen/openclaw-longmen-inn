@@ -1,0 +1,234 @@
+/* 客栈动态 - 竹简/信笺风格 */
+.activity-feed {
+  background: linear-gradient(180deg, #FFF8E7 0%, #F5E6C8 100%);
+  border-radius: 8px;
+  position: relative;
+  padding: 16px;
+}
+
+/* 竹简纹理背景 */
+.activity-feed::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 28px,
+      rgba(139, 69, 19, 0.06) 28px,
+      rgba(139, 69, 19, 0.06) 30px
+    );
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* 竹简两端装饰 */
+.activity-feed::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 4px;
+  width: 3px;
+  background: linear-gradient(180deg, 
+    transparent 0%,
+    rgba(139, 69, 19, 0.3) 10%,
+    rgba(139, 69, 19, 0.3) 90%,
+    transparent 100%
+  );
+  border-radius: 2px;
+}
+
+.activity-feed .ant-list {
+  position: relative;
+  z-index: 1;
+}
+
+/* 动态项 - 信笺风格 */
+.activity-feed .ant-list-item {
+  transition: all 0.3s ease;
+  border-bottom: 1px dashed rgba(139, 69, 19, 0.2);
+  padding: 12px 16px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.4);
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+.activity-feed .ant-list-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.activity-feed .ant-list-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(139, 69, 19, 0.1);
+  transform: translateX(4px);
+}
+
+/* 左侧装饰线 */
+.activity-feed .ant-list-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: linear-gradient(180deg, #B22222 0%, #8B0000 100%);
+  border-radius: 0 2px 2px 0;
+  transition: height 0.3s ease;
+}
+
+.activity-feed .ant-list-item:hover::before {
+  height: 60%;
+}
+
+.activity-feed .ant-list-item-meta {
+  align-items: flex-start;
+}
+
+/* 头像 - 印章风格 */
+.activity-feed .ant-list-item-meta-avatar {
+  margin-top: 2px;
+}
+
+.activity-feed .ant-avatar {
+  transition: all 0.3s ease;
+  border: 2px solid rgba(139, 69, 19, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.activity-feed .ant-list-item:hover .ant-avatar {
+  transform: scale(1.08);
+  border-color: #B22222;
+  box-shadow: 0 4px 8px rgba(178, 34, 34, 0.2);
+}
+
+/* 标题 - 毛笔字风格 */
+.activity-feed .ant-list-item-meta-title {
+  margin-bottom: 6px !important;
+  font-family: 'Noto Serif SC', serif !important;
+  font-size: 14px !important;
+  color: #262626 !important;
+  letter-spacing: 0.5px;
+}
+
+/* 描述文字 */
+.activity-feed .ant-list-item-meta-description {
+  font-family: 'Noto Serif SC', serif !important;
+  font-size: 12px !important;
+  color: #666 !important;
+  line-height: 1.6 !important;
+}
+
+/* 时间戳 */
+.activity-feed .ant-list-item-action {
+  margin-left: 0 !important;
+}
+
+.activity-feed .ant-list-item-action li {
+  color: #999 !important;
+  font-size: 11px !important;
+  font-family: 'Noto Serif SC', serif !important;
+}
+
+/* 类型标签 - 朱砂印章风格 */
+.activity-feed .ant-tag {
+  transition: all 0.2s ease;
+  font-family: 'Noto Serif SC', serif !important;
+  font-size: 11px !important;
+  padding: 2px 8px !important;
+  border-radius: 3px !important;
+  border: none !important;
+  letter-spacing: 1px;
+}
+
+.activity-feed .ant-tag:hover {
+  transform: scale(1.05);
+}
+
+/* 不同类型标签的颜色 */
+.activity-feed .ant-tag[data-type="task_created"] {
+  background: linear-gradient(135deg, #4682B4 0%, #2E5C8A 100%) !important;
+  color: #fff !important;
+}
+
+.activity-feed .ant-tag[data-type="task_completed"] {
+  background: linear-gradient(135deg, #228B22 0%, #1a6b1a 100%) !important;
+  color: #fff !important;
+}
+
+.activity-feed .ant-tag[data-type="task_started"] {
+  background: linear-gradient(135deg, #DAA520 0%, #B8860B 100%) !important;
+  color: #fff !important;
+}
+
+.activity-feed .ant-tag[data-type="longmenling_earned"] {
+  background: linear-gradient(135deg, #B22222 0%, #8B0000 100%) !important;
+  color: #FFD700 !important;
+}
+
+/* 加载状态 */
+.activity-feed .ant-spin {
+  color: #8B4513;
+}
+
+/* 空状态 */
+.activity-feed .ant-empty {
+  padding: 40px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.activity-feed .ant-empty-description {
+  color: #8B4513 !important;
+  font-family: 'Noto Serif SC', serif !important;
+}
+
+.activity-feed .ant-empty-image {
+  opacity: 0.5;
+}
+
+/* 滚动条样式 */
+.activity-feed::-webkit-scrollbar {
+  width: 6px;
+}
+
+.activity-feed::-webkit-scrollbar-track {
+  background: rgba(139, 69, 19, 0.1);
+  border-radius: 3px;
+}
+
+.activity-feed::-webkit-scrollbar-thumb {
+  background: rgba(139, 69, 19, 0.3);
+  border-radius: 3px;
+}
+
+.activity-feed::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 69, 19, 0.5);
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .activity-feed {
+    padding: 12px;
+  }
+  
+  .activity-feed .ant-list-item {
+    padding: 10px 12px;
+  }
+  
+  .activity-feed .ant-list-item-meta {
+    flex-direction: row;
+  }
+  
+  .activity-feed .ant-list-item-meta-avatar {
+    margin-bottom: 0;
+    margin-right: 12px;
+  }
+}

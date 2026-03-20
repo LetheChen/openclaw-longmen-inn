@@ -1,0 +1,135 @@
+/* Settings 页面样式 - 遵循统一设计规范 */
+
+.settings-page {
+  /* 页面特定样式 */
+}
+
+/* 设置卡片 */
+.settings-card {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.settings-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.settings-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.settings-card-body {
+  padding: var(--spacing-lg);
+}
+
+/* 表单样式 */
+.settings-page .ant-form-item-label > label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.settings-page .ant-input,
+.settings-page .ant-input-number,
+.settings-page .ant-select-selector {
+  border-radius: 6px !important;
+}
+
+.settings-page .ant-input:focus,
+.settings-page .ant-input-number:focus,
+.settings-page .ant-select-focused .ant-select-selector {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.1) !important;
+}
+
+/* 开关样式 */
+.settings-page .ant-switch-checked {
+  background: var(--color-primary);
+}
+
+/* Tab样式 */
+.settings-page .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border: 1px solid var(--color-border);
+  border-bottom: none;
+  background: var(--color-bg-tertiary);
+  transition: all var(--transition-fast);
+}
+
+.settings-page .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active {
+  background: var(--color-bg-primary);
+  border-color: var(--color-border);
+}
+
+.settings-page .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab:hover {
+  color: var(--color-primary);
+}
+
+.settings-page .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
+  background: var(--color-bg-primary);
+  padding: var(--spacing-lg) 0;
+}
+
+/* 内容卡片 */
+.settings-page .content-card {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+/* 按钮样式 */
+.settings-page .ant-btn-primary {
+  background: linear-gradient(135deg, #8B0000 0%, #c41a1a 100%);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+  transition: all var(--transition-normal);
+}
+
+.settings-page .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #a50000 0%, #d41a1a 100%);
+  box-shadow: 0 6px 16px rgba(139, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.settings-page .ant-btn-default {
+  border-radius: 8px;
+  transition: all var(--transition-normal);
+}
+
+.settings-page .ant-btn-default:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .settings-card {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .settings-card-body {
+    padding: var(--spacing-md);
+  }
+  
+  .settings-page .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
