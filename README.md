@@ -1,17 +1,36 @@
-# 龙门客栈- 多Agent协作系统
+# 龙门客栈 - 多Agent协作管理系统
 
-> 一个基于角色分工的多Agent协作框架，灵感来自中国客栈文化。
+> **OpenClaw多Agent协作框架** | 基于角色分工的AI智能体协作平台
+
+[![GitHub stars](https://img.shields.io/github/stars/LetheChen/openclaw-longmen-inn?style=social)](https://github.com/LetheChen/openclaw-longmen-inn/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/LetheChen/openclaw-longmen-inn?style=social)](https://github.com/LetheChen/openclaw-longmen-inn/network/members)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Chinese](https://img.shields.io/badge/语言-中文-red.svg)]()
+
+**关键词**: OpenClaw | 多Agent协作 | AI智能体 | 任务管理 |Agent框架 | Python | React | TypeScript
+
+---
 
 ## 🏘️ 项目简介
 
-龙门客栈是一个创新的多Agent协作系统，通过角色分工和规则约束，实现AI Agent之间的高效协作。
+**龙门客栈** 是一个创新的多Agent协作系统，灵感来自中国传统客栈文化。通过角色分工和规则约束，实现AI Agent之间的高效协作。
 
-### 核心特点
+### 🌟 为什么选择龙门客栈？
 
-- **角色分工**：每个Agent有明确的职责边界（厨子编码、画师设计、账房先生质控...）
-- **规则约束**：通过INN_RULES.md定义协作规则，避免越权干预
-- **任务看板**：LEDGER.md作为中央任务看板，透明化任务状态
-- **龙门令**：工作量积分系统，激励贡献
+- **🎭 角色分工明确**：每个Agent有清晰的职责边界，厨子编码、画师设计、账房先生质控...
+- **📋 规则驱动协作**：通过INN_RULES.md定义协作规则，避免越权干预
+- **📊 可视化看板**：LEDGER.md作为中央任务看板，透明化任务状态
+- **🏆 龙门令激励**：工作量积分系统，量化贡献，激励团队
+- **🔌 OpenClaw原生**：深度集成OpenClaw框架，开箱即用
+
+### 适用场景
+
+| 场景 | 说明 |
+|------|------|
+| 软件开发团队 | 多角色协作开发项目 |
+| AI Agent研究 | 多智能体协作实验 |
+| 任务管理系统 | 可视化任务分配与跟踪 |
+| 敏捷开发看板 | 类似Trello的任务看板 |
 
 ## 📂 项目结构
 
@@ -142,5 +161,33 @@ npm run dev
 
 ---
 
-**版本**: v1.0
-**最后更新**: 2026年3月
+## 🔗 相关链接
+
+- [OpenClaw官方文档](https://docs.openclaw.ai)
+- [OpenClaw GitHub](https://github.com/openclaw/openclaw)
+- [ClawHub技能市场](https://clawhub.com)
+
+---
+
+## 📊 技术栈
+
+| 类别 | 技术 | 版本 |
+|------|------|------|
+| 后端框架 | FastAPI | 0.104+ |
+| 前端框架 | React | 18+ |
+| UI组件库 | Ant Design | 5.x |
+| 状态管理 | Zustand | 4.x |
+| 数据库 | SQLite / PostgreSQL | - |
+| 实时通信 | WebSocket | - |
+
+---
+
+## 🏷️ 关键词
+
+`OpenClaw` `多Agent协作` `AI智能体` `Agent框架` `任务管理` `项目管理` `龙门客栈` `FastAPI` `React` `TypeScript` `Python` `任务看板` `敏捷开发` `团队协作` `角色分工` `工作流管理` `Agent调度` `智能体协作` `多智能体系统` `MAS`
+
+---
+
+**版本**: v1.0  
+**最后更新**: 2026年3月  
+**Star⭐ 本项目关注最新动态！**
