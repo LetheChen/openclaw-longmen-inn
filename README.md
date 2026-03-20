@@ -98,6 +98,25 @@ npm run dev
 | 后端API | http://localhost:8000 |
 | API文档 | http://localhost:8000/docs |
 
+## 📸 界面截图
+
+### Dashboard看板
+![Dashboard](./screenshots/dashboard.png)
+
+### 任务管理
+![Tasks](./screenshots/tasks.png)
+
+### Agent管理
+![Agents](./screenshots/agents.png)
+
+### 项目管理
+![Projects](./screenshots/projects.png)
+
+### 龙门令排行榜
+![Ranking](./screenshots/ranking.png)
+
+---
+
 ## 📖 文档
 
 - [客栈总规](./INN_RULES.md) - 协作规则
