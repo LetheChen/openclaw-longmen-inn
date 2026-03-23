@@ -1,4 +1,4 @@
-/* Dashboard 页面样式 - 江湖客栈风格 */
+﻿/* Dashboard 页面样式 - 江湖客栈风格 */
 
 .dashboard-page {
   /* 页面特定样式 */
@@ -356,7 +356,6 @@
     #A0522D 100%
   );
 }
-
 /* 忙碌状态 - 流光边框 */
 .agent-card.busy {
   transform: scale(1.01);
@@ -367,15 +366,16 @@
   inset: -3px;
   background: linear-gradient(
     90deg,
-    #8B4513 0%,
-    #B22222 20%,
-    #DAA520 40%,
-    #B22222 60%,
-    #8B4513 80%,
-    #B22222 100%
+    #5C2E0A 0%,
+    #FF2020 15%,
+    #FFD700 35%,
+    #FF4500 50%,
+    #FFD700 65%,
+    #FF2020 85%,
+    #5C2E0A 100%
   );
   background-size: 200% 100%;
-  animation: borderFlowLight 3s linear infinite;
+  animation: borderFlowLight 2.5s linear infinite;
 }
 
 /* 流光动画 */
@@ -387,7 +387,7 @@
     background-position: 200% 50%;
   }
 }
-
+/* 伙计头像 */
 .agent-card-avatar {
   flex-shrink: 0;
 }
@@ -588,4 +588,66 @@
   background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.03) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
+}
+
+/* 客栈动态Tabs - 古风卷轴风格 */
+.inn-tabs {
+  background: linear-gradient(180deg, #FFF8E7 0%, #F5E6C8 100%);
+  border-radius: 0 0 8px 8px;
+}
+
+.inn-tabs .ant-tabs-nav {
+  margin-bottom: 0;
+  padding: 0 16px;
+  background: linear-gradient(180deg, rgba(245, 230, 200, 0.8) 0%, rgba(255, 248, 231, 0.6) 100%);
+  border-bottom: 2px solid rgba(139, 69, 19, 0.2);
+}
+
+.inn-tabs .ant-tabs-tab {
+  padding: 12px 20px !important;
+  font-family: var(--font-family-serif) !important;
+  font-size: 14px !important;
+  letter-spacing: 2px;
+  color: #8B4513 !important;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  margin: 0 !important;
+}
+
+.inn-tabs .ant-tabs-tab:hover {
+  color: #B22222 !important;
+  background: rgba(178, 34, 34, 0.05);
+}
+
+.inn-tabs .ant-tabs-tab-active {
+  color: #B22222 !important;
+  font-weight: 600 !important;
+  border-bottom-color: #B22222 !important;
+  background: rgba(178, 34, 34, 0.08);
+}
+
+.inn-tabs .ant-tabs-ink-bar {
+  background: linear-gradient(90deg, #B22222 0%, #8B0000 100%) !important;
+  height: 3px !important;
+  border-radius: 2px;
+}
+
+.inn-tabs .ant-tabs-content {
+  padding: 0;
+}
+
+.inn-tabs .ant-tabs-tabpane {
+  padding: 0;
+}
+
+/* Tab激活指示器 - 灯笼装饰 */
+.inn-tabs .ant-tabs-tab-active::after {
+  content: '◆';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--color-gold);
+  font-size: 6px;
+  opacity: 0.6;
 }

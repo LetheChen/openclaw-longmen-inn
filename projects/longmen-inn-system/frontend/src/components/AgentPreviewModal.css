@@ -1,0 +1,171 @@
+/**
+ * Agent预览弹窗样式
+ */
+
+.agent-preview-modal .ant-modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.preview-loading,
+.preview-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.preview-content {
+  background: #fff;
+}
+
+/* 头部区域 */
+.preview-header {
+  height: 160px;
+  padding: 20px;
+  position: relative;
+}
+
+.preview-header-overlay {
+  position: relative;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 0;
+  padding: 16px;
+}
+
+.preview-character {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.preview-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.preview-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.preview-tags .ant-tag {
+  margin: 0;
+  font-size: 11px;
+}
+
+.preview-level {
+  background: rgba(139, 0, 0, 0.8);
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
+/* 描述区域 */
+.preview-description {
+  padding: 16px 20px;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.preview-description .ant-typography {
+  margin-bottom: 0;
+  font-family: var(--font-family-serif);
+}
+
+/* 统计区域 */
+.preview-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.stat-item {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 活动区域 */
+.preview-activities {
+  padding: 16px 20px;
+  background: #fafafa;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activity-item-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+}
+
+.activity-text {
+  flex: 1;
+  font-size: 12px;
+}
+
+/* 操作按钮 */
+.preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #fff;
+  border-top: 1px solid #e8e8e8;
+}
+
+.preview-actions .ant-btn {
+  font-family: var(--font-family-serif);
+}
+
+.preview-actions .ant-btn-primary {
+  background: #8B0000;
+  border-color: #8B0000;
+}
+
+.preview-actions .ant-btn-primary:hover {
+  background: #a00000;
+  border-color: #a00000;
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+  .preview-header {
+    height: auto;
+  }
+  
+  .preview-header-overlay {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .preview-level {
+    align-self: flex-start;
+  }
+  
+  .preview-stats {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .stat-item {
+    min-width: 45%;
+  }
+}

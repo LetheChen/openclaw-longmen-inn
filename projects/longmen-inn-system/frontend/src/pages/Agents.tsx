@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   Avatar,
@@ -14,6 +15,7 @@ import {
   Spin,
   message,
 } from 'antd';
+
 import {
   UserOutlined,
   TeamOutlined,
@@ -38,6 +40,7 @@ const { Text } = Typography;
 const { Option } = Select;
 
 const Agents: React.FC = () => {
+  const navigate = useNavigate();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
@@ -48,6 +51,11 @@ const Agents: React.FC = () => {
     busy: 0,
     offline: 0,
   });
+  
+  // 进入工作空间
+  const handleEnterWorkspace = (agentId: string) => {
+    navigate(`/agents/${agentId}`);
+  };
 
   const loadAgents = useCallback(async () => {
     setLoading(true);
@@ -335,8 +343,9 @@ const Agents: React.FC = () => {
                       icon={<MessageOutlined />} 
                       block
                       className="contact-btn"
+                      onClick={() => handleEnterWorkspace(agent.agent_id)}
                     >
-                      联系
+                      拜访
                     </Button>
                     <Tooltip title="分配任务">
                       <Button icon={<PlusOutlined />} className="assign-btn" />
@@ -363,6 +372,7 @@ const Agents: React.FC = () => {
           </div>
         )}
       </div>
+
     </Spin>
   );
 };

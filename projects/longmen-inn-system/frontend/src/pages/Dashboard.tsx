@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { Row, Col, Badge, Avatar, Spin, Empty, Progress, Tag, Typography, Button } from 'antd'
+import { Row, Col, Badge, Avatar, Spin, Empty, Progress, Tag, Typography, Button, Tabs } from 'antd'
 import {
   CheckSquareOutlined,
   ClockCircleOutlined,
@@ -24,14 +24,17 @@ import {
 } from '@ant-design/icons'
 import TaskWall from '../components/common/TaskWall'
 import ActivityFeed from '../components/common/ActivityFeed'
+import AuditFeed from '../components/common/AuditFeed'
 import LedgerEditor from '../components/common/LedgerEditor'
 import RoleDetail from '../components/common/RoleDetail'
 import { getOnlineAgents, getAgentActivities, getAgentStatistics } from '../services/agentService'
 import { getTaskStatistics, getTasks } from '../services/taskService'
+import { getAuditFeed } from '../services/auditLogService'
 import type { Task } from '../types/task'
 import { subscribeToOpenClawEvents } from '../services/openclawService'
 import type { TaskStatus } from '../types/task'
 import type { AgentActivity, Agent } from '../types/agent'
+import type { AuditFeedEntry } from '../types/auditLog'
 import './Dashboard.css'
 
 const { Text } = Typography
@@ -145,6 +148,8 @@ const Dashboard: React.FC = () => {
   const [ledgerEditorVisible, setLedgerEditorVisible] = useState(false)
   const [roleDetailVisible, setRoleDetailVisible] = useState(false)
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null)
+  const [activeTab, setActiveTab] = useState('activities')
+  const [auditFeed, setAuditFeed] = useState<AuditFeedEntry[]>([])
 
   const wsRef = useRef<WebSocket | null>(null)
 
@@ -223,6 +228,18 @@ const Dashboard: React.FC = () => {
       }
     }
   }, [loadData])
+
+  // 获取版本动态
+  useEffect(() => {
+    if (activeTab === 'updates') {
+      getAuditFeed(10)
+        .then(setAuditFeed)
+        .catch((err) => {
+          console.error('获取版本动态失败:', err)
+          setAuditFeed([])
+        })
+    }
+  }, [activeTab])
 
   const completionRate = taskStats.totalTasks > 0 
     ? Math.round((taskStats.completedTasks / taskStats.totalTasks) * 100) 
@@ -409,7 +426,18 @@ const Dashboard: React.FC = () => {
                 </span>
               </div>
               <div className="content-card-body" style={{ padding: 0 }}>
-                <ActivityFeed activities={activities} />
+                <Tabs 
+                  activeKey={activeTab} 
+                  onChange={setActiveTab}
+                  className="inn-tabs"
+                >
+                  <Tabs.TabPane tab="实时活动" key="activities">
+                    <ActivityFeed activities={activities} />
+                  </Tabs.TabPane>
+                  <Tabs.TabPane tab="版本动态" key="updates">
+                    <AuditFeed items={auditFeed} loading={loading} />
+                  </Tabs.TabPane>
+                </Tabs>
               </div>
             </div>
           </Col>

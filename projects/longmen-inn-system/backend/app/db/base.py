@@ -41,8 +41,15 @@ def init_db():
     初始化数据库
     创建所有表结构
     """
-    # 导入所有模型以确保它们被注册
-    from app.db import models  # noqa
+    # 导入所有模型以确保它们被注册到Base.metadata
+    # 业务模型
+    from app.db.models import (
+        Project, ProjectPhase, Agent, AgentHeartbeat,
+        Task, LongmenlingLog, TaskLog, DataCollectionJob,
+        task_dependencies
+    )
+    # 用户认证模型
+    from app.models.user import User, RefreshToken, AuditLog
     
     # 创建所有表
     Base.metadata.create_all(bind=engine)

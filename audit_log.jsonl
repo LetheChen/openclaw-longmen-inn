@@ -1,0 +1,2 @@
+﻿{"lines_deleted":0,"summary":"Changed 0 files","type":"git_audit","files_changed":[],"tasks_found":null,"timestamp":"2026-03-23T13:36:13Z","status":"passed","lines_added":0,"issues":["sensitive_files_cached","node_modules_present_but_excluded","potential_secrets_found"]}
+{"lines_deleted":0,"summary":"Changed 0 files","type":"git_audit","files_changed":[],"tasks_found":null,"timestamp":"2026-03-23T14:26:40Z","status":"passed","lines_added":0,"issues":["sensitive_files_cached","node_modules_present_but_excluded","potential_secrets_found"]}

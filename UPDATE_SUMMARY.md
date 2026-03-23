@@ -30,9 +30,9 @@
 | 文件路径                             | 更新内容                        |
 | -------------------------------- | --------------------------- |
 | `roles/chef/WORK_STYLE.md`       | 添加 CI/CD Pipeline 技能调用规范    |
-| `roles/chef/TOOL_BELT.md`        | 添加 CI/CD 工具链、Skill 使用指南     |
+| `roles/chef/TOOL_BELT.md`        | 添加 CI/CD 工具链、Skill 使用指南   |
 | `roles/accountant/WORK_STYLE.md` | 添加 Quality Assurance 技能调用规范 |
-| `roles/accountant/TOOL_BELT.md`  | 添加 QA 工具链、Skill 使用指南        |
+| `roles/accountant/TOOL_BELT.md`  | 添加 QA 工具链、Skill 使用指南      |
 
 ### 3. 系统文档更新
 
@@ -49,7 +49,7 @@
 
 ***
 
-## 👥 最终 8 角色体系
+## 👥 最终 7 角色体系
 
 | 序号 | Agent ID      | 角色名      | 核心职责                   | 专业技能                |
 | -- | ------------- | -------- | ---------------------- | ------------------- |
