@@ -57,6 +57,39 @@
   flex-direction: column;
 }
 
+/* 顶部角色信息条 */
+.scene-char-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px 6px;
+  background: linear-gradient(180deg, rgba(20, 10, 5, 0.55) 0%, transparent 100%);
+}
+
+.scene-char-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.scene-char-bar .scene-char-name {
+  font-size: 16px;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.scene-char-bar .scene-char-title {
+  font-size: 11px;
+  color: #DAA520;
+  text-shadow: 1px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.scene-char-tag {
+  margin-left: auto;
+  font-family: var(--font-family-serif) !important;
+  border-radius: 4px !important;
+}
+
 /* 顶部栏 */
 .scene-topbar {
   display: flex;
@@ -66,12 +99,17 @@
 }
 
 .scene-back-btn {
-  color: rgba(212, 196, 168, 0.8) !important;
+  color: #f5e6d3 !important;
   font-family: var(--font-family-serif) !important;
+  background: rgba(20, 10, 5, 0.75) !important;
+  border-radius: 6px !important;
+  padding: 4px 12px !important;
+  border: 1px solid rgba(212, 196, 168, 0.2) !important;
 }
 
 .scene-back-btn:hover {
-  color: #f5e6d3 !important;
+  color: #fff !important;
+  background: rgba(139, 0, 0, 0.8) !important;
 }
 
 .scene-status-tag {
@@ -129,17 +167,20 @@
 
 /* 底部信息栏 */
 .scene-bottombar {
-  padding: 0 24px 14px;
+  padding: 10px 24px 14px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   gap: 16px;
+  background: linear-gradient(0deg, rgba(20, 10, 5, 0.9) 0%, rgba(20, 10, 5, 0.55) 55%, transparent 100%);
 }
 
 .scene-desc {
-  color: rgba(212, 196, 168, 0.6);
-  font-size: 12px;
+  color: #ffffff;
+  font-size: 13px;
   flex: 1;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 0 8px rgba(0,0,0,0.5);
+  font-weight: 600;
 }
 
 .scene-bottom-actions {
@@ -149,9 +190,10 @@
 }
 
 .scene-motto {
-  color: rgba(212, 196, 168, 0.55) !important;
+  color: #ffffff !important;
   font-style: italic;
-  font-size: 12px;
+  font-size: 13px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 0 8px rgba(0,0,0,0.5);
 }
 
 .scene-refresh-btn {

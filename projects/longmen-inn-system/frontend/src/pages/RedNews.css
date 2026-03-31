@@ -1,0 +1,578 @@
+/* =============================================
+   RedNews - 党政期刊 + 现代设计风格
+   红色主调 | 金色点缀 | 网格布局
+   ============================================= */
+
+:root {
+  --red-primary:   #c41230;
+  --red-dark:      #8b0000;
+  --red-light:     #e8d5d8;
+  --gold:          #ffd700;
+  --gold-light:    #ffe55d;
+  --paper-bg:      #fafafa;
+  --paper-card:    #ffffff;
+  --ink-dark:      #1a1a1a;
+  --ink-mid:       #3d3d3d;
+  --ink-light:     #6b6b6b;
+  --rule-light:    #f0e8e9;
+}
+
+.rednews-page {
+  min-height: 100vh;
+  background: var(--paper-bg);
+  color: var(--ink-dark);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ---- 红色横幅 Header ---- */
+.rednews-header {
+  background: linear-gradient(160deg, #c41230 0%, #8b0000 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.rednews-header-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+}
+
+.header-bg-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 20px,
+    rgba(255,255,255,0.15) 20px,
+    rgba(255,255,255,0.15) 21px
+  );
+}
+
+.rednews-header-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 48px 36px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.header-emblem {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 215, 0, 0.15);
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-emblem--right {
+  margin-left: auto;
+}
+
+.header-eyebrow {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 215, 0, 0.85);
+  margin-bottom: 8px;
+}
+
+.header-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 10px;
+  letter-spacing: 8px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.header-date-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-date,
+.header-issue {
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 1px;
+}
+
+.header-sep {
+  color: rgba(255,215,0,0.5);
+}
+
+.header-goldline {
+  height: 4px;
+  background: linear-gradient(90deg,
+    var(--gold) 0%,
+    var(--gold-light) 30%,
+    var(--gold) 60%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+}
+
+/* ---- 控制栏 ---- */
+.rednews-control-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 48px;
+  height: 56px;
+  background: var(--paper-card);
+  border-bottom: 3px solid var(--red-primary);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(196, 18, 48, 0.08);
+}
+
+.ctrl-left {
+  flex: 1;
+}
+
+.ctrl-label {
+  font-family: Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red-primary);
+}
+
+.ctrl-center,
+.ctrl-right {
+  display: flex;
+  align-items: center;
+}
+
+.ctrl-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--red-primary);
+  flex-shrink: 0;
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-light);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fafafa;
+  border: 1px solid #e0d0d2;
+  border-radius: 6px;
+  padding: 7px 12px;
+  width: 220px;
+  transition: border-color 0.2s;
+}
+
+.search-box:focus-within {
+  border-color: var(--red-primary);
+}
+
+.search-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: var(--ink-dark);
+}
+
+.search-box input::placeholder {
+  color: var(--ink-light);
+}
+
+/* ---- 主体 ---- */
+.rednews-body {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 48px;
+  align-items: start;
+}
+
+/* ---- 左：主推区域 ---- */
+.rednews-main-area {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 主推大卡片 */
+.red-hero-card {
+  background: var(--paper-card);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.red-hero-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(196, 18, 48, 0.18);
+}
+
+.red-hero-bar {
+  height: 6px;
+  background: linear-gradient(90deg, var(--red-primary), var(--gold));
+}
+
+.red-hero-body {
+  padding: 28px 32px;
+}
+
+.red-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.red-hero-title {
+  font-family: Georgia, serif;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 700;
+  color: var(--ink-dark);
+  margin: 0 0 16px;
+  line-height: 1.3;
+  letter-spacing: -0.3px;
+}
+
+.red-hero-excerpt {
+  font-size: 15px;
+  color: var(--ink-mid);
+  margin: 0 0 20px;
+  line-height: 1.8;
+}
+
+.red-hero-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule-light);
+}
+
+.red-hero-source {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--red-primary);
+}
+
+.red-hero-date {
+  font-size: 12px;
+  color: var(--ink-light);
+  flex: 1;
+}
+
+.red-hero-cta {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--red-primary);
+  letter-spacing: 0.5px;
+}
+
+/* 副卡片 */
+.red-sub-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.red-sub-card {
+  background: var(--paper-card);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.red-sub-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(196, 18, 48, 0.12);
+}
+
+.red-sub-bar {
+  height: 4px;
+  background: var(--red-primary);
+}
+
+.red-sub-body {
+  padding: 20px 24px;
+}
+
+.red-sub-source {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red-primary);
+  margin-bottom: 10px;
+}
+
+.red-sub-title {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-dark);
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+
+.red-sub-excerpt {
+  font-size: 13px;
+  color: var(--ink-light);
+  margin: 0 0 12px;
+  line-height: 1.6;
+}
+
+.red-sub-date {
+  font-size: 11px;
+  color: var(--ink-light);
+}
+
+/* ---- 右：侧边栏 ---- */
+.rednews-side-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.side-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--red-primary);
+}
+
+.side-header-bar {
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(180deg, var(--red-primary), var(--gold));
+  border-radius: 2px;
+}
+
+.side-header-title {
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-dark);
+}
+
+.red-side-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule-light);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.red-side-item:hover .red-side-title {
+  color: var(--red-primary);
+}
+
+.red-side-item:last-of-type {
+  border-bottom: none;
+}
+
+.red-side-num {
+  font-family: Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--red-primary);
+  opacity: 0.2;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 36px;
+  transition: opacity 0.2s;
+}
+
+.red-side-item:hover .red-side-num {
+  opacity: 0.7;
+}
+
+.red-side-title {
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-dark);
+  margin: 0 0 6px;
+  line-height: 1.4;
+  transition: color 0.2s;
+}
+
+.red-side-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--ink-light);
+}
+
+/* 底部数据面板 */
+.red-data-panel {
+  background: linear-gradient(135deg, var(--red-primary), var(--red-dark));
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.red-data-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.red-big-numbers {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.red-big-num-item {
+  flex: 1;
+  text-align: center;
+}
+
+.red-big-num-val {
+  font-family: Georgia, serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.red-big-num-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+.red-big-num-divider {
+  width: 1px;
+  height: 48px;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+
+/* ---- 加载态 ---- */
+.rednews-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+  gap: 16px;
+  color: var(--red-primary);
+  font-size: 14px;
+}
+
+/* ---- 空状态 ---- */
+.rednews-empty {
+  padding: 100px 0;
+  text-align: center;
+}
+
+/* ---- 弹窗 ---- */
+.rednews-modal .ant-modal-content {
+  background: var(--paper-card);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rednews-modal .ant-modal-close {
+  color: var(--ink-light);
+}
+
+.preview-wrap {
+  padding: 0;
+}
+
+.preview-redbar {
+  height: 5px;
+  background: linear-gradient(90deg, var(--red-primary), var(--gold));
+  margin: -1px -24px 0;
+}
+
+.preview-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red-primary);
+  margin: 20px 0 10px;
+}
+
+.preview-title { font-family: Georgia, serif; font-size: 22px; font-weight: 700; color: #ffffff; margin: 0 0 12px; line-height: 1.3; }
+
+.preview-meta-row {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--ink-light);
+  margin-bottom: 16px;
+}
+
+.preview-divider {
+  height: 1px;
+  background: var(--rule-light);
+  margin-bottom: 20px;
+}
+
+.preview-body { font-size: 15px; color: #f0f0f0; line-height: 1.8; }
+
+.preview-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--red-primary);
+  text-decoration: none;
+}
+
+.preview-link:hover {
+  text-decoration: underline;
+}

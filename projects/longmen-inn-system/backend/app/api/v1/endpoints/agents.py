@@ -7,11 +7,14 @@
 """
 
 from typing import List, Optional
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
+from sqlalchemy import desc, and_
 
-from app.api.deps import get_db
+from app.api.deps import get_db, get_current_user_required
 from app.db import models
+from app.models.user import User
 from app.schemas import agent as agent_schema
 
 router = APIRouter()
@@ -19,6 +22,7 @@ router = APIRouter()
 
 @router.get("/", response_model=List[agent_schema.AgentResponse])
 async def get_agents(
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0, description="跳过记录数"),
     limit: int = Query(100, ge=1, le=500, description="返回记录数"),
@@ -45,7 +49,10 @@ async def get_agents(
 
 
 @router.get("/statistics")
-async def get_agent_statistics(db: Session = Depends(get_db)):
+async def get_agent_statistics(
+    current_user: User = Depends(get_current_user_required),
+    db: Session = Depends(get_db)
+):
     """获取 Agent 汇总统计信息"""
     total = db.query(models.Agent).count()
     offline = db.query(models.Agent).filter(models.Agent.status == models.AgentStatus.OFFLINE).count()
@@ -62,47 +69,154 @@ async def get_agent_statistics(db: Session = Depends(get_db)):
 
 
 @router.get("/online", response_model=List[agent_schema.AgentResponse])
-async def get_online_agents(db: Session = Depends(get_db)):
+async def get_online_agents(
+    current_user: User = Depends(get_current_user_required),
+    db: Session = Depends(get_db)
+):
     """获取在线（非离线）Agent 列表"""
     agents = db.query(models.Agent).filter(models.Agent.status != models.AgentStatus.OFFLINE).all()
     return agents
 
 
-@router.get("/activities")
+@router.get("/activities", response_model=agent_schema.AgentActivityListResponse)
 async def get_agent_activities(
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db),
     agent_id: Optional[str] = Query(None, description="过滤指定 Agent 的活动"),
-    type: Optional[str] = Query(None, description="过滤类型（保留）"),
-    limit: int = Query(20, ge=1, le=100, description="返回条数")
+    activity_type: Optional[str] = Query(None, description="过滤活动类型：task_completed, login, longmenling_issued"),
+    start_time: Optional[datetime] = Query(None, description="开始时间（ISO格式）"),
+    end_time: Optional[datetime] = Query(None, description="结束时间（ISO格式）"),
+    skip: int = Query(0, ge=0, description="跳过记录数"),
+    limit: int = Query(20, ge=1, le=100, description="返回记录数")
 ):
-    """获取 Agent 活动日志（简化实现）"""
-    from app.db import models as _models
-    from sqlalchemy import desc
-    logs = db.query(_models.TaskLog).order_by(desc(_models.TaskLog.created_at)).limit(limit).all()
+    """
+    获取 Agent 活动记录列表
+    
+    支持：
+    - 按 Agent ID 过滤
+    - 按活动类型过滤（task_completed, login, longmenling_issued）
+    - 按时间范围过滤（start_time, end_time）
+    - 分页（skip, limit）
+    """
+    # 构建查询
+    query = db.query(models.AgentActivity)
+    
+    # 应用过滤条件
+    if agent_id:
+        query = query.filter(models.AgentActivity.agent_id == agent_id)
+    if activity_type:
+        query = query.filter(models.AgentActivity.activity_type == activity_type)
+    if start_time:
+        query = query.filter(models.AgentActivity.created_at >= start_time)
+    if end_time:
+        query = query.filter(models.AgentActivity.created_at <= end_time)
+    
+    # 获取总数
+    total = query.count()
+    
+    # 按时间倒序
+    activities = query.order_by(desc(models.AgentActivity.created_at)).offset(skip).limit(limit).all()
+    
+    # 构建响应
+    items = []
+    for activity in activities:
+        # 获取 Agent 信息
+        agent = db.query(models.Agent).filter(models.Agent.agent_id == activity.agent_id).first()
+        
+        items.append(agent_schema.AgentActivityResponse(
+            id=activity.id,
+            agent_id=activity.agent_id,
+            agent_name=agent.name if agent else None,
+            agent_avatar=agent.avatar_url if agent else None,
+            activity_type=activity.activity_type.value if activity.activity_type else None,
+            title=activity.title,
+            description=activity.description,
+            related_task_id=activity.related_task_id,
+            related_task_title=activity.related_task_title,
+            metadata=activity.extra_data or {},
+            created_at=activity.created_at
+        ))
+    
+    return agent_schema.AgentActivityListResponse(total=total, items=items)
 
-    activities = []
-    for log in logs:
-        task = getattr(log, "task", None)
-        agent = None
-        if getattr(log, "operator_agent_id", None):
-            agent = db.query(_models.Agent).filter(_models.Agent.agent_id == log.operator_agent_id).first()
-        activities.append({
-            "id": log.id,
-            "agentId": log.operator_agent_id,
-            "agentName": agent.name if agent else None,
-            "agentAvatar": agent.avatar_url if agent else None,
-            "type": getattr(log.to_status, "value", str(log.to_status)) if getattr(log, "to_status", None) is not None else "task_updated",
-            "content": log.comment or (f"{getattr(task, 'title', '')}" if task else ""),
-            "relatedTaskId": getattr(log, "task_id", None),
-            "relatedTaskTitle": getattr(task, "title", None) if task else None,
-            "metadata": {},
-            "createdAt": log.created_at.isoformat() if log.created_at else None,
-        })
-    return activities
+
+@router.post("/activities", response_model=agent_schema.AgentActivityResponse, status_code=status.HTTP_201_CREATED)
+async def create_agent_activity(
+    activity_in: agent_schema.AgentActivityCreate,
+    current_user: User = Depends(get_current_user_required),
+    db: Session = Depends(get_db)
+):
+    """
+    创建活动记录
+    
+    用于记录：
+    - 伙计任务完成活动 (task_completed)
+    - 登录活动 (login)
+    - 龙门令发放活动 (longmenling_issued)
+    """
+    # 验证 Agent 是否存在
+    agent = db.query(models.Agent).filter(models.Agent.agent_id == activity_in.agent_id).first()
+    if not agent:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Agent '{activity_in.agent_id}' 不存在"
+        )
+    
+    # 验证活动类型
+    valid_types = ["task_completed", "login", "longmenling_issued"]
+    if activity_in.activity_type not in valid_types:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"无效的活动类型，必须是: {', '.join(valid_types)}"
+        )
+    
+    # 验证任务是否存在（如果提供了 task_id）
+    if activity_in.related_task_id:
+        task = db.query(models.Task).filter(models.Task.id == activity_in.related_task_id).first()
+        if not task:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"任务 ID {activity_in.related_task_id} 不存在"
+            )
+        # 如果没提供 task_title，自动填充
+        if not activity_in.related_task_title:
+            activity_in.related_task_title = task.title
+    
+    # 创建活动记录
+    activity = models.AgentActivity(
+        agent_id=activity_in.agent_id,
+        activity_type=models.ActivityType(activity_in.activity_type),
+        title=activity_in.title,
+        description=activity_in.description,
+        related_task_id=activity_in.related_task_id,
+        related_task_title=activity_in.related_task_title,
+        extra_data=activity_in.metadata or {}
+    )
+    
+    db.add(activity)
+    db.commit()
+    db.refresh(activity)
+    
+    return agent_schema.AgentActivityResponse(
+        id=activity.id,
+        agent_id=activity.agent_id,
+        agent_name=agent.name,
+        agent_avatar=agent.avatar_url,
+        activity_type=activity.activity_type.value,
+        title=activity.title,
+        description=activity.description,
+        related_task_id=activity.related_task_id,
+        related_task_title=activity.related_task_title,
+        metadata=activity.extra_data or {},
+        created_at=activity.created_at
+    )
 
 
 @router.get("/me", response_model=agent_schema.AgentResponse)
-async def get_my_agent(db: Session = Depends(get_db)):
+async def get_my_agent(
+    current_user: User = Depends(get_current_user_required),
+    db: Session = Depends(get_db)
+):
     """获取当前（示意）Agent 信息，未集成认证时返回第一个 Agent 作为占位"""
     agent = db.query(models.Agent).first()
     if not agent:
@@ -113,6 +227,7 @@ async def get_my_agent(db: Session = Depends(get_db)):
 @router.get("/{agent_id}", response_model=agent_schema.AgentDetailResponse)
 async def get_agent(
     agent_id: str,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -163,6 +278,7 @@ async def get_agent(
 @router.post("/", response_model=agent_schema.AgentResponse, status_code=status.HTTP_201_CREATED)
 async def create_agent(
     agent_in: agent_schema.AgentCreate,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -192,6 +308,7 @@ async def create_agent(
 async def update_agent(
     agent_id: str,
     agent_in: agent_schema.AgentUpdate,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -223,6 +340,7 @@ async def update_agent(
 @router.delete("/{agent_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_agent(
     agent_id: str,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -258,6 +376,7 @@ async def delete_agent(
 async def update_agent_status(
     agent_id: str,
     status_update: agent_schema.AgentStatusUpdate,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -308,6 +427,7 @@ async def update_agent_status(
 @router.get("/{agent_id}/tasks", response_model=list)
 async def get_agent_tasks(
     agent_id: str,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db),
     status: Optional[str] = None,
     skip: int = 0,
@@ -336,6 +456,7 @@ async def get_agent_tasks(
 
 @router.get("/stats/overview", response_model=dict)
 async def get_agents_overview(
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """

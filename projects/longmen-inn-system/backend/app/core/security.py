@@ -7,7 +7,7 @@ JWT token 生成、验证、刷新等安全功能
 """
 
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Set
 import secrets
 import logging
 
@@ -28,6 +28,13 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # HTTP Bearer认证方案（可选，用于API调用）
 security = HTTPBearer(auto_error=False)
+
+# =============================================================================
+# Access Token 黑名单（登出后撤销）
+# 注意：这是进程内内存存储，仅适用于单实例部署。
+# 多实例或需要持久化时，应使用 Redis 实现。
+# =============================================================================
+_revoked_access_token_jtis: Set[str] = set()
 
 
 def hash_password(password: str) -> str:
@@ -63,10 +70,14 @@ def create_access_token(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
     
+    # 生成唯一令牌ID，用于撤销
+    jti = secrets.token_urlsafe(16)
+    
     to_encode.update({
         "exp": expire,
         "iat": datetime.now(timezone.utc),
-        "type": "access"
+        "type": "access",
+        "jti": jti,  # 令牌唯一ID，用于黑名单追踪
     })
     
     encoded_jwt = jwt.encode(
@@ -76,6 +87,17 @@ def create_access_token(
     )
     
     return encoded_jwt
+
+
+def revoke_access_token_jti(jti: str) -> None:
+    """
+    将 access_token 的 jti 加入黑名单（登出时调用）
+    
+    Args:
+        jti: 令牌唯一ID
+    """
+    _revoked_access_token_jtis.add(jti)
+    logger.info(f"Access token revoked: jti={jti[:8]}...")
 
 
 def create_refresh_token(
@@ -139,6 +161,13 @@ def verify_token(token: str, token_type: str = "access") -> Optional[Dict[str, A
             logger.warning(f"Token type mismatch: expected {token_type}, got {payload.get('type')}")
             return None
         
+        # 检查 access_token 是否已被撤销（黑名单）
+        if token_type == "access":
+            jti = payload.get("jti")
+            if jti and jti in _revoked_access_token_jtis:
+                logger.warning(f"Attempted use of revoked access token: jti={jti[:8] if jti else 'None'}...")
+                return None
+        
         return payload
         
     except JWTError as e:
@@ -154,13 +183,16 @@ def decode_access_token(token: str) -> Optional[Dict[str, Any]]:
 async def get_current_user(
     request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
-    db: Session = Depends(lambda: SessionLocal())
+    db: Session = None  # 调用者需传入正确的 db Session（通过 Depends(get_db)）
 ) -> Optional[User]:
     """
     获取当前用户（从Cookie或Authorization头）
     
     优先从Cookie中获取token，其次从Authorization头获取。
     用于可选认证的场景。
+    
+    注意：db 参数必须由调用者通过 Depends(get_db) 传入，
+    不要自行实例化 SessionLocal()！
     """
     token = None
     
@@ -198,12 +230,15 @@ async def get_current_user(
 async def get_current_user_required(
     request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
-    db: Session = Depends(lambda: SessionLocal())
+    db: Session = None  # 调用者需传入正确的 db Session（通过 Depends(get_db)）
 ) -> User:
     """
     获取当前用户（必须认证）
     
-    抛出401异常如果没有认证
+    抛出401异常如果没有认证。
+    
+    注意：db 参数必须由调用者通过 Depends(get_db) 传入，
+    不要自行实例化 SessionLocal()！
     """
     token = None
     

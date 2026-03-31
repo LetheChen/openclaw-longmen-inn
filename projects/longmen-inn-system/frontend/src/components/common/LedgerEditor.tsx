@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Input, Button, message, Spin } from 'antd';
-import { SaveOutlined, ReloadOutlined } from '@ant-design/icons';
-import { getLedger, saveLedger } from '../../services/fileService';
-
-const { TextArea } = Input;
+import { Modal, Button, message, Spin, Alert } from 'antd';
+import { ReloadOutlined, SyncOutlined } from '@ant-design/icons';
+import { getLedger, generateLedger } from '../../services/fileService';
 
 interface LedgerEditorProps {
   visible: boolean;
   onClose: () => void;
+  onRefresh?: () => void; // 保存或重新加载后回调，刷新父组件数据
 }
 
-const LedgerEditor: React.FC<LedgerEditorProps> = ({ visible, onClose }) => {
+const LedgerEditor: React.FC<LedgerEditorProps> = ({ visible, onClose, onRefresh }) => {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
   const loadLedger = async () => {
     setLoading(true);
     try {
       const result = await getLedger();
       setContent(result.content);
+      onRefresh?.();
     } catch (error: any) {
       message.error(`加载失败: ${error.message}`);
     } finally {
@@ -33,16 +33,18 @@ const LedgerEditor: React.FC<LedgerEditorProps> = ({ visible, onClose }) => {
     }
   }, [visible]);
 
-  const handleSave = async () => {
-    setSaving(true);
+  const handleGenerate = async () => {
+    setGenerating(true);
     try {
-      const result = await saveLedger(content);
-      message.success(result.message);
-      onClose();
+      // 从 DB 重新生成 LEDGER.md
+      await generateLedger(true);
+      message.success('账本已从数据库重新生成');
+      await loadLedger();
+      onRefresh?.();
     } catch (error: any) {
-      message.error(`保存失败: ${error.message}`);
+      message.error(`生成失败: ${error.message}`);
     } finally {
-      setSaving(false);
+      setGenerating(false);
     }
   };
 
@@ -50,46 +52,56 @@ const LedgerEditor: React.FC<LedgerEditorProps> = ({ visible, onClose }) => {
     <Modal
       title={
         <span style={{ color: '#B22222', fontWeight: 600 }}>
-          📜 营业总账编辑器
+          📜 营业总账
         </span>
       }
       open={visible}
       onCancel={onClose}
-      width={900}
+      width={1000}
       footer={[
         <Button key="reload" icon={<ReloadOutlined />} onClick={loadLedger} disabled={loading}>
-          重新加载
+          刷新
         </Button>,
-        <Button key="cancel" onClick={onClose}>
-          取消
+        <Button key="generate" type="primary" icon={<SyncOutlined spin={generating} />} loading={generating} onClick={handleGenerate}>
+          从数据库重新生成
         </Button>,
-        <Button
-          key="save"
-          type="primary"
-          icon={<SaveOutlined />}
-          loading={saving}
-          onClick={handleSave}
-          style={{ background: '#B22222', borderColor: '#B22222' }}
-        >
-          保存并同步
+        <Button key="close" type="default" onClick={onClose}>
+          关闭
         </Button>,
       ]}
       bodyStyle={{ padding: 0 }}
     >
       <Spin spinning={loading}>
-        <TextArea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="LEDGER.md 内容..."
-          style={{
-            minHeight: 500,
-            fontFamily: 'Consolas, Monaco, monospace',
-            fontSize: 13,
-            lineHeight: 1.6,
-            border: 'none',
-            borderRadius: 0,
-          }}
+        <Alert
+          message="账本说明"
+          description={
+            <span>
+              营业总账现在由数据库实时导出生成。任务操作请使用{' '}
+              <strong>任务看板</strong>（增删改查），账本将自动反映最新状态。
+              如需手动刷新，请点击「从数据库重新生成」。
+            </span>
+          }
+          type="info"
+          showIcon
+          style={{ margin: 12 }}
         />
+        <pre
+          style={{
+            margin: 0,
+            padding: '12px 16px',
+            minHeight: 500,
+            maxHeight: 600,
+            overflow: 'auto',
+            fontFamily: 'Consolas, Monaco, monospace',
+            fontSize: 12,
+            lineHeight: 1.6,
+            background: '#f5f5f5',
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word',
+          }}
+        >
+          {content}
+        </pre>
       </Spin>
     </Modal>
   );

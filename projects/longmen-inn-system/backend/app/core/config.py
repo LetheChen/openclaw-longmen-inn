@@ -63,27 +63,56 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://localhost:3000", "http://localhost:8080"]
     
     @validator("CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v):
-        """解析 CORS 配置"""
+    def assemble_cors_origins(cls, v, values):
+        """解析 CORS 配置并验证生产环境安全性"""
+        environment = values.get("ENVIRONMENT", "development")
+        
         if isinstance(v, str) and not v.startswith("["):
-            return [origin.strip() for origin in v.split(",")]
+            origins = [origin.strip() for origin in v.split(",")]
         elif isinstance(v, (list, str)):
-            return v
-        raise ValueError(v)
+            origins = v if isinstance(v, list) else [v]
+        else:
+            raise ValueError(v)
+        
+        # 生产环境安全检查：禁止使用 localhost
+        if environment == "production":
+            localhost_patterns = ["localhost", "127.0.0.1", "0.0.0.0"]
+            for origin in origins:
+                if any(pattern in origin for pattern in localhost_patterns):
+                    raise ValueError(
+                        f"[SECURITY ERROR] Production CORS_ORIGINS cannot contain localhost: {origin}\n"
+                        "Please set explicit production domains in CORS_ORIGINS environment variable."
+                    )
+            # 生产环境必须设置至少一个明确的源
+            if not origins:
+                raise ValueError(
+                    "[SECURITY ERROR] Production environment requires explicit CORS_ORIGINS!\n"
+                    "Set CORS_ORIGINS environment variable with your production domain(s)."
+                )
+        
+        return origins
     
     @validator("SECRET_KEY", pre=True)
     def validate_secret_key(cls, v, values):
         """
         验证 SECRET_KEY：
         - 开发环境：如果没有设置，使用固定的开发密钥并发出警告
-        - 生产环境：必须设置，否则抛出异常
+        - 生产环境：必须设置，否则抛出异常；且不能是默认开发密钥
         """
         environment = values.get("ENVIRONMENT", "development")
         
         # 如果环境变量已设置，直接使用
         if v:
+            # 生产环境检测：如果是设置了环境变量但仍使用默认开发密钥，报错
+            if environment == "production" and v == _DEV_SECRET_KEY:
+                raise ValueError(
+                    "[SECURITY ERROR] Production environment detected but SECRET_KEY "
+                    "is still the default development key! Please set a real SECRET_KEY.\n"
+                    "Generate a secure key: python -c \"import secrets; print(secrets.token_urlsafe(32))\""
+                )
             return v
         
+        # 未设置环境变量
         # 开发环境：允许使用默认开发密钥
         if environment == "development":
             warnings.warn(
@@ -103,7 +132,7 @@ class Settings(BaseSettings):
             )
             return _DEV_SECRET_KEY
         
-        # 生产环境：必须设置
+        # 生产环境：必须设置，未设置则拒绝启动
         raise ValueError(
             "[SECURITY ERROR] Production environment requires SECRET_KEY environment variable!\n"
             "Generate a secure key: python -c \"import secrets; print(secrets.token_urlsafe(32))\"\n"
@@ -131,6 +160,9 @@ class Settings(BaseSettings):
         5: (2500, 4999, "传奇掌柜"),
         6: (5000, float('inf'), "龙门传说")
     }
+    
+    # 客栈情报配置
+    AI_DAILY_REPORTS_PATH: Optional[str] = None  # AI日报存储路径，默认: LONGMEN_INN_ROOT/ai-daily-reports
     
     # 日志配置
     LOG_LEVEL: str = "INFO"

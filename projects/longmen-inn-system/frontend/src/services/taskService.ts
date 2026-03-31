@@ -43,13 +43,17 @@ const mapTaskFromApi = (apiTask: any): Task => ({
 export const getTasks = async (
   params?: TaskFilter & { page?: number; pageSize?: number }
 ): Promise<TaskListResponse> => {
-  const response = await api.get('/tasks', { params });
+  // 后端 API 使用 skip/limit，前端习惯用 page/pageSize
+  const { page, pageSize, ...rest } = params || {};
+  const skip = page !== undefined && pageSize ? (page - 1) * pageSize : undefined;
+  const limit = pageSize;
+  const response = await api.get('/tasks', { params: { ...rest, skip, limit } });
   const data = response.data.data?.map(mapTaskFromApi) || [];
   return {
     data,
     total: response.data.total || 0,
-    page: response.data.page || 1,
-    pageSize: response.data.pageSize || 20,
+    page: response.data.page || page || 1,
+    pageSize: response.data.pageSize || pageSize || 20,
   };
 };
 
@@ -90,13 +94,16 @@ export const getTaskStatistics = async (): Promise<TaskStatistics> => {
 export const getMyTasks = async (
   params?: { status?: string; page?: number; pageSize?: number }
 ): Promise<TaskListResponse> => {
-  const response = await api.get('/tasks/my', { params });
+  const { page, pageSize, ...rest } = params || {};
+  const skip = page !== undefined && pageSize ? (page - 1) * pageSize : undefined;
+  const limit = pageSize;
+  const response = await api.get('/tasks/my', { params: { ...rest, skip, limit } });
   const data = response.data.data?.map(mapTaskFromApi) || [];
   return {
     data,
     total: response.data.total || 0,
-    page: response.data.page || 1,
-    pageSize: response.data.pageSize || 20,
+    page: response.data.page || page || 1,
+    pageSize: response.data.pageSize || pageSize || 20,
   };
 };
 

@@ -50,7 +50,7 @@ const statusConfig = {
 
 // 场景背景（优先用本地宫廷图）
 const sceneBackgrounds: Record<string, string> = {
-  '内堂雅间': '/scenes/court-scene.png',
+  '内堂雅间': '/scenes/boss-scene.png',
   '客房柜台': '/scenes/court-scene.png',
   '大堂茶座': '/scenes/court-scene.png',
   '后厨灶台': '/scenes/court-scene.png',
@@ -187,27 +187,25 @@ const AgentWorkspacePage: React.FC = () => {
             </Tag>
           </div>
 
-          <div className="scene-center">
-            <div className="scene-character-main">
-              <Badge dot color={statusInfo.color} offset={[0, 8]}>
-                <Avatar
-                  size={88}
-                  className="avatar-glow"
-                  style={{
-                    backgroundColor: '#8B0000',
-                    border: '4px solid #D4C4A8',
-                    boxShadow: '0 0 28px rgba(139, 0, 0, 0.7)',
-                  }}
-                >
-                  {workspace.role.name[0]}
-                </Avatar>
-              </Badge>
+          <div className="scene-char-bar">
+            <Badge dot color={statusInfo.color} offset={[0, 8]}>
+              <Avatar
+                size={52}
+                className="avatar-glow"
+                style={{
+                  backgroundColor: '#8B0000',
+                  border: '3px solid #D4C4A8',
+                  boxShadow: '0 0 20px rgba(139, 0, 0, 0.6)',
+                }}
+              >
+                {workspace.role.name[0]}
+              </Avatar>
+            </Badge>
+            <div className="scene-char-info">
               <div className="scene-char-name">{workspace.role.name}</div>
               <div className="scene-char-title">{workspace.role.title}</div>
-              <div className="scene-char-tags">
-                <Tag color="#DAA520">{workspace.role.scene}</Tag>
-              </div>
             </div>
+            <Tag color="#DAA520" className="scene-char-tag">{workspace.role.scene}</Tag>
           </div>
 
           <div className="scene-bottombar">

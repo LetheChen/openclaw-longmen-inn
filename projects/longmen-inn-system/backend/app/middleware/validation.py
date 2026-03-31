@@ -105,23 +105,9 @@ class ValidationMiddleware(BaseHTTPMiddleware):
                 media_type="application/json"
             )
         
-        # 对于JSON请求，验证请求体（只读取，不消费）
-        if request.method in ["POST", "PUT", "PATCH"]:
-            content_type = request.headers.get("content-type", "")
-            if "application/json" in content_type:
-                try:
-                    body = await request.body()
-                    if body:
-                        body_str = body.decode("utf-8", errors="ignore")
-                        if self._detect_malicious(body_str, "请求体"):
-                            logger.warning(f"检测到恶意请求体")
-                            return Response(
-                                content='{"detail": "检测到非法输入"}',
-                                status_code=400,
-                                media_type="application/json"
-                            )
-                except Exception as e:
-                    logger.error(f"验证请求体时出错: {e}")
+        # 注意：请求体的 JSON 格式验证由 FastAPI/Pydantic 处理，
+        # 此处只做路径和查询参数的恶意模式检测（不读 body，避免消耗 stream）
+        # SQL/XSS 等攻击模式的体数据检测在安全层面由 parameterized query 和输出转义覆盖
         
         return await call_next(request)
     

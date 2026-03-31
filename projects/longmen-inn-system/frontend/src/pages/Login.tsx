@@ -103,7 +103,6 @@ const LoginPage: React.FC = () => {
             name="password"
             rules={[
               { required: true, message: '请输入密码' },
-              { min: 8, message: '密码至少8个字符' },
             ]}
           >
             <Input.Password
@@ -131,13 +130,12 @@ const LoginPage: React.FC = () => {
             </Button>
           </Form.Item>
           
-          {/* 开发环境提示 */}
+          {/* 开发环境提示（不显示具体密码） */}
           {import.meta.env.DEV && (
             <div className="dev-hint">
               <Paragraph type="secondary" style={{ marginBottom: 8, fontSize: 12 }}>
-                开发环境默认账户：
+                开发环境请联系东家获取测试账户
               </Paragraph>
-              <Text code>admin / Admin@123456</Text>
             </div>
           )}
         </Form>

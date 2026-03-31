@@ -20,8 +20,9 @@ import {
   FlagOutlined,
   ShopOutlined,
   ToolOutlined,
+  AuditOutlined,
 } from '@ant-design/icons'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import './MainLayout.css'
 
 const { Sider, Content } = Layout
@@ -125,6 +126,23 @@ const NotificationFloat: React.FC = () => {
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+
+  // 用户下拉菜单点击处理
+  const handleUserMenuClick = ({ key }: { key: string }) => {
+    switch (key) {
+      case 'profile':
+        navigate('/profile')
+        break
+      case 'settings':
+        navigate('/settings')
+        break
+      case 'logout':
+        // 登出逻辑由 authStore 处理
+        window.location.href = '/login'
+        break
+    }
+  }
 
   const menuItems = [
     {
@@ -151,6 +169,28 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       key: '/ranking',
       icon: <FlagOutlined />,
       label: <Link to="/ranking">英雄榜</Link>,
+    },
+    {
+      key: '/intelligence',
+      icon: <AuditOutlined />,
+      label: <Link to="/intelligence/ai-news">客栈情报</Link>,
+      children: [
+        {
+          key: '/intelligence/ai-news',
+          icon: <RobotOutlined />,
+          label: <Link to="/intelligence/ai-news">AI资讯</Link>,
+        },
+        {
+          key: '/intelligence/news',
+          icon: <BookOutlined />,
+          label: <Link to="/intelligence/news">时事要闻</Link>,
+        },
+        {
+          key: '/intelligence/red-news',
+          icon: <FlagOutlined />,
+          label: <Link to="/intelligence/red-news">红色印记</Link>,
+        },
+      ],
     },
     {
       key: '/openclaw',
@@ -186,6 +226,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     },
   ]
 
+  // 渲染用户下拉菜单
+  const userMenu = (
+    <Menu
+      items={userMenuItems}
+      onClick={handleUserMenuClick}
+    />
+  )
+
   return (
     <Layout className="main-layout">
       <Sider
@@ -208,7 +256,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </div>
 
         <div className="sider-footer">
-          <Dropdown menu={{ items: userMenuItems }} placement="topLeft" trigger={['click']}>
+          <Dropdown overlay={userMenu} placement="topLeft" trigger={['click']}>
             <div className="user-card">
               <Avatar 
                 size={36} 

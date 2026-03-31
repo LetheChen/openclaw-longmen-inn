@@ -1,16 +1,15 @@
 import React from 'react';
-import { Tag, Typography, Empty, Spin, Card, Space, Divider } from 'antd';
+import { Typography, Empty, Spin, Space } from 'antd';
 import { 
   CheckCircleOutlined, 
   WarningOutlined, 
-  RocketOutlined,
-  FileTextOutlined,
-  BugOutlined,
-  ClockCircleOutlined,
   FireOutlined,
-  ToolOutlined,
+  FileTextOutlined,
+  ClockCircleOutlined,
   PlusOutlined,
   MinusOutlined,
+  LockOutlined,
+  RocketOutlined,
 } from '@ant-design/icons';
 import './AuditFeed.css';
 
@@ -33,6 +32,8 @@ interface AuditFeedEntry {
   issues_count: number;
   tasks_found: string[];
   type: string;
+  agent?: string;
+  details?: string;
 }
 
 interface AuditFeedProps {
@@ -40,65 +41,30 @@ interface AuditFeedProps {
   loading?: boolean;
 }
 
-const feedTypeConfig: Record<string, { icon: React.ReactNode; color: string; bgGradient: string; label: string }> = {
-  deploy: { 
-    icon: <RocketOutlined />, 
-    color: '#52c41a', 
-    bgGradient: 'linear-gradient(135deg, #52c41a 0%, #238636 100%)',
-    label: '部署'
-  },
-  success: { 
-    icon: <CheckCircleOutlined />, 
-    color: '#228B22', 
-    bgGradient: 'linear-gradient(135deg, #228B22 0%, #1a6b1a 100%)',
-    label: '成功'
-  },
-  warning: { 
-    icon: <WarningOutlined />, 
-    color: '#faad14', 
-    bgGradient: 'linear-gradient(135deg, #faad14 0%, #d48806 100%)',
-    label: '警告'
-  },
-  error: { 
-    icon: <BugOutlined />, 
-    color: '#DC143C', 
-    bgGradient: 'linear-gradient(135deg, #DC143C 0%, #8B0000 100%)',
-    label: '错误'
-  },
-  task: { 
-    icon: <FileTextOutlined />, 
-    color: '#1890ff', 
-    bgGradient: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
-    label: '任务'
-  },
-  build: { 
-    icon: <ToolOutlined />, 
-    color: '#722ed1', 
-    bgGradient: 'linear-gradient(135deg, #722ed1 0%, #53186e 100%)',
-    label: '构建'
-  },
-  git_audit: { 
-    icon: <FireOutlined />, 
-    color: '#B22222', 
-    bgGradient: 'linear-gradient(135deg, #B22222 0%, #8B0000 100%)',
-    label: '审计'
-  },
-  audit: { 
-    icon: <FireOutlined />, 
-    color: '#B22222', 
-    bgGradient: 'linear-gradient(135deg, #B22222 0%, #8B0000 100%)',
-    label: '审计'
-  },
+// 根据 type 确定样式
+const getDotClass = (type: string): string => {
+  if (type === 'task_completion') return 'task';
+  if (type === 'security_improvement') return 'security';
+  if (type === 'deploy' || type === 'success') return 'success';
+  if (type === 'warning' || type === 'git_audit') return 'warning';
+  return 'default';
+};
+
+// 获取图标
+const getTypeIcon = (type: string) => {
+  if (type === 'task_completion') return <FileTextOutlined style={{ fontSize: 9 }} />;
+  if (type === 'security_improvement') return <LockOutlined style={{ fontSize: 9 }} />;
+  if (type === 'deploy') return <RocketOutlined style={{ fontSize: 9 }} />;
+  if (type === 'git_audit') return <FireOutlined style={{ fontSize: 9 }} />;
+  return <CheckCircleOutlined style={{ fontSize: 9 }} />;
 };
 
 const AuditFeed: React.FC<AuditFeedProps> = ({ items, loading = false }) => {
   const formatTime = (dateStr: string): string => {
     if (!dateStr) return '';
     
-    // 尝试解析 ISO 格式
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) {
-      // 如果已经是格式化好的日期字符串（如 "03月23日 21:36"）
       return dateStr;
     }
     
@@ -141,79 +107,78 @@ const AuditFeed: React.FC<AuditFeedProps> = ({ items, loading = false }) => {
 
   return (
     <div className="audit-feed">
-      <div className="audit-feed-list">
+      <div className="audit-feed-timeline">
         {items.map((item, index) => {
-          const config = feedTypeConfig[item.type] || feedTypeConfig.git_audit;
-          const statusEmoji = item.status_emoji || (item.status === 'passed' ? '✅' : '⚠️');
+          const dotClass = getDotClass(item.type);
+          const icon = getTypeIcon(item.type);
+          const statusEmoji = item.status_emoji || (item.status === 'passed' || item.status === 'completed' ? '✅' : '⚠️');
           
           return (
-            <Card 
+            <div 
               key={`${item.timestamp}-${index}`}
-              className="audit-feed-card"
-              size="small"
+              className={`audit-timeline-item ${item.type === 'task_completion' ? 'task' : item.type === 'security_improvement' ? 'security' : ''}`}
             >
-              <div className="audit-feed-card-header">
-                <div className="audit-feed-type" style={{ background: config.bgGradient }}>
-                  {config.icon}
-                  <span>{config.label}</span>
-                </div>
-                <Text type="secondary" className="audit-feed-time">
-                  <ClockCircleOutlined style={{ marginRight: 4 }} />
-                  {formatTime(item.date_str || item.timestamp)}
-                </Text>
+              <div className={`audit-timeline-dot ${dotClass}`}>
+                {icon}
               </div>
               
-              <div className="audit-feed-card-body">
-                <Text strong className="audit-feed-title">
-                  {statusEmoji} {item.title}
-                </Text>
+              <div className="audit-timeline-content">
+                <div className="audit-timeline-header">
+                  <span className="audit-timeline-title">
+                    {statusEmoji} {item.title}
+                  </span>
+                  <span className="audit-timeline-time">
+                    <ClockCircleOutlined style={{ marginRight: 3, fontSize: 10 }} />
+                    {formatTime(item.date_str || item.timestamp)}
+                  </span>
+                </div>
                 
-                <div className="audit-feed-stats">
-                  {(item.lines_added > 0 || item.lines_deleted > 0) && (
-                    <span className="audit-feed-stat-item">
-                      <PlusOutlined style={{ color: '#52c41a', fontSize: 10 }} />
-                      <span style={{ color: '#52c41a' }}>{item.lines_added}</span>
-                      <MinusOutlined style={{ color: '#DC143C', fontSize: 10, marginLeft: 4 }} />
-                      <span style={{ color: '#DC143C' }}>{item.lines_deleted}</span>
-                    </span>
-                  )}
+                <div className="audit-timeline-meta">
+                  {/* 统计信息 */}
+                  <div className="audit-timeline-stats">
+                    {(item.lines_added > 0 || item.lines_deleted > 0) && (
+                      <span className="audit-timeline-stat">
+                        <PlusOutlined style={{ color: '#52c41a', fontSize: 10 }} />
+                        <span style={{ color: '#52c41a' }}>{item.lines_added}</span>
+                        <MinusOutlined style={{ color: '#DC143C', fontSize: 10, marginLeft: 2 }} />
+                        <span style={{ color: '#DC143C' }}>{item.lines_deleted}</span>
+                      </span>
+                    )}
+                    
+                    {item.files_count > 0 && (
+                      <span className="audit-timeline-stat">
+                        <FileTextOutlined style={{ color: '#1890ff', fontSize: 10 }} />
+                        <span style={{ color: '#1890ff' }}>{item.files_count}</span>
+                      </span>
+                    )}
+                    
+                    {item.issues_count > 0 && (
+                      <span className="audit-timeline-stat">
+                        <WarningOutlined style={{ color: '#faad14', fontSize: 10 }} />
+                        <span style={{ color: '#faad14' }}>{item.issues_count}</span>
+                      </span>
+                    )}
+                  </div>
                   
-                  {item.files_count > 0 && (
-                    <span className="audit-feed-stat-item">
-                      <FileTextOutlined style={{ color: '#1890ff', fontSize: 10 }} />
-                      <span style={{ color: '#1890ff' }}>{item.files_count} 文件</span>
-                    </span>
-                  )}
-                  
-                  {item.issues_count > 0 && (
-                    <span className="audit-feed-stat-item">
-                      <WarningOutlined style={{ color: '#faad14', fontSize: 10 }} />
-                      <span style={{ color: '#faad14' }}>{item.issues_count} 问题</span>
-                    </span>
+                  {/* 任务标签 */}
+                  {item.tasks_found && item.tasks_found.length > 0 && (
+                    <div className="audit-timeline-tags">
+                      {item.tasks_found.slice(0, 3).map((task, tagIndex) => (
+                        <span 
+                          key={tagIndex}
+                          className="audit-timeline-tag"
+                        >
+                          {task}
+                        </span>
+                      ))}
+                      {item.tasks_found.length > 3 && (
+                        <span className="audit-timeline-tag">+{item.tasks_found.length - 3}</span>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
-              
-              {(item.tasks_found && item.tasks_found.length > 0) && (
-                <div className="audit-feed-tags">
-                  <Space size={[4, 4]} wrap>
-                    {item.tasks_found.map((task, tagIndex) => (
-                      <Tag 
-                        key={tagIndex}
-                        className="audit-feed-tag"
-                        style={{ 
-                          background: 'rgba(178, 34, 34, 0.08)',
-                          borderColor: 'rgba(178, 34, 34, 0.2)',
-                          color: '#8B4513'
-                        }}
-                      >
-                        {task}
-                      </Tag>
-                    ))}
-                  </Space>
-                </div>
-              )}
-            </Card>
+            </div>
           );
         })}
       </div>

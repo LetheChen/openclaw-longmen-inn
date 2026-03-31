@@ -11,16 +11,29 @@ import logging
 import asyncio
 from typing import Optional, Set
 from datetime import datetime
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query, WebSocketException
 
 from .manager import manager
 from app.services.openclaw_service import openclaw_service
+from app.core.security import verify_token
 
 logger = logging.getLogger(__name__)
 
 websocket_router = APIRouter()
 
 openclaw_subscribers: Set[WebSocket] = set()
+
+
+async def verify_websocket_token(token: Optional[str]) -> Optional[dict]:
+    """
+    验证WebSocket连接令牌
+    
+    Returns:
+        解码后的payload，验证失败返回None
+    """
+    if not token:
+        return None
+    return verify_token(token, "access")
 
 
 @websocket_router.websocket("/ws/{client_id}")
@@ -30,6 +43,15 @@ async def websocket_endpoint(
     token: Optional[str] = Query(None),
     groups: Optional[str] = Query(None)
 ):
+    # 验证token（可选，但推荐开启）
+    if token:
+        payload = await verify_websocket_token(token)
+        if not payload:
+            await websocket.close(code=4001, reason="Invalid or expired token")
+            logger.warning(f"WebSocket connection rejected: invalid token for client {client_id}")
+            return
+        logger.info(f"WebSocket authenticated: client_id={client_id}, user_id={payload.get('sub')}")
+    
     group_list = groups.split(",") if groups else []
     
     await manager.connect(websocket, client_id=client_id, groups=group_list)

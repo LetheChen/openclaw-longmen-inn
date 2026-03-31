@@ -1,20 +1,15 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Row, Col, Badge, Avatar, Spin, Empty, Progress, Tag, Typography, Button, Tabs } from 'antd'
 import {
-  CheckSquareOutlined,
-  ClockCircleOutlined,
   CheckCircleOutlined,
   PauseCircleOutlined,
   TeamOutlined,
   TrophyOutlined,
   FireOutlined,
   ReloadOutlined,
-  ThunderboltOutlined,
   RiseOutlined,
   FallOutlined,
   MinusOutlined,
-  RightOutlined,
-  DashboardOutlined,
   UserOutlined,
   ShopOutlined,
   CoffeeOutlined,
@@ -33,7 +28,7 @@ import { getAuditFeed } from '../services/auditLogService'
 import type { Task } from '../types/task'
 import { subscribeToOpenClawEvents } from '../services/openclawService'
 import type { TaskStatus } from '../types/task'
-import type { AgentActivity, Agent } from '../types/agent'
+import { AgentActivity, Agent, ActivityType } from '../types/agent'
 import type { AuditFeedEntry } from '../types/auditLog'
 import './Dashboard.css'
 
@@ -151,6 +146,67 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('activities')
   const [auditFeed, setAuditFeed] = useState<AuditFeedEntry[]>([])
 
+  // 实时活动的模拟数据（后端 API 就绪前先用这个）
+  const mockActivities: AgentActivity[] = [
+    {
+      id: 'mock-1',
+      agentId: 'cook',
+      agentName: '厨子',
+      type: ActivityType.TASK_COMPLETED,
+      content: '审计日志 API 开发完成，3个端点已就绪',
+      relatedTaskId: 'T-20250323-001',
+      relatedTaskTitle: '审计日志API开发',
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: 'mock-2',
+      agentId: 'painter',
+      agentName: '画师',
+      type: ActivityType.TASK_COMPLETED,
+      content: 'Dashboard 客栈动态 Tab 前端集成完成',
+      relatedTaskId: 'T-20250323-002',
+      relatedTaskTitle: '审计动态前端集成',
+      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: 'mock-3',
+      agentId: 'accountant',
+      agentName: '账房先生',
+      type: ActivityType.TASK_COMPLETED,
+      content: '代码审查通过，pre-upload-check.ps1 完善',
+      relatedTaskId: 'T-20250323-003',
+      relatedTaskTitle: '代码审查与Git上传前检查',
+      createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: 'mock-4',
+      agentId: '老板娘',
+      agentName: '老板娘',
+      type: ActivityType.LONGMENLING_EARNED,
+      content: '安全修复批量完成，JWT+中间件+速率限制，+200龙门令',
+      relatedTaskId: 'T-20250321-002~007',
+      createdAt: new Date(Date.now() - 22 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: 'mock-5',
+      agentId: 'cook',
+      agentName: '厨子',
+      type: ActivityType.TASK_STARTED,
+      content: '开始 Agent 工作空间可视化 Phase1 后端框架开发',
+      relatedTaskId: 'T-20250322-001',
+      relatedTaskTitle: 'Agent工作空间后端框架',
+      createdAt: new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: 'mock-6',
+      agentId: 'storyteller',
+      agentName: '说书先生',
+      type: ActivityType.LOGIN,
+      content: '签到完毕，随时待命',
+      createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+    },
+  ]
+
   const wsRef = useRef<WebSocket | null>(null)
 
   const loadData = useCallback(async () => {
@@ -185,6 +241,9 @@ const Dashboard: React.FC = () => {
       
       if (activitiesData && activitiesData.length > 0) {
         setActivities(activitiesData)
+      } else {
+        // 后端无 agent activities API 时，用模拟数据顶上
+        setActivities(mockActivities)
       }
       
       if (tasksData && tasksData.data) {
@@ -305,7 +364,7 @@ const Dashboard: React.FC = () => {
         <Row gutter={[24, 24]}>
           <Col xs={24} lg={16}>
             {/* 在线伙计 - 伙计花名册 */}
-            <div className="content-card" style={{ marginBottom: 24 }}>
+            <div className="content-card agents-card" style={{ marginBottom: 24 }}>
               <div className="content-card-header">
                 <span className="content-card-title">
                   <TeamOutlined style={{ color: '#B22222' }} />
@@ -345,7 +404,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* 任务看板 - 任务墙 */}
-            <div className="content-card">
+            <div className="content-card taskwall-card">
               <div className="content-card-header">
                 <span className="content-card-title">
                   <FlagOutlined style={{ color: '#B22222' }} />
@@ -369,7 +428,7 @@ const Dashboard: React.FC = () => {
 
           <Col xs={24} lg={8}>
             {/* 完成进度 - 业绩榜 */}
-            <div className="content-card" style={{ marginBottom: 24 }}>
+            <div className="content-card achievement-card" style={{ marginBottom: 24 }}>
               <div className="content-card-header">
                 <span className="content-card-title">
                   <TrophyOutlined style={{ color: '#B22222' }} />
@@ -418,7 +477,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* 动态活动 - 客栈动态 */}
-            <div className="content-card">
+            <div className="content-card activity-card">
               <div className="content-card-header">
                 <span className="content-card-title">
                   <CoffeeOutlined style={{ color: '#B22222' }} />
@@ -446,6 +505,7 @@ const Dashboard: React.FC = () => {
         <LedgerEditor
           visible={ledgerEditorVisible}
           onClose={() => setLedgerEditorVisible(false)}
+          onRefresh={loadData}
         />
 
         <RoleDetail

@@ -1,0 +1,328 @@
+/**
+ * 个人中心页面样式
+ */
+
+.profile-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+.loading-text {
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+/* 页面头部 */
+.page-header {
+  margin-bottom: 24px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.header-actions {
+  flex-shrink: 0;
+}
+
+/* 通用卡片样式 */
+.profile-card {
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  height: 100%;
+}
+
+.profile-card .ant-card-body {
+  padding: 28px;
+}
+
+/* 按钮样式 */
+.edit-btn {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%) !important;
+  border: none !important;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%) !important;
+  border: none !important;
+}
+
+.password-btn {
+  border-color: #8B0000 !important;
+  color: #8B0000 !important;
+}
+
+.password-btn:hover {
+  background: #8B0000 !important;
+  color: #fff !important;
+  border-color: #8B0000 !important;
+}
+
+/* 个人信息卡片 */
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+
+.profile-avatar {
+  background: linear-gradient(135deg, #8B0000 0%, #c41a1a 100%);
+  border: 3px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.profile-basic {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.3;
+}
+
+.name-input {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  max-width: 200px;
+}
+
+.profile-tags {
+  display: flex;
+}
+
+.profile-tags .ant-tag {
+  margin: 0;
+}
+
+.card-divider {
+  margin: 20px 0;
+  border-color: #f0f0f0;
+}
+
+/* 信息表单 */
+.info-form .ant-form-item {
+  margin-bottom: 0;
+}
+
+.info-form.editing .info-label {
+  color: #1890ff;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #fafafa;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-row:first-child {
+  padding-top: 0;
+}
+
+.info-label {
+  color: #8c8c8c;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.info-label .anticon {
+  color: #bfbfbf;
+  font-size: 12px;
+}
+
+.info-value {
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: right;
+}
+
+.info-value.readonly {
+  color: #666;
+}
+
+.value-input {
+  max-width: 200px;
+  text-align: right;
+}
+
+.hidden-item {
+  display: none;
+}
+
+/* 修改密码卡片 */
+.password-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.password-icon {
+  font-size: 28px;
+  color: #8B0000;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.password-title {
+  margin: 0 0 4px 0 !important;
+  font-size: 18px;
+  color: #333;
+}
+
+.password-subtitle {
+  color: #8c8c8c;
+  font-size: 13px;
+}
+
+/* 密码表单 */
+.password-form .ant-form-item-label > label {
+  color: #333;
+  font-weight: 500;
+}
+
+.input-icon {
+  color: #bfbfbf;
+  font-size: 14px;
+}
+
+.password-tips {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: 8px;
+  margin-top: 8px;
+  margin-bottom: 24px;
+}
+
+.tips-icon {
+  color: #fa8c16;
+  font-size: 16px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.tips-text {
+  color: #7d5a1a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.form-actions {
+  margin-bottom: 0;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #8B0000 0%, #c41a1a 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3) !important;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, #a00000 0%, #d42a2a 100%) !important;
+}
+
+/* 响应式调整 */
+@media (max-width: 992px) {
+  .profile-card .ant-card-body {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .header-actions .ant-btn {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .profile-page .page-header {
+    padding: 20px 16px 16px;
+  }
+
+  .info-card-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .profile-tags {
+    justify-content: center;
+  }
+
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 0;
+  }
+
+  .info-value {
+    text-align: left;
+    padding-left: 20px;
+  }
+
+  .profile-card .ant-card-body {
+    padding: 20px 16px;
+  }
+
+  .password-card-header {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .form-actions .ant-space {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .form-actions .ant-btn {
+    width: 100%;
+  }
+}

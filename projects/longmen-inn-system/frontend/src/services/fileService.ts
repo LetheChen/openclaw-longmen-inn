@@ -30,12 +30,8 @@ export interface RoleFileList {
 export interface SaveResult {
   success: boolean;
   message: string;
-  sync_results?: {
-    agents: number;
-    projects: number;
-    tasks: number;
-    longmenling_logs: number;
-  };
+  path: string;
+  mode: 'generated';
 }
 
 export const getLedger = async (): Promise<LedgerContent> => {
@@ -43,9 +39,17 @@ export const getLedger = async (): Promise<LedgerContent> => {
   return response.data;
 };
 
-export const saveLedger = async (content: string): Promise<SaveResult> => {
-  const response = await api.post('/files/ledger', { content });
+export const generateLedger = async (includeCompleted: boolean = true): Promise<SaveResult> => {
+  // 从 DB 导出生成 LEDGER.md（唯一写入入口）
+  const response = await api.post('/files/ledger/generate', null, {
+    params: { include_completed: includeCompleted }
+  });
   return response.data;
+};
+
+// 兼容旧调用：现在改为从 DB 生成
+export const saveLedger = async (): Promise<SaveResult> => {
+  return generateLedger(true);
 };
 
 export const getRoleFile = async (agentId: string, filePath: string = 'IDENTITY.md'): Promise<RoleContent> => {

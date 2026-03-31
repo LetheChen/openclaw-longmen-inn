@@ -1,9 +1,9 @@
-/* 审计动态 - 古籍版本风格 */
+/* 审计动态 - 紧凑时间线样式 */
 .audit-feed {
   background: linear-gradient(180deg, #FFF8E7 0%, #F5E6C8 100%);
   border-radius: 8px;
   position: relative;
-  padding: 16px;
+  padding: 12px 16px;
   min-height: 200px;
 }
 
@@ -27,7 +27,7 @@
   pointer-events: none;
 }
 
-/* 古籍侧边装饰 */
+/* 古籍侧边装饰线 */
 .audit-feed::after {
   content: '';
   position: absolute;
@@ -44,115 +44,142 @@
   border-radius: 2px;
 }
 
-/* 卡片列表 */
-.audit-feed-list {
+/* 时间线列表 - 紧凑垂直布局 */
+.audit-feed-timeline {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  padding-left: 16px;
 }
 
-/* 卡片 - 卷轴风格 */
-.audit-feed-card {
-  background: rgba(255, 255, 255, 0.5) !important;
-  border: 1px solid rgba(139, 69, 19, 0.2) !important;
-  border-radius: 8px !important;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 卡片左边装饰条 */
-.audit-feed-card::before {
+.audit-feed-timeline::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, #B22222 0%, #8B0000 100%);
+  left: 4px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(180deg, 
+    rgba(139, 69, 19, 0.4) 0%,
+    rgba(139, 69, 19, 0.15) 100%
+  );
 }
 
-.audit-feed-card:hover {
-  background: rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.15);
-  transform: translateX(4px);
+/* 时间线条目 */
+.audit-timeline-item {
+  position: relative;
+  padding: 6px 0 6px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-radius: 4px;
 }
 
-/* 卡片头部 */
-.audit-feed-card-header {
+.audit-timeline-item:hover {
+  background: rgba(139, 69, 19, 0.06);
+}
+
+/* 时间线圆点 */
+.audit-timeline-dot {
+  position: absolute;
+  left: -1px;
+  top: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: #F5E6C8;
+  z-index: 1;
+}
+
+.audit-timeline-dot.audit { border-color: #B22222; background: #B22222; }
+.audit-timeline-dot.task { border-color: #1890ff; background: #1890ff; }
+.audit-timeline-dot.success { border-color: #52c41a; background: #52c41a; }
+.audit-timeline-dot.warning { border-color: #faad14; background: #faad14; }
+.audit-timeline-dot.security { border-color: #722ed1; background: #722ed1; }
+.audit-timeline-dot.default { border-color: #8B4513; background: #8B4513; }
+
+/* 时间线内容 */
+.audit-timeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.audit-timeline-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  padding-left: 12px;
+  gap: 8px;
+  margin-bottom: 2px;
 }
 
-/* 类型标签 - 印章风格 */
-.audit-feed-type {
-  display: inline-flex;
+.audit-timeline-title {
+  font-family: var(--font-family-serif);
+  font-size: 13px;
+  font-weight: 600;
+  color: #262626;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.audit-timeline-time {
+  font-family: var(--font-family-serif);
+  font-size: 11px;
+  color: #8B4513;
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+.audit-timeline-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.audit-timeline-stats {
+  display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px;
-  border-radius: 4px;
-  color: #fff;
   font-family: var(--font-family-serif);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 11px;
 }
 
-/* 时间 */
-.audit-feed-time {
-  font-family: var(--font-family-serif) !important;
-  font-size: 12px !important;
+.audit-timeline-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
 }
 
-/* 卡片内容区 */
-.audit-feed-card-body {
-  padding-left: 12px;
-  margin-bottom: 8px;
+.stat-add { color: #52c41a; }
+.stat-del { color: #DC143C; }
+.stat-file { color: #1890ff; }
+.stat-warn { color: #faad14; }
+
+.audit-timeline-tags {
+  display: inline-flex;
+  gap: 4px;
 }
 
-/* 标题 */
-.audit-feed-title {
-  display: block;
-  font-family: var(--font-family-serif) !important;
-  font-size: 14px !important;
-  color: #262626 !important;
-  margin-bottom: 4px;
-  letter-spacing: 0.5px;
+.audit-timeline-tag {
+  font-family: var(--font-family-serif);
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(178, 34, 34, 0.1);
+  border: 1px solid rgba(178, 34, 34, 0.2);
+  color: #8B4513;
 }
 
-/* 内容 */
-.audit-feed-content {
-  display: block;
-  font-family: var(--font-family-serif) !important;
-  font-size: 13px !important;
-  color: #666 !important;
-  line-height: 1.6 !important;
+/* 任务类型特殊样式 */
+.audit-timeline-item.task .audit-timeline-title {
+  color: #1890ff;
 }
 
-/* 标签区 */
-.audit-feed-tags {
-  padding-left: 12px;
-  margin-top: 8px;
-}
-
-/* 标签 */
-.audit-feed-tag {
-  font-family: var(--font-family-serif) !important;
-  font-size: 11px !important;
-  padding: 2px 8px !important;
-  border-radius: 3px !important;
-  transition: all 0.2s ease;
-}
-
-.audit-feed-tag:hover {
-  transform: scale(1.05);
-  background: rgba(178, 34, 34, 0.15) !important;
+/* 安全类型特殊样式 */
+.audit-timeline-item.security .audit-timeline-title {
+  color: #722ed1;
 }
 
 /* 加载状态 */
@@ -178,17 +205,17 @@
 
 /* 滚动条 */
 .audit-feed::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .audit-feed::-webkit-scrollbar-track {
   background: rgba(139, 69, 19, 0.1);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .audit-feed::-webkit-scrollbar-thumb {
   background: rgba(139, 69, 19, 0.3);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .audit-feed::-webkit-scrollbar-thumb:hover {
@@ -198,10 +225,10 @@
 /* 响应式 */
 @media (max-width: 768px) {
   .audit-feed {
-    padding: 12px;
+    padding: 8px 12px;
   }
   
-  .audit-feed-card {
-    margin-bottom: 8px;
+  .audit-timeline-item {
+    padding: 5px 0 5px 18px;
   }
 }

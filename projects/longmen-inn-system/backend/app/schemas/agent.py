@@ -90,3 +90,57 @@ class AgentDetailResponse(AgentBase):
     
     class Config:
         from_attributes = True
+
+
+# ============ Agent 活动记录 Schemas ============
+
+class ActivityTypeEnum(str):
+    """活动类型枚举"""
+    TASK_COMPLETED = "task_completed"
+    LOGIN = "login"
+    LONGMENLING_ISSUED = "longmenling_issued"
+
+
+class AgentActivityCreate(BaseModel):
+    """创建活动记录请求"""
+    agent_id: str = Field(..., description="Agent ID", example="chef")
+    activity_type: str = Field(..., description="活动类型", example="task_completed")
+    title: str = Field(..., description="活动标题", example="完成了任务 T-20250307-001")
+    description: Optional[str] = Field(None, description="活动描述")
+    related_task_id: Optional[int] = Field(None, description="关联任务ID")
+    related_task_title: Optional[str] = Field(None, description="关联任务标题")
+    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict, description="额外元数据")
+
+
+class AgentActivityResponse(BaseModel):
+    """活动记录响应"""
+    id: int
+    agent_id: str
+    agent_name: Optional[str] = None
+    agent_avatar: Optional[str] = None
+    activity_type: str
+    title: str
+    description: Optional[str] = None
+    related_task_id: Optional[int] = None
+    related_task_title: Optional[str] = None
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+class AgentActivityQuery(BaseModel):
+    """查询活动记录参数"""
+    agent_id: Optional[str] = Field(None, description="过滤指定 Agent")
+    activity_type: Optional[str] = Field(None, description="过滤活动类型")
+    start_time: Optional[datetime] = Field(None, description="开始时间")
+    end_time: Optional[datetime] = Field(None, description="结束时间")
+    skip: int = Field(0, ge=0, description="跳过记录数")
+    limit: int = Field(20, ge=1, le=100, description="返回记录数")
+
+
+class AgentActivityListResponse(BaseModel):
+    """活动记录列表响应"""
+    total: int
+    items: List[AgentActivityResponse]

@@ -11,8 +11,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from app.api.deps import get_db
+from app.api.deps import get_db, get_current_user_required
 from app.db import models
+from app.models.user import User
 from app.schemas import project as project_schema
 
 router = APIRouter()
@@ -20,6 +21,7 @@ router = APIRouter()
 
 @router.get("/")
 async def get_projects(
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0, description="跳过记录数"),
     limit: int = Query(100, ge=1, le=500, description="返回记录数"),
@@ -53,6 +55,7 @@ async def get_projects(
 @router.get("/{project_id}", response_model=project_schema.ProjectDetailResponse)
 async def get_project(
     project_id: int,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -114,6 +117,7 @@ async def get_project(
 @router.post("/", response_model=project_schema.ProjectResponse, status_code=status.HTTP_201_CREATED)
 async def create_project(
     project_in: project_schema.ProjectCreate,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -143,6 +147,7 @@ async def create_project(
 async def update_project(
     project_id: int,
     project_in: project_schema.ProjectUpdate,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -184,6 +189,7 @@ async def update_project(
 @router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_project(
     project_id: int,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """

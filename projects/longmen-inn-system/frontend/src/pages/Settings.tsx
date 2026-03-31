@@ -23,6 +23,9 @@ import {
   MobileOutlined,
   SaveOutlined,
   ReloadOutlined,
+  AuditOutlined,
+  FolderOutlined,
+  RobotOutlined,
 } from '@ant-design/icons';
 import type { TabsProps } from 'antd';
 import './Settings.css';
@@ -35,6 +38,7 @@ const Settings: React.FC = () => {
   const [basicForm] = Form.useForm();
   const [notificationForm] = Form.useForm();
   const [securityForm] = Form.useForm();
+  const [intelligenceForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
   // 保存基本设置
@@ -73,6 +77,21 @@ const Settings: React.FC = () => {
       setLoading(true);
       setTimeout(() => {
         message.success('安全设置已保存');
+        setLoading(false);
+      }, 500);
+    } catch (error) {
+      message.error('请检查表单填写是否正确');
+    }
+  };
+
+  // 保存客栈情报设置
+  const handleSaveIntelligence = async () => {
+    try {
+      const values = await intelligenceForm.validateFields();
+      setLoading(true);
+      // 实际应用中，这里应该调用API保存设置到后端
+      setTimeout(() => {
+        message.success('客栈情报设置已保存');
         setLoading(false);
       }, 500);
     } catch (error) {
@@ -462,6 +481,157 @@ const Settings: React.FC = () => {
     </Form>
   );
 
+  // 客栈情报设置Tab内容
+  const intelligenceSettingsContent = (
+    <Form
+      form={intelligenceForm}
+      layout="vertical"
+      initialValues={{
+        reportsPath: '.longmen_inn/ai-daily-reports/',
+        archiveTime: '08:30',
+        enableAINews: true,
+        enableNews: true,
+        enableRedNews: true,
+        enablePush: true,
+        pushChannel: 'dingtalk',
+      }}
+    >
+      <Row gutter={24}>
+        <Col xs={24} lg={16}>
+          <div className="settings-card" style={{ marginBottom: 24 }}>
+            <div className="settings-card-header">
+              <FolderOutlined style={{ color: '#8B0000', fontSize: 18 }} />
+              <span className="settings-card-title">存储配置</span>
+            </div>
+            <div className="settings-card-body">
+              <Form.Item
+                label="AI日报存储路径"
+                name="reportsPath"
+                rules={[{ required: true, message: '请输入日报存储路径' }]}
+                extra="AI日报文件的存储目录，支持绝对路径或相对路径（相对于系统根目录）"
+              >
+                <Input 
+                  placeholder=".longmen_inn/ai-daily-reports/" 
+                  style={{ borderRadius: 6 }} 
+                  prefix={<FolderOutlined style={{ color: '#8c8c8c' }} />}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="归档时间"
+                name="archiveTime"
+                extra="每日自动归档AI日报的时间（北京时间）"
+              >
+                <Input 
+                  placeholder="08:30" 
+                  style={{ borderRadius: 6 }} 
+                />
+              </Form.Item>
+            </div>
+          </div>
+        </Col>
+
+        <Col xs={24} lg={8}>
+          <div className="settings-card" style={{ marginBottom: 24 }}>
+            <div className="settings-card-header">
+              <RobotOutlined style={{ color: '#1890ff', fontSize: 18 }} />
+              <span className="settings-card-title">情报开关</span>
+            </div>
+            <div className="settings-card-body">
+              <Form.Item
+                label="AI资讯"
+                name="enableAINews"
+                valuePropName="checked"
+                extra="36氪/科技新媒体风格"
+              >
+                <Switch checkedChildren="启用" unCheckedChildren="禁用" />
+              </Form.Item>
+
+              <Form.Item
+                label="时事要闻"
+                name="enableNews"
+                valuePropName="checked"
+                extra="纽约时报/经典日报风格"
+              >
+                <Switch checkedChildren="启用" unCheckedChildren="禁用" />
+              </Form.Item>
+
+              <Form.Item
+                label="红色印记"
+                name="enableRedNews"
+                valuePropName="checked"
+                extra="人民日报/党政风风格"
+              >
+                <Switch checkedChildren="启用" unCheckedChildren="禁用" />
+              </Form.Item>
+
+              <Form.Item
+                label="推送通知"
+                name="enablePush"
+                valuePropName="checked"
+                extra="日报生成后推送到指定渠道"
+              >
+                <Switch checkedChildren="启用" unCheckedChildren="禁用" />
+              </Form.Item>
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      <Row gutter={24}>
+        <Col xs={24} lg={12}>
+          <div className="settings-card" style={{ marginBottom: 24 }}>
+            <div className="settings-card-header">
+              <NotificationOutlined style={{ color: '#8B0000', fontSize: 18 }} />
+              <span className="settings-card-title">推送渠道</span>
+            </div>
+            <div className="settings-card-body">
+              <Form.Item
+                label="推送渠道"
+                name="pushChannel"
+              >
+                <Select placeholder="请选择推送渠道" style={{ borderRadius: 6 }}>
+                  <Option value="dingtalk">钉钉群</Option>
+                  <Option value="feishu">飞书</Option>
+                  <Option value="wecom">企业微信</Option>
+                  <Option value="email">邮件</Option>
+                </Select>
+              </Form.Item>
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      <Form.Item style={{ marginBottom: 0, marginTop: 24 }}>
+        <Space>
+          <Button
+            type="primary"
+            icon={<SaveOutlined />}
+            onClick={handleSaveIntelligence}
+            loading={loading}
+            size="large"
+            style={{ 
+              background: 'linear-gradient(135deg, #8B0000 0%, #c41a1a 100%)',
+              border: 'none',
+              borderRadius: 8,
+              boxShadow: '0 4px 12px rgba(139, 0, 0, 0.3)'
+            }}
+          >
+            保存客栈情报设置
+          </Button>
+          <Button
+            icon={<ReloadOutlined />}
+            onClick={() => intelligenceForm.resetFields()}
+            size="large"
+            style={{ borderRadius: 8 }}
+          >
+            重置
+          </Button>
+        </Space>
+      </Form.Item>
+    </Form>
+  );
+
   // Tab配置
   const tabItems: TabsProps['items'] = [
     {
@@ -493,6 +663,16 @@ const Settings: React.FC = () => {
         </Space>
       ),
       children: securitySettingsContent,
+    },
+    {
+      key: 'intelligence',
+      label: (
+        <Space>
+          <AuditOutlined />
+          客栈情报
+        </Space>
+      ),
+      children: intelligenceSettingsContent,
     },
   ];
 

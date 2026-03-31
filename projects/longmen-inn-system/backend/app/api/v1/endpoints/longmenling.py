@@ -12,8 +12,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
 
-from app.api.deps import get_db
+from app.api.deps import get_db, get_current_user_required
 from app.db import models
+from app.models.user import User
 from app.schemas import longmenling as longmenling_schema
 
 router = APIRouter()
@@ -35,6 +36,7 @@ def _get_level_requirement(level: int) -> int:
 @router.post("/", response_model=longmenling_schema.LongmenlingResponse, status_code=status.HTTP_201_CREATED)
 async def create_longmenling(
     longmenling_in: longmenling_schema.LongmenlingCreate,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -79,6 +81,7 @@ async def create_longmenling(
 
 @router.get("/ranking", response_model=longmenling_schema.LongmenlingRanking)
 async def get_longmenling_ranking(
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db),
     top_n: int = Query(10, ge=1, le=100, description="返回前几名"),
     agent_id: Optional[str] = Query(None, description="查询指定Agent的排名")
@@ -124,6 +127,7 @@ async def get_longmenling_ranking(
 @router.get("/{agent_id}", response_model=longmenling_schema.AgentLongmenlingDetail)
 async def get_agent_longmenling_detail(
     agent_id: str,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db),
     history_limit: int = Query(20, ge=1, le=100, description="历史记录数量")
 ):

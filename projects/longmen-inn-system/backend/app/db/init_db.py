@@ -46,10 +46,15 @@ def drop_tables():
         return False
 
 
-def init_db():
+def init_db(skip_import: bool = False):
     """
     初始化数据库
-    创建所有必要的表并初始化生产数据
+    创建所有必要的表，可选是否导入生产数据
+    
+    注意：LEDGER.md 同步到 DB 的功能已禁用。
+    如需从 DB 生成 LEDGER.md，请使用：
+        python -m app.cli ledger generate
+        POST /files/ledger/generate
     """
     logger.info("=" * 50)
     logger.info("开始初始化数据库...")
@@ -58,11 +63,9 @@ def init_db():
     success = create_tables()
     
     if success:
-        from app.db.import_production_data import import_production_data
-        try:
-            import_production_data()
-        except Exception as e:
-            logger.warning(f"生产数据已存在，跳过初始化: {str(e)}")
+        if not skip_import:
+            logger.info("生产数据导入已禁用（LEDGER.md 不再作为数据源）")
+            logger.info("如需从 DB 导出 LEDGER.md，请运行：python -m app.cli ledger generate")
         
         logger.info("=" * 50)
         logger.info("数据库初始化成功！")

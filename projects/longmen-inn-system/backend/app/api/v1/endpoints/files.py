@@ -8,8 +8,13 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.api.deps import get_current_user_required
+from app.models.user import User
 from typing import Optional, List
 from pathlib import Path
+import os
 
 from app.core.config import settings
 
@@ -43,11 +48,16 @@ class RoleFileList(BaseModel):
 
 @router.get("/ledger")
 async def get_ledger():
-    """读取LEDGER.md文件内容"""
+    """
+    读取 LEDGER.md 文件内容（纯展示用途）
+    
+    注意：此端点直接读取 markdown 文件。任务操作请使用 POST /tasks/ 。
+    如需生成最新账本，请调用 POST /files/ledger/generate 。
+    """
     ledger_path = LONGMEN_INN_ROOT / "LEDGER.md"
     
     if not ledger_path.exists():
-        raise HTTPException(status_code=404, detail="LEDGER.md 文件不存在")
+        raise HTTPException(status_code=404, detail="LEDGER.md 文件不存在，请先调用 POST /files/ledger/generate 生成")
     
     try:
         with open(ledger_path, "r", encoding="utf-8") as f:
@@ -56,38 +66,62 @@ async def get_ledger():
         return {
             "success": True,
             "content": content,
-            "path": str(ledger_path)
+            "path": str(ledger_path),
+            "mode": "file"  # 标识来源：file=markdown文件
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"读取文件失败: {str(e)}")
 
 
-@router.post("/ledger")
-async def save_ledger(data: SaveFileRequest):
-    """保存LEDGER.md文件内容并同步到数据库"""
-    ledger_path = LONGMEN_INN_ROOT / "LEDGER.md"
+@router.post("/ledger/generate")
+async def generate_ledger(
+    include_completed: bool = True,
+    current_user: User = Depends(get_current_user_required),
+):
+    """
+    从数据库生成 LEDGER.md 文件（单一写入入口）
+    
+    这是任务数据的唯一写入路径。
+    LEDGER.md 由 DB 状态导出，作为纯展示/日报用途。
+    """
+    from app.db.session import SessionLocal
+    from app.cli.ledger_generator import export_ledger_to_file
     
     try:
-        with open(ledger_path, "w", encoding="utf-8") as f:
-            f.write(data.content)
-        
-        from app.db.import_production_data import ProductionDataImporter
-        from app.db.session import SessionLocal
-        
-        db = SessionLocal()
-        try:
-            importer = ProductionDataImporter(db)
-            results = importer.import_all()
-        finally:
-            db.close()
-        
+        path = export_ledger_to_file(include_completed=include_completed)
         return {
             "success": True,
-            "message": "文件保存成功，数据已同步",
-            "sync_results": results
+            "message": "LEDGER.md 已从数据库生成",
+            "path": path,
+            "mode": "generated"  # 标识来源：generated=由DB导出
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"保存文件失败: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"生成失败: {str(e)}")
+
+
+@router.post("/ledger")  # 兼容旧调用
+async def regenerate_ledger_alias(
+    current_user: User = Depends(get_current_user_required),
+):
+    """
+    POST /files/ledger（兼容旧接口）
+    
+    旧接口会写入 markdown 后同步到 DB。
+    现在改为由 DB 导出为 markdown（单向）。
+    如需手动编辑账本内容，请使用 inn ledger generate 命令。
+    """
+    from app.cli.ledger_generator import export_ledger_to_file
+    
+    try:
+        path = export_ledger_to_file(include_completed=True)
+        return {
+            "success": True,
+            "message": "LEDGER.md 已从数据库生成（旧接口已废弃，请使用 POST /files/ledger/generate）",
+            "path": path,
+            "mode": "generated"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"生成失败: {str(e)}")
 
 
 @router.get("/role/{agent_id}/files")
@@ -126,18 +160,27 @@ async def list_agent_role_files(agent_id: str):
 @router.get("/role/{agent_id}/file")
 async def get_agent_role_file(agent_id: str, file_path: str = "IDENTITY.md"):
     """读取指定agent的角色文件内容"""
-    role_dir = ROLES_DIR / agent_id
+    role_dir = (ROLES_DIR / agent_id).resolve()
     
     if not role_dir.exists():
         raise HTTPException(status_code=404, detail=f"角色目录不存在: {agent_id}")
     
-    file_full_path = role_dir / file_path
+    # 安全检查：禁止路径遍历
+    # 清理 file_path，去除任何 .. 或绝对路径成分
+    safe_file_path = os.path.normpath(file_path)
+    if safe_file_path.startswith("..") or os.path.isabs(safe_file_path):
+        raise HTTPException(status_code=400, detail="无效的文件路径")
+    
+    file_full_path = (role_dir / safe_file_path).resolve()
+    
+    # 严格检查：确保解析后的路径在 role_dir 内
+    try:
+        file_full_path.relative_to(role_dir)
+    except ValueError:
+        raise HTTPException(status_code=403, detail="无权访问此文件")
     
     if not file_full_path.exists():
         raise HTTPException(status_code=404, detail=f"文件不存在: {file_path}")
-    
-    if not str(file_full_path.resolve()).startswith(str(role_dir.resolve())):
-        raise HTTPException(status_code=403, detail="无权访问此文件")
     
     try:
         with open(file_full_path, "r", encoding="utf-8") as f:

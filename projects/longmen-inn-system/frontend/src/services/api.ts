@@ -12,9 +12,24 @@
 import axios, { AxiosInstance, AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { message } from 'antd';
 
+// 安全的 Vite 环境变量访问
+interface ImportMetaEnv {
+  readonly VITE_API_BASE_URL?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
+declare module 'vite/client' {
+  interface ImportMetaEnv {
+    readonly VITE_API_BASE_URL?: string;
+  }
+}
+
 // 创建axios实例
 const api: AxiosInstance = axios.create({
-  baseURL: (import.meta as any).env?.VITE_API_BASE_URL || '/api/v1',
+  baseURL: (import.meta as ImportMeta).env?.VITE_API_BASE_URL || '/api/v1',
   timeout: 15000, // 缩短超时时间
   headers: {
     'Content-Type': 'application/json',

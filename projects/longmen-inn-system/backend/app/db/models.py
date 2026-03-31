@@ -73,6 +73,13 @@ class AgentSessionStatus(str, PyEnum):
     WAITING = "waiting"
 
 
+class ActivityType(str, PyEnum):
+    """活动类型"""
+    TASK_COMPLETED = "task_completed"           # 任务完成
+    LOGIN = "login"                            # 登录
+    LONGMENLING_ISSUED = "longmenling_issued"   # 龙门令发放
+
+
 class Project(Base):
     """项目表"""
     __tablename__ = "projects"
@@ -143,6 +150,7 @@ class Agent(Base):
     longmenling_logs = relationship("LongmenlingLog", back_populates="agent")
     current_task = relationship("Task", foreign_keys=[current_task_id])
     heartbeat_logs = relationship("AgentHeartbeat", back_populates="agent", cascade="all, delete-orphan")
+    activities = relationship("AgentActivity", back_populates="agent", cascade="all, delete-orphan")
 
 
 class AgentHeartbeat(Base):
@@ -160,6 +168,24 @@ class AgentHeartbeat(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     
     agent = relationship("Agent", back_populates="heartbeat_logs")
+
+
+class AgentActivity(Base):
+    """Agent活动记录表"""
+    __tablename__ = "agent_activities"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    agent_id = Column(String(50), ForeignKey("agents.agent_id"), nullable=False, index=True)
+    activity_type = Column(Enum(ActivityType), nullable=False, index=True)
+    title = Column(String(200), nullable=False)
+    description = Column(Text)
+    related_task_id = Column(Integer, ForeignKey("tasks.id"), nullable=True)
+    related_task_title = Column(String(200), nullable=True)
+    extra_data = Column(JSON, default=dict)  # 存储额外信息，如龙门令数量等
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    
+    agent = relationship("Agent")
+    related_task = relationship("Task")
 
 
 class Task(Base):

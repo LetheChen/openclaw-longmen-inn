@@ -6,7 +6,7 @@
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import agents, projects, tasks, longmenling, openclaw, data, files, auth, agent_workspace
+from app.api.v1.endpoints import agents, projects, tasks, longmenling, openclaw, data, files, auth, agent_workspace, daily_reports
 
 api_router = APIRouter()
 
@@ -24,3 +24,6 @@ api_router.include_router(files.router, prefix="/files", tags=["文件管理"])
 
 # Agent工作空间路由（新增）
 api_router.include_router(agent_workspace.router, tags=["Agent工作空间"])
+
+# 客栈情报路由
+api_router.include_router(daily_reports.router, prefix="/intelligence", tags=["客栈情报"])

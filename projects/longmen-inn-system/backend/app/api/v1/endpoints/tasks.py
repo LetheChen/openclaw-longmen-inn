@@ -12,8 +12,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 
-from app.api.deps import get_db
+from app.api.deps import get_db, get_current_user, get_current_user_required
 from app.db import models
+from app.models.user import User
 from app.schemas import task as task_schema
 
 router = APIRouter()
@@ -21,6 +22,7 @@ router = APIRouter()
 
 @router.get("/")
 async def get_tasks(
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0, description="跳过记录数"),
     limit: int = Query(20, ge=1, le=100, description="返回记录数"),
@@ -90,7 +92,10 @@ async def get_tasks(
 
 
 @router.get("/statistics")
-async def get_task_statistics(db: Session = Depends(get_db)):
+async def get_task_statistics(
+    current_user: User = Depends(get_current_user_required),
+    db: Session = Depends(get_db)
+):
     """获取任务统计信息"""
     total = db.query(func.count(models.Task.id)).scalar() or 0
     pending = db.query(func.count(models.Task.id)).filter(
@@ -120,7 +125,10 @@ async def get_task_statistics(db: Session = Depends(get_db)):
 
 
 @router.get("/kanban")
-async def get_kanban_data(db: Session = Depends(get_db)):
+async def get_kanban_data(
+    current_user: User = Depends(get_current_user_required),
+    db: Session = Depends(get_db)
+):
     """获取看板数据"""
     def get_tasks_by_status(status):
         return db.query(models.Task).filter(
@@ -137,20 +145,27 @@ async def get_kanban_data(db: Session = Depends(get_db)):
 
 @router.get("/my")
 async def get_my_tasks(
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     status: Optional[models.TaskStatus] = Query(None)
 ):
-    """获取我的任务（未实现认证时返回所有任务）"""
+    """获取当前用户的任务（按创建者Agent过滤）"""
+    # 获取用户关联的Agent ID（通过 username 匹配 agent_id）
+    user_agent = db.query(models.Agent).filter(models.Agent.agent_id == current_user.username).first()
+    
     query = db.query(models.Task)
+    
+    # 按创建者Agent过滤（返回用户作为创建者的任务）
+    if user_agent:
+        query = query.filter(models.Task.creator_agent_id == user_agent.agent_id)
     
     if status:
         query = query.filter(models.Task.status == status)
     
     total = query.count()
     tasks = query.order_by(models.Task.created_at.desc()).offset(skip).limit(limit).all()
-    
     return {
         "data": tasks,
         "total": total,
@@ -162,6 +177,7 @@ async def get_my_tasks(
 @router.get("/{task_id}", response_model=task_schema.TaskDetailResponse)
 async def get_task(
     task_id: int,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -183,6 +199,7 @@ async def get_task(
 @router.post("/", response_model=task_schema.TaskResponse, status_code=status.HTTP_201_CREATED)
 async def create_task(
     task_in: task_schema.TaskCreate,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -257,6 +274,7 @@ async def create_task(
 async def update_task(
     task_id: int,
     task_in: task_schema.TaskUpdate,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -318,6 +336,7 @@ async def update_task(
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(
     task_id: int,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -349,6 +368,7 @@ async def delete_task(
 async def update_task_status(
     task_id: int,
     status_update: task_schema.TaskStatusUpdate,
+    current_user: User = Depends(get_current_user_required),
     db: Session = Depends(get_db)
 ):
     """
@@ -392,12 +412,19 @@ async def update_task_status(
     db.commit()
     db.refresh(task)
     
+    # 获取当前用户关联的Agent ID
+    operator_agent_id = current_user.username  # 使用用户名作为agent_id
+    # 如果有对应的Agent记录，使用其agent_id
+    user_agent = db.query(models.Agent).filter(models.Agent.agent_id == current_user.username).first()
+    if user_agent:
+        operator_agent_id = user_agent.agent_id
+    
     # 创建任务日志
     task_log = models.TaskLog(
         task_id=task.id,
         from_status=old_status,
         to_status=new_status,
-        operator_agent_id=None,  # TODO: 从当前用户获取
+        operator_agent_id=operator_agent_id,
         comment=status_update.comment or f"状态变更: {old_status.value} -> {new_status.value}"
     )
     db.add(task_log)

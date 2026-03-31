@@ -11,6 +11,10 @@ import {
   Tooltip,
   Typography,
   message,
+  Modal,
+  Form,
+  DatePicker,
+  Tabs,
 } from 'antd';
 import {
   PlusOutlined,
@@ -29,11 +33,15 @@ import {
   FlagOutlined,
   ExclamationCircleOutlined,
   PushpinOutlined,
+  DeleteOutlined,
+  CloseCircleOutlined,
 } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 import { TaskStatus, TaskPriority } from '../types/task';
 import type { Task } from '../types/task';
-import { getTasks, getTaskStatistics } from '../services/taskService';
+import { getTasks, getTaskStatistics, createTask, updateTask, deleteTask, getKanbanData, batchUpdateTaskStatus } from '../services/taskService';
+import KanbanBoard from '../components/common/KanbanBoard';
 import { getAgents } from '../services/agentService';
 import { getProjects } from '../services/projectService';
 import './Tasks.css';
@@ -74,6 +82,28 @@ const Tasks: React.FC = () => {
   });
   const [agentsMap, setAgentsMap] = useState<Record<string, string>>({});
   const [projectsMap, setProjectsMap] = useState<Record<number, string>>({});
+  const [agents, setAgents] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
+
+  // 新建任务 Modal
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [createForm] = Form.useForm();
+
+  // 任务详情/编辑 Modal
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [detailForm] = Form.useForm();
+
+  // 看板相关
+  const [activeTab, setActiveTab] = useState<string>('list');
+  const [kanbanData, setKanbanData] = useState<{ pending: Task[]; inProgress: Task[]; review: Task[]; completed: Task[] }>({
+    pending: [],
+    inProgress: [],
+    review: [],
+    completed: [],
+  });
+  const [kanbanLoading, setKanbanLoading] = useState(false);
 
   // 状态映射 - 江湖风
   const statusMap: Record<string, { color: string; text: string; icon: React.ReactNode; bgColor: string }> = {
@@ -163,12 +193,14 @@ const Tasks: React.FC = () => {
         agentMap[agent.agent_id] = agent.name;
       });
       setAgentsMap(agentMap);
+      setAgents(agentsRes);
 
       const projectMap: Record<number, string> = {};
       projectsRes.data.forEach((project: any) => {
         projectMap[project.id] = project.name;
       });
       setProjectsMap(projectMap);
+      setProjects(projectsRes.data);
 
       const tasksWithNames = tasksRes.data.map((task: Task) => ({
         ...task,
@@ -376,7 +408,7 @@ const Tasks: React.FC = () => {
     {
       title: '操作',
       key: 'action',
-      width: 80,
+      width: 120,
       fixed: 'right',
       render: (_, record) => (
         <Space size="small">
@@ -392,7 +424,16 @@ const Tasks: React.FC = () => {
             <Button
               type="text"
               icon={<EyeOutlined />}
+              onClick={() => handleView(record)}
               style={{ color: '#595959' }}
+            />
+          </Tooltip>
+          <Tooltip title="删除">
+            <Button
+              type="text"
+              icon={<DeleteOutlined />}
+              onClick={() => handleDelete(record)}
+              style={{ color: '#ff4d4f' }}
             />
           </Tooltip>
         </Space>
@@ -401,10 +442,167 @@ const Tasks: React.FC = () => {
   ];
 
   const handleEdit = (task: Task) => {
-    console.log('编辑任务:', task);
+    setEditingTask(task);
+    detailForm.setFieldsValue({
+      title: task.title,
+      description: task.description,
+      projectId: task.projectId,
+      assigneeId: task.assigneeId,
+      priority: task.priority,
+      dueDate: task.dueDate ? dayjs(task.dueDate) : null,
+    });
+    setIsEditing(false);
+    setDetailModalVisible(true);
   };
 
-  const overdueCount = tasks.filter(t => 
+  const handleView = (task: Task) => {
+    setEditingTask(task);
+    detailForm.setFieldsValue({
+      title: task.title,
+      description: task.description,
+      projectId: task.projectId,
+      assigneeId: task.assigneeId,
+      priority: task.priority,
+      dueDate: task.dueDate ? dayjs(task.dueDate) : null,
+    });
+    setIsEditing(false);
+    setDetailModalVisible(true);
+  };
+
+  const handleDelete = (task: Task) => {
+    Modal.confirm({
+      title: '确认删除任务',
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <div>
+          <p style={{ marginBottom: 8 }}>确定要删除任务「{task.title}」吗？</p>
+          <p style={{ color: '#ff4d4f', marginBottom: 0 }}>此操作不可恢复</p>
+        </div>
+      ),
+      okText: '确认删除',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          await deleteTask(task.id);
+          message.success('任务删除成功');
+          loadData();
+        } catch (error) {
+          message.error('删除任务失败');
+          console.error('删除任务失败:', error);
+        }
+      },
+    });
+  };
+
+  const handleCreateTask = () => {
+    createForm.resetFields();
+    setCreateModalVisible(true);
+  };
+
+  const handleCreateSubmit = async () => {
+    try {
+      const values = await createForm.validateFields();
+      const payload: any = {
+        title: values.title,
+        description: values.description,
+        projectId: values.projectId,
+        assigneeId: values.assigneeId,
+        priority: values.priority || 'medium',
+        dueDate: values.dueDate ? values.dueDate.format('YYYY-MM-DD') : undefined,
+      };
+      await createTask(payload);
+      message.success('任务创建成功');
+      setCreateModalVisible(false);
+      loadData();
+    } catch (error: any) {
+      if (error.errorFields) {
+        return; // 表单验证失败
+      }
+      message.error('创建任务失败');
+      console.error('创建任务失败:', error);
+    }
+  };
+
+  const handleDetailEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleDetailSave = async () => {
+    if (!editingTask) return;
+    try {
+      const values = await detailForm.validateFields();
+      const payload: any = {
+        title: values.title,
+        description: values.description,
+        projectId: values.projectId,
+        assigneeId: values.assigneeId,
+        priority: values.priority,
+        dueDate: values.dueDate ? values.dueDate.format('YYYY-MM-DD') : undefined,
+      };
+      await updateTask(editingTask.id, payload);
+      message.success('任务更新成功');
+      setDetailModalVisible(false);
+      setIsEditing(false);
+      loadData();
+    } catch (error: any) {
+      if (error.errorFields) {
+        return;
+      }
+      message.error('更新任务失败');
+      console.error('更新任务失败:', error);
+    }
+  };
+
+  const handleDetailCancel = () => {
+    setDetailModalVisible(false);
+    setIsEditing(false);
+    setEditingTask(null);
+  };
+
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+    if (key === 'kanban') {
+      loadKanbanData();
+    }
+  };
+
+  const loadKanbanData = async () => {
+    setKanbanLoading(true);
+    try {
+      const data = await getKanbanData();
+      setKanbanData(data);
+    } catch (error) {
+      message.error('加载看板数据失败');
+      console.error('加载看板数据失败:', error);
+    } finally {
+      setKanbanLoading(false);
+    }
+  };
+
+  const handleKanbanTaskMove = async (taskId: string, sourceStatus: string, targetStatus: string) => {
+    try {
+      await batchUpdateTaskStatus([taskId], targetStatus);
+      message.success('任务状态已更新');
+      loadKanbanData();
+      loadData();
+    } catch (error) {
+      message.error('更新任务状态失败');
+      console.error('更新任务状态失败:', error);
+    }
+  };
+
+  const handleKanbanTaskClick = (task: Task) => {
+    handleView(task);
+  };
+
+  const handleKanbanAddTask = (columnId: TaskStatus) => {
+    createForm.resetFields();
+    createForm.setFieldsValue({ status: columnId });
+    setCreateModalVisible(true);
+  };
+
+  const overdueCount = tasks.filter(t =>
     t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'completed'
   ).length;
 
@@ -432,6 +630,7 @@ const Tasks: React.FC = () => {
             icon={<PlusOutlined />}
             size="large"
             className="publish-task-btn"
+            onClick={handleCreateTask}
           >
             发布任务
           </Button>
@@ -499,36 +698,322 @@ const Tasks: React.FC = () => {
         </Select>
       </div>
 
-      {/* 任务列表 - 卷轴风格 */}
-      <div className="content-card">
-        <div className="content-card-header">
-          <span className="content-card-title">
-            <FileTextOutlined style={{ color: '#8B0000' }} />
-            任务列表
+      {/* 任务列表/看板切换 */}
+      <Tabs
+        activeKey={activeTab}
+        onChange={handleTabChange}
+        items={[
+          {
+            key: 'list',
+            label: (
+              <span>
+                <FileTextOutlined style={{ marginRight: 6 }} />
+                列表
+              </span>
+            ),
+            children: (
+              <div className="content-card">
+                <div className="content-card-header">
+                  <span className="content-card-title">
+                    <FileTextOutlined style={{ color: '#8B0000' }} />
+                    任务列表
+                  </span>
+                  <Text type="secondary" style={{ fontSize: 12, fontFamily: 'var(--font-family-serif)' }}>
+                    共 {filteredTasks.length} 条记录
+                  </Text>
+                </div>
+                <div className="content-card-body" style={{ padding: 0 }}>
+                  <Table
+                    className="data-table"
+                    columns={columns}
+                    dataSource={filteredTasks}
+                    rowKey="id"
+                    pagination={{
+                      pageSize: 10,
+                      showSizeChanger: true,
+                      showTotal: (total) => `共 ${total} 条`,
+                      style: { margin: '16px 24px' }
+                    }}
+                    loading={loading}
+                    scroll={{ x: 900 }}
+                  />
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'kanban',
+            label: (
+              <span>
+                <PushpinOutlined style={{ marginRight: 6 }} />
+                看板
+              </span>
+            ),
+            children: (
+              <KanbanBoard
+                columns={[
+                  {
+                    id: 'pending' as TaskStatus,
+                    title: '待开工',
+                    tasks: kanbanData.pending,
+                    color: '#8B4513',
+                    icon: <ClockCircleOutlined />,
+                  },
+                  {
+                    id: 'in_progress' as TaskStatus,
+                    title: '进行中',
+                    tasks: kanbanData.inProgress,
+                    color: '#4682B4',
+                    icon: <FireOutlined />,
+                  },
+                  {
+                    id: 'reviewing' as TaskStatus,
+                    title: '待审核',
+                    tasks: kanbanData.review,
+                    color: '#DAA520',
+                    icon: <EyeOutlined />,
+                  },
+                  {
+                    id: 'completed' as TaskStatus,
+                    title: '已完成',
+                    tasks: kanbanData.completed,
+                    color: '#228B22',
+                    icon: <CheckCircleOutlined />,
+                  },
+                ]}
+                loading={kanbanLoading}
+                draggable={true}
+                onTaskMove={handleKanbanTaskMove}
+                onTaskClick={handleKanbanTaskClick}
+                onAddTask={handleKanbanAddTask}
+                cardSize="default"
+              />
+            ),
+          },
+        ]}
+      />
+
+      {/* 新建任务 Modal */}
+      <Modal
+        title={
+          <span style={{ fontFamily: 'var(--font-family-serif)', fontSize: 18, color: '#8B0000' }}>
+            <PlusOutlined style={{ marginRight: 8 }} />
+            发布新任务
           </span>
-          <Text type="secondary" style={{ fontSize: 12, fontFamily: 'var(--font-family-serif)' }}>
-            共 {filteredTasks.length} 条记录
-          </Text>
-        </div>
-        <div className="content-card-body" style={{ padding: 0 }}>
-          <Table
-            className="data-table"
-            columns={columns}
-            dataSource={filteredTasks}
-            rowKey="id"
-            pagination={{ 
-              pageSize: 10, 
-              showSizeChanger: true, 
-              showTotal: (total) => `共 ${total} 条`,
-              style: { margin: '16px 24px' }
-            }}
-            loading={loading}
-            scroll={{ x: 900 }}
-          />
-        </div>
-      </div>
+        }
+        open={createModalVisible}
+        onOk={handleCreateSubmit}
+        onCancel={() => setCreateModalVisible(false)}
+        okText="发布任务"
+        cancelText="取消"
+        width={600}
+        bodyStyle={{ padding: '24px' }}
+      >
+        <Form
+          form={createForm}
+          layout="vertical"
+          initialValues={{ priority: 'medium', status: 'pending' }}
+        >
+          <Form.Item
+            name="title"
+            label="任务标题"
+            rules={[{ required: true, message: '请输入任务标题' }]}
+          >
+            <Input placeholder="请输入任务标题" maxLength={200} />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="任务描述"
+          >
+            <Input.TextArea placeholder="请输入任务描述（可选）" rows={3} maxLength={1000} showCount />
+          </Form.Item>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Form.Item
+              name="projectId"
+              label="所属项目"
+              style={{ flex: 1 }}
+            >
+              <Select placeholder="请选择项目（可选）" allowClear>
+                {projects.map((p: any) => (
+                  <Option key={p.id} value={String(p.id)}>{p.name}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name="assigneeId"
+              label="负责人"
+              style={{ flex: 1 }}
+            >
+              <Select placeholder="请选择负责人（可选）" allowClear>
+                {agents.map((agent: any) => (
+                  <Option key={agent.agent_id} value={agent.agent_id}>{agent.name}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Form.Item
+              name="priority"
+              label="优先级"
+              style={{ flex: 1 }}
+            >
+              <Select>
+                <Option value="urgent">🔴 紧急 (P0)</Option>
+                <Option value="high">🟠 高 (P1)</Option>
+                <Option value="medium">🔵 中 (P2)</Option>
+                <Option value="low">⚪ 低 (P3)</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name="dueDate"
+              label="截止时间"
+              style={{ flex: 1 }}
+            >
+              <DatePicker style={{ width: '100%' }} placeholder="请选择截止时间（可选）" />
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
+
+      {/* 任务详情/编辑 Modal */}
+      <Modal
+        title={
+          <span style={{ fontFamily: 'var(--font-family-serif)', fontSize: 18, color: '#8B0000' }}>
+            {isEditing ? (
+              <>
+                <EditOutlined style={{ marginRight: 8 }} />
+                编辑任务
+              </>
+            ) : (
+              <>
+                <EyeOutlined style={{ marginRight: 8 }} />
+                任务详情
+              </>
+            )}
+          </span>
+        }
+        open={detailModalVisible}
+        onOk={isEditing ? handleDetailSave : handleDetailEdit}
+        onCancel={handleDetailCancel}
+        okText={isEditing ? '保存' : '编辑'}
+        cancelText="关闭"
+        width={600}
+        bodyStyle={{ padding: '24px' }}
+        footer={isEditing ? (
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => editingTask && handleDelete(editingTask)}
+            >
+              删除任务
+            </Button>
+            <Space>
+              <Button onClick={handleDetailCancel}>取消</Button>
+              <Button type="primary" onClick={handleDetailSave}>保存</Button>
+            </Space>
+          </div>
+        ) : null}
+      >
+        <Form
+          form={detailForm}
+          layout="vertical"
+          disabled={!isEditing}
+        >
+          <Form.Item
+            name="title"
+            label="任务标题"
+            rules={[{ required: true, message: '请输入任务标题' }]}
+          >
+            <Input placeholder="请输入任务标题" />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="任务描述"
+          >
+            <Input.TextArea placeholder="请输入任务描述" rows={3} />
+          </Form.Item>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Form.Item
+              name="projectId"
+              label="所属项目"
+              style={{ flex: 1 }}
+            >
+              <Select placeholder="请选择项目" allowClear>
+                {projects.map((p: any) => (
+                  <Option key={p.id} value={String(p.id)}>{p.name}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name="assigneeId"
+              label="负责人"
+              style={{ flex: 1 }}
+            >
+              <Select placeholder="请选择负责人" allowClear>
+                {agents.map((agent: any) => (
+                  <Option key={agent.agent_id} value={agent.agent_id}>{agent.name}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Form.Item
+              name="priority"
+              label="优先级"
+              style={{ flex: 1 }}
+            >
+              <Select>
+                <Option value="urgent">🔴 紧急 (P0)</Option>
+                <Option value="high">🟠 高 (P1)</Option>
+                <Option value="medium">🔵 中 (P2)</Option>
+                <Option value="low">⚪ 低 (P3)</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name="dueDate"
+              label="截止时间"
+              style={{ flex: 1 }}
+            >
+              <DatePicker style={{ width: '100%' }} placeholder="请选择截止时间" />
+            </Form.Item>
+          </div>
+          {editingTask && !isEditing && (
+            <div style={{ marginTop: 16, padding: 16, background: '#f5f5f5', borderRadius: 8 }}>
+              <p style={{ marginBottom: 8 }}>
+                <Text type="secondary">任务号：</Text>
+                <Text strong style={{ color: '#8B0000' }}>{editingTask.taskNo}</Text>
+              </p>
+              <p style={{ marginBottom: 8 }}>
+                <Text type="secondary">状态：</Text>
+                {statusMap[editingTask.status] && (
+                  <Tag style={{ background: statusMap[editingTask.status].bgColor, borderColor: statusMap[editingTask.status].color, color: statusMap[editingTask.status].color }}>
+                    {statusMap[editingTask.status].icon} {statusMap[editingTask.status].text}
+                  </Tag>
+                )}
+              </p>
+              <p style={{ marginBottom: 8 }}>
+                <Text type="secondary">创建时间：</Text>
+                <Text>{new Date(editingTask.createdAt).toLocaleString('zh-CN')}</Text>
+              </p>
+              {editingTask.completedAt && (
+                <p style={{ marginBottom: 0 }}>
+                  <Text type="secondary">完成时间：</Text>
+                  <Text style={{ color: '#228B22' }}>{new Date(editingTask.completedAt).toLocaleString('zh-CN')}</Text>
+                </p>
+              )}
+            </div>
+          )}
+        </Form>
+      </Modal>
     </div>
   );
 };
+
+// [F01] 任务创建表单 - 已实现：发布任务按钮 + CreateTask Modal + 表单验证
+// [F02] 任务详情弹窗 - 已实现：查看任务详情 Modal
+// [F03] 任务编辑表单 - 已实现：编辑按钮切换为可编辑表单 + 保存更新
+// [F05] 任务删除 - 已实现：删除按钮 + Modal.confirm 二次确认
+// [F06/F07] 看板视图 - 已实现：列表/看板 Tab 切换 + KanbanBoard 组件 + 拖拽更新状态
 
 export default Tasks;

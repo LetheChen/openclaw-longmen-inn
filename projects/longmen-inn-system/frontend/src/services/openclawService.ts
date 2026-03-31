@@ -102,8 +102,24 @@ export const updateOpenClawConfig = async (config: {
   ws_url?: string;
   api_key?: string;
   heartbeat_interval?: number;
+  ai_news_enabled?: boolean;
+  news_enabled?: boolean;
+  red_news_enabled?: boolean;
 }): Promise<{ message: string; updated: Record<string, unknown> }> => {
   const response = await api.post('/openclaw/config', config);
+  return response.data;
+};
+
+export const getOpenClawConfig = async (): Promise<{
+  gateway_url: string;
+  ws_url: string;
+  api_key?: string;
+  heartbeat_interval: number;
+  ai_news_enabled: boolean;
+  news_enabled: boolean;
+  red_news_enabled: boolean;
+}> => {
+  const response = await api.get('/openclaw/config');
   return response.data;
 };
 

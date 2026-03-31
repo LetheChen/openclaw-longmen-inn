@@ -1,4 +1,4 @@
-﻿/* Dashboard 页面样式 - 江湖客栈风格 */
+﻿﻿/* Dashboard 页面样式 - 江湖客栈风格 */
 
 .dashboard-page {
   /* 页面特定样式 */
@@ -163,6 +163,41 @@
   overflow: visible;
   position: relative;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 伙计花名册 & 业绩榜 - 同高度对齐 */
+.agents-card,
+.achievement-card {
+  max-height: 380px;
+}
+
+.agents-card .content-card-body,
+.achievement-card .content-card-body {
+  overflow-y: auto;
+}
+
+/* 客栈动态卡片 - 固定最大高度，内滚动 */
+.activity-card {
+  max-height: 420px;
+}
+
+.activity-card .content-card-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0;
+}
+
+/* 任务墙 - 和客栈动态同高度 */
+.taskwall-card {
+  max-height: 420px;
+}
+
+.taskwall-card .content-card-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0;
 }
 
 /* 卷轴顶部装饰条 */
@@ -236,6 +271,8 @@
 .content-card-body {
   padding: var(--spacing-lg);
   overflow: visible;
+  flex: 1;
+  min-height: 0;
 }
 
 /* 印章标签 */

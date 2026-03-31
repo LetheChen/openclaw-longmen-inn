@@ -13,6 +13,8 @@ import {
   Empty,
   message,
   Modal,
+  Form,
+  DatePicker,
 } from 'antd';
 import {
   FolderOutlined,
@@ -32,7 +34,8 @@ import {
   PushpinOutlined,
   BuildOutlined,
 } from '@ant-design/icons';
-import { getProjects } from '../services/projectService';
+import dayjs from 'dayjs';
+import { getProjects, createProject } from '../services/projectService';
 import { getAgents } from '../services/agentService';
 import { getTasks } from '../services/taskService';
 import { getReadme } from '../services/fileService';
@@ -86,6 +89,10 @@ const Projects: React.FC = () => {
   const [readmeContent, setReadmeContent] = useState('');
   const [readmeLoading, setReadmeLoading] = useState(false);
 
+  // 项目立项 Modal
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [createForm] = Form.useForm();
+
   // 状态映射 - 江湖风
   const statusMap: Record<string, { color: string; text: string; icon: React.ReactNode; bgColor: string }> = {
     pending: { 
@@ -130,7 +137,7 @@ const Projects: React.FC = () => {
       const [projectsRes, agentsRes, tasksRes] = await Promise.all([
         getProjects({ page: 1, pageSize: 100 }),
         getAgents(),
-        getTasks({ page: 1, pageSize: 1000 }),
+        getTasks({ page: 1, pageSize: 100 }),
       ]);
 
       const agentMap: Record<string, string> = {};
@@ -192,6 +199,39 @@ const Projects: React.FC = () => {
     }
   };
 
+  const handleCreateProject = () => {
+    createForm.resetFields();
+    setCreateModalVisible(true);
+  };
+
+  const handleCreateSubmit = async () => {
+    try {
+      const values = await createForm.validateFields();
+      const payload: any = {
+        name: values.name,
+        description: values.description,
+        status: values.status || 'pending',
+      };
+      // 如果后端支持 start_date 和 end_date，则添加
+      if (values.startDate) {
+        payload.startDate = values.startDate.format('YYYY-MM-DD');
+      }
+      if (values.endDate) {
+        payload.endDate = values.endDate.format('YYYY-MM-DD');
+      }
+      await createProject(payload);
+      message.success('项目创建成功');
+      setCreateModalVisible(false);
+      loadData();
+    } catch (error: any) {
+      if (error.errorFields) {
+        return; // 表单验证失败
+      }
+      message.error('创建项目失败');
+      console.error('创建项目失败:', error);
+    }
+  };
+
   const filteredProjects = projects.filter((project) => {
     const matchSearch =
       project.name.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -239,6 +279,7 @@ const Projects: React.FC = () => {
             icon={<PlusOutlined />}
             size="large"
             className="create-project-btn"
+            onClick={handleCreateProject}
           >
             立项
           </Button>
@@ -531,8 +572,76 @@ const Projects: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* 项目立项 Modal */}
+      <Modal
+        title={
+          <span style={{ fontFamily: 'var(--font-family-serif)', fontSize: 18, color: '#8B0000' }}>
+            <BuildOutlined style={{ marginRight: 8 }} />
+            项目立项
+          </span>
+        }
+        open={createModalVisible}
+        onOk={handleCreateSubmit}
+        onCancel={() => setCreateModalVisible(false)}
+        okText="创建项目"
+        cancelText="取消"
+        width={600}
+        bodyStyle={{ padding: '24px' }}
+      >
+        <Form
+          form={createForm}
+          layout="vertical"
+          initialValues={{ status: 'pending' }}
+        >
+          <Form.Item
+            name="name"
+            label="项目名称"
+            rules={[{ required: true, message: '请输入项目名称' }]}
+          >
+            <Input placeholder="请输入项目名称" maxLength={200} />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="项目描述"
+          >
+            <Input.TextArea placeholder="请输入项目描述（可选）" rows={3} maxLength={1000} showCount />
+          </Form.Item>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Form.Item
+              name="status"
+              label="项目状态"
+              style={{ flex: 1 }}
+            >
+              <Select>
+                <Option value="pending">🟤 待启动</Option>
+                <Option value="active">🔵 进行中</Option>
+                <Option value="completed">🟢 已完成</Option>
+              </Select>
+            </Form.Item>
+          </div>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Form.Item
+              name="startDate"
+              label="开始日期"
+              style={{ flex: 1 }}
+            >
+              <DatePicker style={{ width: '100%' }} placeholder="请选择开始日期（可选）" />
+            </Form.Item>
+            <Form.Item
+              name="endDate"
+              label="结束日期"
+              style={{ flex: 1 }}
+            >
+              <DatePicker style={{ width: '100%' }} placeholder="请选择结束日期（可选）" />
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
     </div>
   );
 };
+
+// [F04] 项目立项表单 - 已实现：立项按钮 + CreateProject Modal + 表单验证（支持 startDate/endDate）
 
 export default Projects;

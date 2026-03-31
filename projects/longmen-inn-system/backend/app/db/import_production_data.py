@@ -17,11 +17,12 @@ from sqlalchemy.orm import Session
 from app.db.session import SessionLocal
 from app.db import models
 from app.db.init_db import create_tables
+from app.core.config import settings
+
 
 logger = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent
-LONGMEN_INN_ROOT = PROJECT_ROOT.parent.parent # 相对于backend目录向上查找
+LONGMEN_INN_ROOT = settings.LONGMEN_INN_ROOT
 
 
 class RosterParser:
@@ -164,12 +165,16 @@ class LedgerParser:
         status_map = {
             '**✅ 已完成**': models.TaskStatus.COMPLETED,
             '✅ 已完成': models.TaskStatus.COMPLETED,
+            '✅ 完成': models.TaskStatus.COMPLETED,
             '**🔥 进行中**': models.TaskStatus.IN_PROGRESS,
             '🔥 进行中': models.TaskStatus.IN_PROGRESS,
+            '🔄 进行中': models.TaskStatus.IN_PROGRESS,
             '进行中': models.TaskStatus.IN_PROGRESS,
             '待开工': models.TaskStatus.PENDING,
+            '⏳ 待开始': models.TaskStatus.PENDING,
             '待审核': models.TaskStatus.REVIEWING,
             '已阻塞': models.TaskStatus.BLOCKED,
+            '**⚠️ 部分完成**': models.TaskStatus.REVIEWING,
         }
         
         assignee_map = {
@@ -424,45 +429,57 @@ class ProductionDataImporter:
         self.db.commit()
         return count
     
+    # Task 模型的合法列名（排除 relationship/FK 字段和 computed 字段）
+    _TASK_COLUMNS = {
+        'task_no', 'title', 'description', 'status', 'priority',
+        'creator_agent_id', 'assignee_agent_id', 'project_id',
+        'phase_id', 'estimated_hours', 'actual_hours', 'progress',
+        'deliverable_path', 'parent_task_id', 'blocked_reason', 'tags', 'extra_data',
+        'created_at', 'started_at', 'completed_at',
+    }
+
     def import_tasks(self) -> int:
         """导入任务数据 - 从LEDGER.md获取真实任务"""
         logger.info("开始导入任务数据...")
-        
+
         ledger_parser = LedgerParser(self.ledger_path)
         if not ledger_parser.load():
             logger.warning("LEDGER.md加载失败，使用默认任务数据")
-        
+
         tasks_data = ledger_parser.parse_tasks()
-        
+
         project = self.db.query(models.Project).filter(
             models.Project.code == 'LM-INN'
         ).first()
-        
+
         count = 0
         for task_data in tasks_data:
             existing = self.db.query(models.Task).filter(
                 models.Task.task_no == task_data['task_no']
             ).first()
-            
+
             if project:
                 task_data['project_id'] = project.id
-            
+
             if task_data['status'] == models.TaskStatus.COMPLETED:
                 task_data['completed_at'] = datetime.utcnow() - timedelta(days=1)
             elif task_data['status'] == models.TaskStatus.IN_PROGRESS:
                 task_data['started_at'] = datetime.utcnow() - timedelta(hours=2)
-            
+
+            # 过滤掉非列字段，避免 setattr / model 构造失败
+            valid_data = {k: v for k, v in task_data.items() if k in self._TASK_COLUMNS}
+
             if existing:
-                for key, value in task_data.items():
+                for key, value in valid_data.items():
                     setattr(existing, key, value)
                 logger.info(f"更新任务: {task_data['task_no']} - {task_data['title']}")
             else:
-                task = models.Task(**task_data)
+                task = models.Task(**valid_data)
                 self.db.add(task)
                 logger.info(f"创建任务: {task_data['task_no']} - {task_data['title']}")
-            
+
             count += 1
-        
+
         self.db.commit()
         return count
     

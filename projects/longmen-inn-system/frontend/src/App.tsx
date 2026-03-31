@@ -9,7 +9,12 @@ import AgentWorkspace from './pages/AgentWorkspace'
 import Ranking from './pages/Ranking'
 import OpenClaw from './pages/OpenClaw'
 import Settings from './pages/Settings'
+import Profile from './pages/Profile'
 import Login from './pages/Login'
+import Intelligence from './pages/Intelligence'
+import AINews from './pages/AINews'
+import NewsPage from './pages/NewsPage'
+import RedNews from './pages/RedNews'
 import './App.css'
 
 function App() {
@@ -42,6 +47,11 @@ function App() {
         <Route path="/ranking" element={<Ranking />} />
         <Route path="/openclaw" element={<OpenClaw />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/intelligence" element={<Intelligence />} />
+        <Route path="/intelligence/ai-news" element={<AINews />} />
+        <Route path="/intelligence/news" element={<NewsPage />} />
+        <Route path="/intelligence/red-news" element={<RedNews />} />
       </Route>
       
       <Route path="*" element={<Dashboard />} />

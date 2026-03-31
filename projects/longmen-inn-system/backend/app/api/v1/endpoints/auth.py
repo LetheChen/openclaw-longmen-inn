@@ -26,6 +26,7 @@ from app.core.security import (
     validate_refresh_token,
     generate_csrf_token,
     validate_csrf_token,
+    revoke_access_token_jti,
 )
 from app.core.config import settings
 from app.schemas.user import (
@@ -379,32 +380,41 @@ async def logout(
     """
     用户登出
     
-    撤销refresh_token并清除所有认证Cookie
+    撤销refresh_token、将access_token加入黑名单并清除所有认证Cookie
     """
-    # 从Cookie获取refresh_token并撤销
+    # 1. 获取并撤销 access_token（加入黑名单）
+    access_token_value = request.cookies.get(ACCESS_TOKEN_COOKIE_NAME)
+    if access_token_value:
+        # 解码 token 获取 jti
+        payload = verify_token(access_token_value, "access")
+        if payload and payload.get("jti"):
+            revoke_access_token_jti(payload["jti"])
+    
+    # 2. 从Cookie获取refresh_token并撤销
     refresh_token_value = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
     
     if refresh_token_value:
         revoke_refresh_token(refresh_token_value, db)
     
-    # 清除所有Cookie
+    # 3. 清除所有Cookie
     clear_auth_cookies(response)
     
-    # 记录审计日志（如果用户已登录）
-    user = await get_current_user(request, db=db)
-    if user:
-        audit_log = AuditLog(
-            user_id=user.id,
-            username=user.username,
-            action="logout",
-            resource_type="user",
-            resource_id=user.id,
-            ip_address=request.client.host if request.client else None,
-            status="success"
-        )
-        db.add(audit_log)
-        db.commit()
-        logger.info(f"用户登出: {user.username}")
+    # 4. 记录审计日志（如果用户已登录）
+    if access_token_value:
+        user = await get_current_user(request, db=db)
+        if user:
+            audit_log = AuditLog(
+                user_id=user.id,
+                username=user.username,
+                action="logout",
+                resource_type="user",
+                resource_id=user.id,
+                ip_address=request.client.host if request.client else None,
+                status="success"
+            )
+            db.add(audit_log)
+            db.commit()
+            logger.info(f"用户登出: {user.username}")
     
     return LogoutResponse(message="登出成功")
 
@@ -558,7 +568,7 @@ async def change_password(
 
 
 @router.get("/csrf-token")
-async def get_csrf_token(request: Request):
+async def get_csrf_token(request: Request, response: Response):
     """
     获取CSRF令牌
     
@@ -568,8 +578,17 @@ async def get_csrf_token(request: Request):
     csrf_token = request.cookies.get(CSRF_TOKEN_COOKIE_NAME)
     
     if not csrf_token:
-        # 如果没有CSRF令牌，生成一个新的
+        # 如果没有CSRF令牌，生成一个新的并写入Cookie
         csrf_token = generate_csrf_token()
+        response.set_cookie(
+            key=CSRF_TOKEN_COOKIE_NAME,
+            value=csrf_token,
+            max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+            httponly=False,  # 前端需要读取
+            secure=settings.is_production,
+            samesite="strict",
+            path="/"
+        )
     
     return {"csrf_token": csrf_token}
 

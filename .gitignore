@@ -1,5 +1,5 @@
 # 龙门客栈 .gitignore
-# 版本: v1.0
+# 版本: v2.0（2026-03-31 安全修复 + 数据架构重构）
 
 # === 数据库文件（本地开发数据，不上传）===
 *.db
@@ -18,8 +18,8 @@ data/runtime/
 node_modules/
 __pycache__/
 *.pyc
-.pyo
-.pyd
+*.pyo
+*.pyd
 .Python
 venv/
 env/
@@ -31,6 +31,9 @@ env/
 *.env
 .env.local
 .env.*.local
+# 明确排除 backend/.env（含 SECRET_KEY 等敏感信息）
+backend/.env
+backend/.env.*
 secrets.json
 credentials.json
 *.pem
@@ -55,9 +58,8 @@ build/
 *.log
 logs/
 
-# === 个人工作记忆（可选排除）===
-# 如果不想公开个人工作记忆，取消下面的注释：
-# roles/*/MEMORY_LOG.md
+# === 个人工作记忆 ===
+roles/*/MEMORY_LOG.md
 
 # === 测试覆盖率 ===
 htmlcov/
@@ -73,5 +75,13 @@ coverage.xml
 # === 本地备份目录 ===
 backups/
 
-# === 本地任务看板（如包含敏感项目信息，可排除）===
-# LEDGER.md
+# === 本地 IDE Job 标记文件 ===
+#（由 IDE 插件生成，记录后台任务状态，不需要版本控制）
+.backend_job
+.frontend_job
+
+# === AI 日常报告（个人每日工作记录，不需要上传）===
+ai-daily-reports/
+
+# === 项目交付物（本地验证产物，不需要上传）===
+deliverables/

@@ -8,6 +8,7 @@
 import asyncio
 import uvicorn
 import time
+from datetime import datetime, timezone
 from collections import defaultdict
 from typing import Dict, Tuple
 from fastapi import FastAPI, HTTPException, Request
@@ -95,8 +96,8 @@ class RateLimiter:
         return True, remaining
 
 
-# 全局速率限制器（每分钟1000次请求，方便开发测试）
-rate_limiter = RateLimiter(requests_per_minute=1000)
+# 全局速率限制器（每分钟60次请求，防止DDoS）
+rate_limiter = RateLimiter(requests_per_minute=60)
 
 
 # 速率限制中间件
@@ -113,10 +114,24 @@ class RateLimitMiddleware:
         
         request = Request(scope, receive)
         
-        # 获取客户端标识（IP 或用户ID）
-        client_id = request.client.host if request.client else "unknown"
+        # 获取客户端真实IP（优先从 X-Real-IP 获取，防止 X-Forwarded-For 伪造）
+        # 注意：只有当 server 在受信任的代理（如 Nginx）后方时才能使用这些头
+        client_ip = request.headers.get("x-real-ip")
+        if not client_ip:
+            # X-Forwarded-For 可能包含多个IP，取最左边第一个（原始客户端）
+            x_forwarded_for = request.headers.get("x-forwarded-for")
+            if x_forwarded_for:
+                client_ip = x_forwarded_for.split(",")[0].strip()
+        
+        # 如果都没有，使用 socket 直接获取的地址（最可靠）
+        if not client_ip:
+            client_ip = request.client.host if request.client else "unknown"
+        
+        # 构建客户端标识：优先使用用户ID，其次使用IP
         if hasattr(request.state, "user") and request.state.user:
             client_id = f"user_{request.state.user.id}"
+        else:
+            client_id = f"ip_{client_ip}"
         
         # 跳过特定路径
         skip_paths = ["/docs", "/redoc", "/openapi.json", "/health"]
@@ -141,10 +156,10 @@ class RateLimitMiddleware:
         
         await self.app(scope, receive, send)
 
-# 安全中间件（暂时全部禁用，待修复）
-# app.add_middleware(ErrorHandlerMiddleware)
-# app.add_middleware(ValidationMiddleware)
-# app.add_middleware(RateLimitMiddleware)
+# 安全中间件（已启用）
+app.add_middleware(ErrorHandlerMiddleware)
+app.add_middleware(ValidationMiddleware)
+app.add_middleware(RateLimitMiddleware)
 
 # CORS配置（严格模式）
 app.add_middleware(
@@ -175,7 +190,7 @@ async def root():
 async def health_check():
     return {
         "status": "healthy",
-        "timestamp": "2026-03-14T12:00:00Z"
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
 

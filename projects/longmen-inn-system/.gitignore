@@ -9,6 +9,9 @@
 .env.production
 .env.*.local
 *.env
+# 明确排除 backend/.env（包含 SECRET_KEY 等敏感信息）
+backend/.env
+backend/.env.*
 
 # 密钥文件
 *.pem

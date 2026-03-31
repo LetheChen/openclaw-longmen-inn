@@ -1,500 +1,603 @@
 # 龙门客栈系统代码审查报告
 
-> 审查人：铁算盘老方（账房先生）
-> 审查日期：2026-03-21
-> 审查版本：v1.0
+> **版本**：v1.0.0-audit-001  
+> **审查日期**：2026-03-31  
+> **审查人**：账房先生（铁算盘老方）  
+> **审查范围**：backend/app（Python/FastAPI） + frontend/src（React/TypeScript）
 
 ---
 
-## 一、总体评分
+## 一、总评
 
 | 维度 | 评分 | 说明 |
 |------|------|------|
-| **后端代码质量** | 85/100 | 架构清晰，但存在安全隐患和改进空间 |
-| **前端代码质量** | 82/100 | 组件化良好，但类型定义需加强 |
-| **项目结构** | 88/100 | 组织合理，符合最佳实践 |
-| **文档完整性** | 75/100 | README完善，但缺少API文档和架构图 |
-| **综合评分** | **82.5/100** | 良好，可投入生产使用 |
+| **代码质量** | 72/100 | 整体结构清晰，文档完善，但存在大量重复代码和未完成功能 |
+| **安全性** | 58/100 | 高危问题多，安全中间件全部禁用，多个端点缺少认证 |
+| **规范遵守** | 70/100 | 有文档和类型标注，但部分规范（认证、错误处理）未落实 |
+| **潜在Bug** | 65/100 | 硬编码时间戳、路径遍历风险、依赖注入不规范等问题存在 |
+| **综合评分** | **64/100** | 项目整体处于"能跑但不够安全"的开发阶段 |
 
 ---
 
-## 二、后端代码审查
+## 二、高危问题（High Severity）
 
-### 2.1 FastAPI应用结构 ✅ 良好
+### 🔴 H-01：安全中间件全部被禁用
 
-**优点：**
-- 采用标准的FastAPI应用结构，目录分层清晰
-- 使用lifespan上下文管理器管理启动/关闭逻辑
-- 路由按功能模块划分，符合单一职责原则
-- 中间件配置合理，CORS设置完善
-
-**文件结构：**
-```
-backend/app/
-├── api/v1/endpoints/    # API端点
-├── core/                # 核心配置
-├── db/                  # 数据库层
-├── schemas/             # Pydantic模型
-├── services/            # 业务服务
-└── websocket/           # WebSocket处理
-```
-
-### 2.2 数据库模型设计 ⚠️ 需改进
-
-**优点：**
-- 使用SQLAlchemy ORM，模型定义清晰
-- 枚举类型定义规范（TaskStatus, AgentStatus等）
-- 关系映射完整（一对多、多对多）
-- 自动时间戳字段设计合理
-
-**问题清单：**
-
-| 严重程度 | 问题描述 | 位置 | 建议 |
-|---------|---------|------|------|
-| 🔴 高 | 缺少数据库迁移工具 | `db/` | 集成Alembic进行版本控制 |
-| 🔴 高 | 模型缺少软删除字段 | `models.py` | 添加`is_deleted`和`deleted_at`字段 |
-| 🟡 中 | `datetime.utcnow()`已弃用 | 多处 | 改用`datetime.now(timezone.utc)` |
-| 🟡 中 | 缺少创建者/更新者追踪 | 所有模型 | 添加`created_by`和`updated_by`字段 |
-| 🟢 低 | 外键约束命名不规范 | `models.py` | 使用显式命名约束便于维护 |
-
-**代码示例问题：**
-```python
-# 🔴 问题：使用已弃用的utcnow()
-created_at = Column(DateTime, default=datetime.utcnow)  # 不推荐
-
-# ✅ 正确做法：
-from datetime import datetime, timezone
-created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-```
-
-### 2.3 API接口实现 ✅ 良好
-
-**优点：**
-- RESTful设计规范，端点命名清晰
-- 使用依赖注入管理数据库会话
-- 错误处理统一，返回标准HTTP状态码
-- 查询参数验证完善（使用Query、Field）
-
-**问题清单：**
-
-| 严重程度 | 问题描述 | 位置 | 建议 |
-|---------|---------|------|------|
-| 🔴 高 | 缺少认证授权机制 | 所有端点 | 集成JWT或其他认证方案 |
-| 🔴 高 | 缺少输入数据清洗 | 各端点 | 添加XSS/SQL注入防护 |
-| 🟡 中 | 分页参数未做上限控制 | 列表查询 | 限制最大pageSize为100 |
-| 🟡 中 | 删除检查逻辑过于简单 | projects.py:68 | 提供更详细的错误信息 |
-| 🟢 低 | API响应格式不统一 | 部分端点 | 定义统一的Response包装类 |
-
-**关键代码问题：**
+**文件**：`backend/app/main.py`（第89-92行）
 
 ```python
-# 🔴 高危：缺少认证，任何人可访问敏感数据
+# 安全中间件（暂时全部禁用，待修复）
+# app.add_middleware(ErrorHandlerMiddleware)
+# app.add_middleware(ValidationMiddleware)
+# app.add_middleware(RateLimitMiddleware)
+```
+
+**风险**：
+- `ErrorHandlerMiddleware` 被禁用意味着全局异常未统一处理，500错误直接暴露Python堆栈
+- `ValidationMiddleware` 被禁用意味着请求参数校验完全依赖各端点自己处理
+- `RateLimitMiddleware` 被禁用意味着接口完全无速率限制，容易遭受DDoS
+
+**修复建议**：
+- 立即启用 `ErrorHandlerMiddleware`，生产环境返回脱敏错误
+- 启用 `RateLimitMiddleware`，对公开接口限流
+- 评估 `ValidationMiddleware` 的必要性，若启用需全面测试
+
+---
+
+### 🔴 H-02：多个核心API端点完全无认证保护
+
+**文件**：`backend/app/api/v1/endpoints/tasks.py`
+
+```python
+# get_tasks - 第15行：无需任何认证
 @router.get("/")
 async def get_tasks(
-    db: Session = Depends(get_db),  # 无认证
+    db: Session = Depends(get_db),
     ...
 ):
-    # 建议：
-    # current_user: User = Depends(get_current_user)
-
-# 🔴 高危：批量删除未做权限检查
-@router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_project(
-    project_id: int,
-    db: Session = Depends(get_db)  # 无权限验证
-):
 ```
 
-### 2.4 服务层逻辑 ⚠️ 需改进
+**受影响端点**：
 
-**优点：**
-- OpenClaw集成服务设计合理
-- 支持同步和异步两种数据库会话
-- WebSocket连接管理器实现完整
+| 端点 | 文件 | 风险 |
+|------|------|------|
+| `GET /api/v1/tasks/` | tasks.py:15 | 无认证查看所有任务 |
+| `POST /api/v1/tasks/` | tasks.py:129 | **无认证创建任务** |
+| `GET /api/v1/tasks/{id}` | tasks.py:165 | 无认证查看任务详情 |
+| `PUT /api/v1/tasks/{id}` | tasks.py:193 | **无认证修改任务** |
+| `DELETE /api/v1/tasks/{id}` | tasks.py:254 | **无认证删除任务** |
+| `GET /api/v1/projects/` | projects.py:17 | 无认证查看所有项目 |
+| `POST /api/v1/projects/` | projects.py:92 | **无认证创建项目** |
+| `GET /api/v1/agents/` | agents.py:18 | 无认证查看所有Agent |
+| `POST /api/v1/agents/` | agents.py:183 | **无认证创建Agent** |
+| `DELETE /api/v1/agents/{id}` | agents.py:233 | **无认证删除Agent** |
+| `POST /api/v1/longmenling/` | longmenling.py:23 | **无认证发放积分** |
+| `GET /api/v1/audit-logs` | audit_log.py (routers/) | 无认证查看审计日志 |
 
-**问题清单：**
-
-| 严重程度 | 问题描述 | 位置 | 建议 |
-|---------|---------|------|------|
-| 🔴 高 | 异常处理不完善 | `openclaw_service.py` | 添加统一的异常捕获和日志 |
-| 🔴 高 | 硬编码敏感信息 | `config.py:28` | SECRET_KEY应使用环境变量 |
-| 🟡 中 | 服务层缺少单例模式 | 多处服务 | 使用依赖注入管理服务实例 |
-| 🟡 中 | 数据库会话未做连接池优化 | `session.py` | 配置合理的连接池参数 |
-| 🟢 低 | 日志记录不足 | 服务层 | 添加关键操作的日志记录 |
-
-**代码示例问题：**
-```python
-# 🔴 高危：硬编码密钥
-SECRET_KEY: str = "your-secret-key-here-change-in-production"  # config.py
-
-# ✅ 正确做法：
-import os
-SECRET_KEY: str = os.getenv("SECRET_KEY", "dev-secret-key")  # 生产环境必须设置
-```
-
-### 2.5 代码质量：类型注解 ✅ 良好
-
-**优点：**
-- 使用Pydantic进行数据验证
-- 类型注解覆盖率高
-- 使用Python类型提示（Optional、List等）
-
-**问题：**
-- 部分函数返回类型未标注
-- 少量`Any`类型使用过度
-
-### 2.6 代码质量：错误处理 ⚠️ 需改进
-
-**问题：**
-- 全局异常处理器缺失
-- 部分错误信息暴露内部细节
-- 数据库事务回滚不完整
-
-**建议添加全局异常处理：**
-```python
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    logger.exception("Unhandled exception")
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "Internal server error"}
-    )
-```
-
-### 2.7 代码质量：日志记录 ⚠️ 需改进
-
-**优点：**
-- 使用structlog进行结构化日志
-- 关键操作有日志记录
-
-**问题：**
-- 敏感信息可能被记录（如密码、token）
-- 日志级别使用不规范
-- 缺少请求/响应日志中间件
+**修复建议**：
+- 所有涉及数据修改的端点（POST/PUT/DELETE/PATCH）必须要求 `Depends(get_current_user_required)`
+- 敏感数据读取端点至少要求 `Depends(get_current_user)` 或更高权限
+- 建议在 API router 层统一加认证守卫，而不是逐端点添加
 
 ---
 
-## 三、前端代码审查
+### 🔴 H-03：内存速率限制器可被轻易绕过
 
-### 3.1 React组件架构 ✅ 良好
+**文件**：`backend/app/main.py`（第47-75行）
 
-**优点：**
-- 采用函数组件和Hooks
-- 组件划分合理，职责单一
-- 使用React Router进行路由管理
-- 样式与逻辑分离
-
-**组件结构：**
-```
-frontend/src/
-├── components/
-│   ├── common/          # 公共组件
-│   └── Layout/          # 布局组件
-├── pages/               # 页面组件
-├── services/            # API服务
-├── types/               # 类型定义
-└── utils/               # 工具函数
+```python
+class RateLimiter:
+    def is_allowed(self, client_id: str) -> Tuple[bool, int]:
+        # 获取客户端标识（IP 或用户ID）
+        client_id = request.client.host if request.client else "unknown"
 ```
 
-### 3.2 TypeScript类型定义 ⚠️ 需改进
+**风险**：
+1. `request.client.host` 可被 HTTP 头 `X-Forwarded-For` 或 `X-Real-IP` 伪造
+2. 内存存储，重启即失效，多实例无法共享
+3. 每分钟1000次限制过高，形同虚设
 
-**优点：**
-- 使用枚举定义状态和优先级
-- 接口定义相对完整
+**修复建议**：
+- 接入 Redis 实现分布式限流
+- 使用可靠的IP获取方式（优先从 `X-Real-IP` 但需配置信任代理）
+- 降低限制阈值至合理值（如每分钟60次）
 
-**问题清单：**
+---
 
-| 严重程度 | 问题描述 | 位置 | 建议 |
-|---------|---------|------|------|
-| 🔴 高 | 类型定义与后端不一致 | `types/task.ts` | 确保前后端枚举值一致 |
-| 🟡 中 | 缺少API响应类型定义 | `services/` | 定义统一的API响应类型 |
-| 🟡 中 | 部分使用`any`类型 | 多处 | 明确具体类型 |
-| 🟢 低 | 类型文件分散 | `types/` | 考虑集中管理或使用自动生成 |
+### 🔴 H-04：开发环境默认密钥硬编码
 
-**代码示例问题：**
-```typescript
-// 🟡 问题：未定义返回类型
-export const getTasks = async (params?: TaskFilter) => {
-  const response = await api.get('/tasks', { params });
-  return response.data.data;  // 返回类型隐式推断
-};
+**文件**：`backend/app/core/config.py`（第18行）
 
-// ✅ 正确做法：
-export const getTasks = async (params?: TaskFilter): Promise<TaskListResponse> => {
-  const response = await api.get<TaskListResponse>('/tasks', { params });
-  return response.data;
-};
+```python
+_DEV_SECRET_KEY = "dev-secret-key-DO-NOT-USE-IN-PRODUCTION"
 ```
 
-### 3.3 状态管理 ✅ 良好
+**文件**：`backend/app/core/config.py`（第65-79行）
 
-**优点：**
-- 使用Zustand进行轻量级状态管理
-- 组件内部状态管理合理
-- 数据流清晰
-
-**问题：**
-- 部分状态可考虑提升到全局
-- 缺少状态持久化机制
-
-### 3.4 API服务层 ⚠️ 需改进
-
-**优点：**
-- 使用axios进行HTTP请求
-- 请求/响应拦截器设计合理
-- 统一的错误处理逻辑
-
-**问题清单：**
-
-| 严重程度 | 问题描述 | 位置 | 建议 |
-|---------|---------|------|------|
-| 🔴 高 | 错误处理不完善，只打印日志 | `api.ts:45` | 向用户显示友好的错误提示 |
-| 🔴 高 | Token存储在localStorage | `api.ts:18` | 考虑使用HttpOnly Cookie |
-| 🟡 中 | 缺少请求重试机制 | `api.ts` | 添加网络错误重试逻辑 |
-| 🟡 中 | 超时时间过长 | `api.ts:10` | 30秒超时偏长，建议10-15秒 |
-| 🟢 低 | 缺少请求缓存 | 服务层 | 对频繁调用的API添加缓存 |
-
-**代码示例问题：**
-```typescript
-// 🔴 高危：Token存储在localStorage，易受XSS攻击
-const token = localStorage.getItem('token');
-if (token) {
-  config.headers.Authorization = `Bearer ${token}`;
-}
-
-// 🔴 高危：错误只打印到控制台，用户无感知
-case 500:
-  console.error('服务器内部错误');
-  break;
+```python
+# 开发环境：允许使用默认开发密钥
+if environment == "development":
+    warnings.warn(...)
+    return _DEV_SECRET_KEY  # ← 直接使用弱密钥
 ```
 
-### 3.5 代码质量：组件复用 ✅ 良好
+**风险**：
+- 即使设置了 `ENVIRONMENT=production`，若未设置 `SECRET_KEY` 环境变量，staging 分支仍会使用弱密钥
+- 攻击者可利用此密钥伪造任意用户的 JWT token
 
-**优点：**
-- 提取了公共组件（TaskCard、AgentCard等）
-- 使用了Ant Design组件库
-- 样式统一，符合"江湖风"设计
+**修复建议**：
+- 生产环境检测到未设置 `SECRET_KEY` 时应直接拒绝启动，而不是降级使用弱密钥
+- 将 `_DEV_SECRET_KEY` 改为仅在 `ENVIRONMENT=development` 时使用
+- 建议增加启动时强制检测：`if settings.is_production and settings.SECRET_KEY == _DEV_SECRET_KEY: raise RuntimeError(...)`
 
-**组件设计评价：**
-| 组件 | 复用性 | 评价 |
-|------|--------|------|
-| TaskCard | 高 | 设计良好，props清晰 |
-| AgentCard | 高 | 可复用性强 |
-| KanbanBoard | 中 | 功能完整但略显复杂 |
-| StatCard | 高 | 简洁实用 |
+---
 
-### 3.6 代码质量：性能优化 ⚠️ 需改进
+### 🔴 H-05：文件读取接口存在路径遍历风险
 
-**问题清单：**
+**文件**：`backend/app/api/v1/endpoints/files.py`（第101-105行）
 
-| 严重程度 | 问题描述 | 位置 | 建议 |
-|---------|---------|------|------|
-| 🟡 中 | 未使用React.memo | 列表组件 | 对纯组件使用memo优化 |
-| 🟡 中 | 缺少useMemo/useCallback | `Dashboard.tsx` | 对计算属性和回调函数优化 |
-| 🟡 中 | 图片未做懒加载 | 多处 | 添加图片懒加载 |
-| 🟢 低 | WebSocket未做断线重连 | `openclawService.ts` | 添加自动重连机制 |
+```python
+@router.get("/role/{agent_id}/file")
+async def get_agent_role_file(agent_id: str, file_path: str = "IDENTITY.md"):
+    ...
+    if not str(file_full_path.resolve()).startswith(str(role_dir.resolve())):
+        raise HTTPException(status_code=403, detail="无权访问此文件")
+```
 
-**代码示例问题：**
+**风险**：
+- 路径遍历检查 `startswith` 逻辑理论上可被符号链接（symlink）绕过
+- `file_path` 参数用户可控，若处理不当可读取任意文件
+
+**修复建议**：
+- 使用 `Path.resolve()` 并对比规范化后的绝对路径
+- 限制只能读取 `.md` 和 `.json` 文件（已在代码中部分实现）
+- 考虑使用沙盒目录或 chroot 环境隔离
+
+---
+
+### 🔴 H-06：前端登录页硬编码暴露开发测试账号
+
+**文件**：`frontend/src/pages/Login.tsx`（第119-122行）
+
 ```tsx
-// 🟡 问题：每次渲染都创建新函数
-const loadData = useCallback(async () => {
-  // ...
-}, []); // 空依赖，但内部引用了外部状态
+{import.meta.env.DEV && (
+  <div className="dev-hint">
+    <Text code>admin / Admin@123456</Text>
+  </div>
+)}
+```
 
-// 建议：拆分数据处理和UI渲染
-const TaskList: React.FC = React.memo(({ tasks }) => {
-  return <>{tasks.map(task => <TaskCard key={task.id} task={task} />)}</>;
+**风险**：
+- 虽是 DEV 模式保护，但开发者可能误将 DEBUG 代码打包进生产
+- 代码仓库若泄露，攻击者立即获得管理员账号
+
+**修复建议**：
+- 删除前端代码中的硬编码凭证提示
+- 默认账户信息仅通过安全渠道（内部wiki）传达
+- 可保留"开发环境提示"但不显示具体密码
+
+---
+
+### 🔴 H-07：refresh_token 不验证旧 token 即销毁（登出逻辑缺陷）
+
+**文件**：`backend/app/api/v1/endpoints/auth.py`（第207-213行）
+
+```python
+@router.post("/logout")
+async def logout(...):
+    # 从Cookie获取refresh_token并撤销
+    refresh_token_value = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
+    if refresh_token_value:
+        revoke_refresh_token(refresh_token_value, db)  # ← 只撤销了refresh_token
+    # 清除所有Cookie
+    clear_auth_cookies(response)
+    # access_token 未被撤销！
+```
+
+**风险**：
+- 攻击者拿到 valid 的 access_token（有效期24小时）后，即使受害者"登出"，攻击者仍可在24小时内以受害者身份操作
+- Refresh token 被撤销但 access token 未被加入黑名单
+
+**修复建议**：
+- 引入 token 黑名单机制（如 Redis 存储已撤销的 access_token jti）
+- 或者在 `logout` 时通过 `revoke_all_user_tokens` 撤销所有相关 refresh_tokens
+- 参考方案：短期 access_token + 检查 Redis 黑名单
+
+---
+
+### 🔴 H-08：数据库会话依赖注入不规范，造成连接泄漏
+
+**文件**：`backend/app/core/security.py`（第73、92行）
+
+```python
+async def get_current_user(..., db: Session = Depends(lambda: SessionLocal())):
+    ...
+    user = db.query(User).filter(User.id == user_id).first()
+    return user  # ← 函数结束后 db 未关闭！
+```
+
+**受影响文件**：
+- `backend/app/core/security.py` — `get_current_user` 和 `get_current_user_required`
+- `backend/app/api/deps.py` — `get_current_user` 和 `get_current_user_required`
+
+**问题**：
+- 正确的 `get_db` 使用 `yield` 模式确保会话关闭
+- 这里的 `db: Session = Depends(lambda: SessionLocal())` 不会触发 `finally: db.close()`
+- 高并发场景下可能导致数据库连接耗尽
+
+**修复建议**：
+- 统一使用 `from app.api.deps import get_db` 作为依赖注入
+- 不要在依赖项外自行实例化 `SessionLocal()`
+
+---
+
+## 三、中危问题（Medium Severity）
+
+### 🟠 M-01：backend/.env 文件未被 .gitignore 忽略
+
+**文件**：`backend/.env`
+
+**风险**：
+- `.env` 文件通常包含 `SECRET_KEY`、`DATABASE_URL` 等敏感信息
+- 若提交到版本控制，攻击者可获取生产配置
+
+**修复建议**：
+- 立即从 git 历史中移除 `.env` 文件
+- 在项目根目录和 backend 目录的 `.gitignore` 中添加 `*.env`（排除 `.env.example`）
+- `.env` 应该是本地手动创建，不从版本库复制
+
+---
+
+### 🟠 M-02：Agent 管理端点完全无权限控制
+
+**文件**：`backend/app/api/v1/endpoints/agents.py`
+
+```python
+@router.post("/")  # 无认证
+async def create_agent(...)
+
+@router.delete("/{agent_id}")  # 无认证
+async def delete_agent(...)
+```
+
+**风险**：
+- 任何人可以创建、修改、删除 Agent 记录
+- 可能被用来伪造 Agent 数据以操纵积分排行榜
+
+**修复建议**：
+- 所有 Agent 管理端点要求 `Depends(get_admin_user)` 或 `Depends(get_current_user_required)`
+- 创建/删除操作应记录审计日志
+
+---
+
+### 🟠 M-03：OpenClaw API Key 明文存储
+
+**文件**：`backend/app/api/v1/endpoints/openclaw.py`（第122-148行）
+
+```python
+def _save_config(config: dict):
+    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+        json.dump(config, f, ...)
+```
+
+**风险**：
+- `OPENCLAW_API_KEY` 以明文形式写入 `~/.openclaw/workspace/.longmen_inn/openclaw_config.json`
+- 文件权限若配置不当，本地其他用户可读取
+
+**修复建议**：
+- API Key 存储使用系统密钥加密（如 `python-keyring` 或 AWS Secrets Manager）
+- 或仅从环境变量读取，不提供写入配置文件功能
+
+---
+
+### 🟠 M-04：审计日志端点无认证且记录到文件无加密
+
+**文件**：`backend/app/routers/audit_log.py` + `audit_log.jsonl`
+
+```python
+AUDIT_LOG_PATH = os.path.expanduser("~/.openclaw/workspace/.longmen_inn/audit_log.jsonl")
+```
+
+**风险**：
+- 审计日志记录用户操作，但 `/api/v1/audit-logs` 端点无认证
+- 任何人可读取所有操作记录
+- JSONL 文件明文存储，可被篡改
+
+**修复建议**：
+- 审计日志端点要求 `Depends(get_current_user_required)`
+- 考虑使用 append-only 日志存储（如数据库表），防止文件被篡改
+
+---
+
+### 🟠 M-05：`health` 端点返回硬编码时间戳
+
+**文件**：`backend/app/main.py`（第123-127行）
+
+```python
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "timestamp": "2026-03-14T12:00:00Z"  # ← 硬编码！
+    }
+```
+
+**风险**：
+- 健康检查无法反映真实服务状态
+- 监控告警系统基于此时间戳会误判
+
+**修复建议**：
+- 使用 `datetime.utcnow().isoformat()` 返回真实时间
+- 增加数据库连接、Redis 等关键依赖的健康检查
+
+---
+
+### 🟠 M-06：前端 API 服务层直接暴露 `import.meta.env`
+
+**文件**：`frontend/src/services/api.ts`
+
+```typescript
+const api: AxiosInstance = axios.create({
+  baseURL: (import.meta as any).env?.VITE_API_BASE_URL || '/api/v1',
 });
 ```
 
+**风险**：
+- 使用 `(import.meta as any).env` 绕过 TypeScript 类型检查
+- `VITE_` 前缀变量若配置不当可注入恶意值
+
+**修复建议**：
+- 定义正确的环境变量类型接口
+- baseURL 应该有明确的类型和默认值校验
+
 ---
 
-## 四、项目结构审查
+### 🟠 M-07：CSRF Token 验证接口未强制要求 Token
 
-### 4.1 目录组织 ✅ 良好
+**文件**：`backend/app/api/v1/endpoints/auth.py`（第320-335行）
 
-**优点：**
-- 前后端分离清晰
-- 配置文件集中管理
-- 资源文件组织合理
-
-**目录结构评价：**
-```
-longmen-inn-system/
-├── backend/                 # 后端代码 ✅
-│   ├── app/                 # 应用主目录 ✅
-│   ├── data/                # 数据文件 ✅
-│   ├── requirements.txt      # 依赖 ✅
-│   └── init_db.py           # 初始化脚本 ✅
-├── frontend/                # 前端代码 ✅
-│   ├── src/                 # 源码 ✅
-│   ├── public/              # 静态资源 ✅
-│   └── package.json         # 依赖 ✅
-├── start-services.ps1       # 启动脚本 ✅
-└── README.md               # 说明文档 ✅
-```
-
-**问题：**
-- 缺少测试目录（`tests/`）
-- 缺少docs目录存放设计文档
-- 缺少CI/CD配置文件
-
-### 4.2 配置管理 ⚠️ 需改进
-
-**优点：**
-- 使用Pydantic Settings管理配置
-- 支持.env文件
-
-**问题清单：**
-
-| 严重程度 | 问题描述 | 位置 | 建议 |
-|---------|---------|------|------|
-| 🔴 高 | 缺少环境区分 | `config.py` | 添加development/production配置 |
-| 🔴 高 | 敏感配置硬编码 | 多处 | 使用环境变量注入 |
-| 🟡 中 | 缺少配置验证 | `config.py` | 添加配置合法性校验 |
-| 🟢 低 | 前端环境变量类型不安全 | `vite.config.ts` | 使用类型化的环境变量 |
-
-**建议配置结构：**
 ```python
-class Settings(BaseSettings):
-    ENVIRONMENT: str = "development"
-    
-    @property
-    def is_production(self) -> bool:
-        return self.ENVIRONMENT == "production"
-    
-    @validator("SECRET_KEY")
-    def validate_secret_key(cls, v, values):
-        if values.get("is_production") and v == "dev-secret-key":
-            raise ValueError("生产环境必须设置安全的SECRET_KEY")
-        return v
+@router.get("/csrf-token")
+async def get_csrf_token(request: Request):
+    csrf_token = request.cookies.get(CSRF_TOKEN_COOKIE_NAME)
+    if not csrf_token:
+        csrf_token = generate_csrf_token()  # ← 未设置到Cookie！
+    return {"csrf_token": csrf_token}
 ```
 
-### 4.3 文档完整性 ⚠️ 需改进
+**风险**：
+- `generate_csrf_token()` 返回新 token 但未通过 `set_cookie` 写入响应
+- 前端拿到的 token 与 Cookie 中的不一致，验证必然失败
 
-**已有文档：**
-- ✅ README.md（启动指南）
-- ✅ 代码注释（较为完整）
-
-**缺失文档：**
-- ❌ API文档（建议使用Swagger/OpenAPI）
-- ❌ 架构设计文档
-- ❌ 数据库ER图
-- ❌ 部署文档
-- ❌ 开发者指南
-- ❌ 变更日志（CHANGELOG.md）
+**修复建议**：
+- 若要实现 Double Submit Cookie 模式，应在返回 Response 对象时同时 set_cookie
+- 或者改为纯 Cookie 模式（前端不读 token，只通过 Cookie 自动发送）
 
 ---
 
-## 五、安全问题汇总
+### 🟠 M-08：WebSocket 端点 Token 参数未验证
 
-### 🔴 高危问题（必须修复）
+**文件**：`backend/app/websocket/handler.py`（第26行）
 
-| 编号 | 问题描述 | 影响 | 修复建议 |
-|------|---------|------|---------|
-| SEC-001 | 无认证授权机制 | 任何人可访问所有API | 实现JWT认证中间件 |
-| SEC-002 | SECRET_KEY硬编码 | 密钥泄露风险 | 使用环境变量 |
-| SEC-003 | Token存储在localStorage | XSS攻击风险 | 使用HttpOnly Cookie |
-| SEC-004 | 缺少输入验证清洗 | 注入攻击风险 | 添加输入过滤和参数化查询 |
-| SEC-005 | 错误信息暴露内部细节 | 信息泄露 | 统一错误响应格式 |
+```python
+@websocket_router.websocket("/ws/{client_id}")
+async def websocket_endpoint(
+    websocket: WebSocket,
+    client_id: str,
+    token: Optional[str] = Query(None),  # ← 接收但未验证！
+    groups: Optional[str] = Query(None)
+):
+```
 
-### 🟡 中危问题（建议修复）
+**风险**：
+- WebSocket 连接可被任意客户端建立
+- `token` 参数被接收但未做任何校验
 
-| 编号 | 问题描述 | 影响 | 修复建议 |
-|------|---------|------|---------|
-| SEC-006 | CORS配置允许所有来源 | CSRF风险 | 限制允许的来源 |
-| SEC-007 | 缺少速率限制 | DoS风险 | 实现API速率限制 |
-| SEC-008 | WebSocket无认证 | 未授权访问 | 添加WebSocket认证 |
-| SEC-009 | 缺少SQL注入防护 | 数据泄露风险 | 使用参数化查询 |
-| SEC-010 | 敏感日志记录 | 日志泄露 | 过滤敏感信息 |
-
----
-
-## 六、改进建议
-
-### 6.1 短期改进（1-2周）
-
-1. **安全加固**
-   - 实现JWT认证机制
-   - 移除所有硬编码密钥
-   - 添加输入验证中间件
-
-2. **错误处理**
-   - 添加全局异常处理器
-   - 统一错误响应格式
-   - 改善前端错误提示
-
-3. **性能优化**
-   - 添加API响应缓存
-   - 优化前端组件渲染
-   - 数据库查询优化
-
-### 6.2 中期改进（1-2月）
-
-1. **架构优化**
-   - 引入数据库迁移工具（Alembic）
-   - 实现服务层依赖注入
-   - 添加单元测试和集成测试
-
-2. **功能增强**
-   - 实现WebSocket断线重连
-   - 添加审计日志功能
-   - 实现软删除机制
-
-3. **文档完善**
-   - 编写API文档
-   - 绘制架构图
-   - 编写开发者指南
-
-### 6.3 长期改进（3-6月）
-
-1. **基础设施**
-   - 配置CI/CD流程
-   - 容器化部署（Docker）
-   - 监控告警系统
-
-2. **可观测性**
-   - 日志聚合（ELK）
-   - 性能监控（APM）
-   - 业务指标统计
+**修复建议**：
+- 实现 WebSocket 握手时的 token 验证（参考 FastAPI WebSocket 认证最佳实践）
+- 未验证前不向客户端发送任何业务数据
 
 ---
 
-## 七、审查结论
+### 🟠 M-09：模块级循环依赖风险
 
-### 总体评价
+**文件**：`backend/app/core/security.py` ↔ `backend/app/api/deps.py`
 
-龙门客栈系统代码质量**良好**，架构设计合理，符合现代Web应用开发规范。代码组织清晰，前后端分离到位，具备投入生产使用的基础条件。
+```
+core/security.py imports app.db.base.SessionLocal
+  → api/deps.py imports app.core.security.verify_token
+    → 又 imports get_db from app.db.base (via SessionLocal)
+```
 
-### 主要优点
+**问题**：
+- `security.py` 顶层的 `get_db` 依赖使用 `lambda: SessionLocal()` 而非 `Depends(get_db)`
+- 两个文件互相 import，可能导致加载顺序问题
 
-1. ✅ 清晰的分层架构，职责划分明确
-2. ✅ 使用现代技术栈（FastAPI + React + TypeScript）
-3. ✅ 完整的业务功能实现
-4. ✅ 良好的代码注释和命名规范
-5. ✅ 统一的UI/UX设计风格
-
-### 主要问题
-
-1. ❌ 缺少认证授权机制（高危）
-2. ❌ 存在多个安全隐患
-3. ❌ 测试覆盖率为零
-4. ❌ 文档不够完善
-5. ❌ 部分代码需要优化
-
-### 建议优先级
-
-| 优先级 | 改进项 | 预计工时 |
-|--------|--------|---------|
-| P0 | 认证授权机制 | 3-5天 |
-| P0 | 移除硬编码密钥 | 1天 |
-| P1 | 输入验证和安全加固 | 2-3天 |
-| P1 | 全局异常处理 | 1-2天 |
-| P2 | 添加单元测试 | 5-7天 |
-| P2 | 文档完善 | 3-5天 |
+**修复建议**：
+- 在 `api/deps.py` 中统一管理所有依赖注入
+- `core/security.py` 中的认证函数应接收 `db` 作为参数而非依赖注入
 
 ---
 
-**审查人签名：** 铁算盘老方  
-**审查日期：** 2026-03-21  
-**下次审查：** 建议在重大更新后进行复审
+### 🟠 M-10：跨域配置默认值在生产环境不当
+
+**文件**：`backend/app/core/config.py`（第35行）
+
+```python
+CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://localhost:3000", "http://localhost:8080"]
+```
+
+**风险**：
+- 若生产环境未显式设置 `CORS_ORIGINS` 环境变量，会默认允许所有 localhost 端口
+- 结合 `allow_credentials=True`，可能导致凭证泄露
+
+**修复建议**：
+- 生产环境必须有明确的 CORS_ORIGINS 配置
+- 建议在 `validate_secret_key` 类似逻辑中强制检查 CORS_ORIGINS 配置
+
+---
+
+## 四、低危问题（Low Severity）
+
+### 🟡 L-01：health 端点无鉴权可被探测
+
+**文件**：`backend/app/main.py`（第121行）
+
+**说明**：健康检查端点未认证，但这属于正常设计（给负载均衡器探测用），仅作记录。
+
+---
+
+### 🟡 L-02：代码中存在 TODO 注释未完成
+
+**文件**：`backend/app/api/v1/endpoints/tasks.py`（第280行）
+
+```python
+operator_agent_id=None,  # TODO: 从当前用户获取
+```
+
+**说明**：任务状态变更日志的操作人 ID 为 None，未关联到真实用户。
+
+---
+
+### 🟡 L-03：登录表单 `min=8` 密码校验与后端 bcrypt 强度不匹配
+
+**文件**：`frontend/src/pages/Login.tsx`（第90行）
+
+```tsx
+{ min: 8, message: '密码至少8个字符' }
+```
+
+**说明**：前端要求8位，后端 bcrypt 无此限制（可接受任意长度）。不一致可能导致用户困惑。
+
+---
+
+### 🟡 L-04：部分 Python 文件存在 `__pycache__` 和 `.pyc` 文件
+
+**说明**：已构建的文件不应提交到版本库。虽然这是常见问题，但建议确认 `.gitignore` 配置正确。
+
+---
+
+### 🟡 L-05：Dashboard 页面导入了未使用的图标
+
+**文件**：`frontend/src/pages/Dashboard.tsx`（第1-17行）
+
+```tsx
+import { ..., CoffeeOutlined, BookOutlined, EditOutlined, ... } from '@ant-design/icons'
+```
+
+**说明**：存在死代码，建议清理。
+
+---
+
+### 🟡 L-06：`get_my_tasks` 端点未实现用户绑定过滤
+
+**文件**：`backend/app/api/v1/endpoints/tasks.py`（第110-127行）
+
+```python
+@router.get("/my")
+async def get_my_tasks(...):
+    """获取我的任务（未实现认证时返回所有任务）"""
+    query = db.query(models.Task)
+    ...
+```
+
+**说明**：注释已承认"未实现"，该端点实际返回所有任务而非当前用户任务。
+
+---
+
+### 🟡 L-07：项目 README.md 中暴露了开发环境默认账户信息
+
+**文件**：`backend/README.md`（推测）
+
+**说明**：文档不应包含生产或共享账户的明文凭据，应仅描述如何初始化账户。
+
+---
+
+### 🟡 L-08：SQLite 数据库文件存储在项目目录
+
+**文件**：`backend/longmen_inn.db`
+
+**风险**：
+- 数据库文件与代码混在一起，不便于部署和备份
+- 若误提交到 git 造成数据泄露
+
+**修复建议**：
+- 数据库文件放在项目外的独立目录
+- 加入 `.gitignore`
+
+---
+
+## 五、整体改进建议
+
+### 5.1 安全优先（最高优先级）
+
+1. **立即启用安全中间件**：ErrorHandler、RateLimit 必须立即启用
+2. **强制认证策略**：所有修改型 API 必须携带有效 JWT（除 `/auth/login`）
+3. **密钥管理**：生产环境禁用默认密钥，启动时强制检测
+4. **依赖注入规范化**：统一使用 `app/api/deps.py` 中的依赖，禁止直接实例化 `SessionLocal()`
+5. **Token 撤销机制**：引入 Redis 黑名单，支持 access_token 的即时撤销
+
+### 5.2 代码质量提升
+
+1. **消除重复代码**：`core/security.py` 和 `api/deps.py` 中的认证逻辑高度重复，应合并为一个统一模块
+2. **完善类型标注**：前端部分文件仍使用 `any`，应加强 TypeScript 类型安全
+3. **清理 TODO**：代码中 TODO 注释应转化为 GitHub Issue 或立即实现
+4. **统一错误处理**：所有端点应统一返回标准错误格式
+
+### 5.3 测试覆盖
+
+1. **增加认证相关单元测试**：JWT 生成/验证、token 刷新、登出等场景
+2. **API 权限测试**：验证各角色对端点的访问控制
+3. **前端组件测试**：关键页面（Login、Dashboard）的行为测试
+4. **集成测试**：使用 `TestClient` 对 FastAPI 端点进行集成测试
+
+### 5.4 配置与环境
+
+1. **敏感文件隔离**：`.env` 文件彻底从版本控制排除
+2. **数据库配置外置**：生产数据库连接信息不得写在代码或配置文件中
+3. **日志规范化**：统一日志格式，增加请求ID追踪
+
+### 5.5 架构优化
+
+1. **Redis 集成**：速率限制、Token 黑名单、缓存等场景急需 Redis
+2. **任务队列**：后台同步任务（openclaw_sync_service）应使用 Celery 或类似工具
+3. **API 版本管理**：当前 v1 无版本隔离，建议平滑升级路径
+
+---
+
+## 六、问题汇总
+
+| 编号 | 严重度 | 类别 | 位置 | 问题名称 |
+|------|--------|------|------|----------|
+| H-01 | 🔴高 | 安全 | main.py:89-92 | 安全中间件全部禁用 |
+| H-02 | 🔴高 | 认证 | tasks.py等多文件 | 多个核心端点无认证 |
+| H-03 | 🔴高 | 安全 | main.py:47-75 | 速率限制可被绕过 |
+| H-04 | 🔴高 | 安全 | config.py:18,65-79 | 开发环境默认弱密钥 |
+| H-05 | 🔴高 | 安全 | files.py:101-105 | 路径遍历风险 |
+| H-06 | 🔴高 | 安全 | Login.tsx:119-122 | 前端硬编码测试账号 |
+| H-07 | 🔴高 | 安全 | auth.py:207-213 | 登出后access_token未撤销 |
+| H-08 | 🔴高 | 规范 | security.py:73,92 | 数据库会话未关闭 |
+| M-01 | 🟠中 | 安全 | backend/.env | .env未加入gitignore |
+| M-02 | 🟠中 | 认证 | agents.py | Agent端点无权限控制 |
+| M-03 | 🟠中 | 安全 | openclaw.py:122 | API Key明文存储 |
+| M-04 | 🟠中 | 安全 | audit_log.py | 审计日志无认证 |
+| M-05 | 🟠中 | Bug | main.py:123 | health端点硬编码时间戳 |
+| M-06 | 🟠中 | 规范 | api.ts | 环境变量类型不安全 |
+| M-07 | 🟠中 | 安全 | auth.py:320 | CSRF token未写入Cookie |
+| M-08 | 🟠中 | 认证 | handler.py:26 | WebSocket token未验证 |
+| M-09 | 🟠中 | 规范 | security.py↔deps.py | 模块循环依赖 |
+| M-10 | 🟠中 | 安全 | config.py:35 | CORS默认值生产不安全 |
+| L-01 | 🟡低 | 规范 | main.py:121 | health端点说明（正常设计） |
+| L-02 | 🟡低 | 规范 | tasks.py:280 | TODO未完成 |
+| L-03 | 🟡低 | 规范 | Login.tsx:90 | 密码校验前后端不一致 |
+| L-04 | 🟡低 | 规范 | backend/ | pycache文件 |
+| L-05 | 🟡低 | 规范 | Dashboard.tsx | 未使用导入 |
+| L-06 | 🟡低 | Bug | tasks.py:110 | get_my_tasks未实现 |
+| L-07 | 🟡低 | 安全 | README.md | 文档暴露凭据 |
+| L-08 | 🟡低 | 规范 | backend/ | SQLite数据库文件位置 |
+
+**总计**：高危 8 项 · 中危 10 项 · 低危 8 项
+
+---
+
+*账房先生（铁算盘老方）审查完毕 · 2026-03-31*

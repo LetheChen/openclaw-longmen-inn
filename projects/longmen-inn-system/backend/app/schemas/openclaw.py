@@ -100,3 +100,18 @@ class OpenClawConfigUpdate(BaseModel):
     ws_url: Optional[str] = Field(None, description="WebSocket URL")
     api_key: Optional[str] = Field(None, description="API Key")
     heartbeat_interval: Optional[int] = Field(None, description="心跳间隔(秒)")
+    # 客栈情报开关
+    ai_news_enabled: Optional[bool] = Field(None, description="AI日报开关")
+    news_enabled: Optional[bool] = Field(None, description="时事要闻开关")
+    red_news_enabled: Optional[bool] = Field(None, description="红色印记开关")
+
+
+class OpenClawConfigResponse(BaseModel):
+    """OpenClaw配置响应（用于GET /openclaw/config）"""
+    gateway_url: str
+    ws_url: str
+    api_key: Optional[str] = None
+    heartbeat_interval: int = 1800
+    ai_news_enabled: bool = True
+    news_enabled: bool = True
+    red_news_enabled: bool = True

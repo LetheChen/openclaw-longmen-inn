@@ -10,8 +10,11 @@ import os
 import json
 from typing import List, Optional
 from datetime import datetime
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
+from sqlalchemy.orm import Session
 
+from app.api.deps import get_db, get_current_user_required
+from app.models.user import User
 from app.schemas.audit_log import (
     AuditLogEntry,
     AuditLogResponse,
@@ -146,6 +149,7 @@ def build_feed_item(entry: dict) -> dict:
 
 @router.get("", response_model=AuditLogResponse)
 async def get_audit_logs(
+    current_user: User = Depends(get_current_user_required),
     skip: int = Query(default=0, ge=0, description="跳过条目数（分页）"),
     limit: int = Query(default=20, ge=1, le=100, description="返回条目数量"),
     status: Optional[str] = Query(default=None, description="按状态过滤 (passed, failed)"),
@@ -184,6 +188,7 @@ async def get_audit_logs(
 
 @router.get("/feed", response_model=AuditFeedResponse)
 async def get_audit_feed(
+    current_user: User = Depends(get_current_user_required),
     limit: int = Query(default=20, ge=1, le=100, description="返回动态数量"),
 ) -> AuditFeedResponse:
     """
@@ -203,7 +208,9 @@ async def get_audit_feed(
 
 
 @router.get("/stats")
-async def get_audit_stats():
+async def get_audit_stats(
+    current_user: User = Depends(get_current_user_required),
+):
     """
     获取审计日志统计信息
     
