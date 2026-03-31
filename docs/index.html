@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>榫欓棬瀹㈡爤 - 鍩轰簬 OpenClaw 鐨勫 Agent 鍗忎綔绠＄悊绯荤粺</title>
+  <meta name="description" content="榫欓棬瀹㈡爤 - 鍩轰簬 OpenClaw 鐨勫 Agent 鍗忎綔绠＄悊绯荤粺锛屾敮鎸佽嚜瀹氫箟瑙掕壊銆佹妧鑳戒笌宸ヤ綔娴佽嚜鍔ㄥ寲锛屽府鍔╀紒涓氬揩閫熸惌寤?AI 鍗忎綔鍥㈤槦銆?>
+  <meta name="keywords" content="OpenClaw, 澶欰gent鍗忎綔, AI鑷姩鍖? 宸ヤ綔娴? Agent绯荤粺, 鏅鸿兘浣? Python, React">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      font-family: "PingFang SC", "Microsoft YaHei", -apple-system, sans-serif;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+    }
+    .hero { text-align: center; max-width: 800px; }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #e94560, #ff6b6b, #feca57);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+      letter-spacing: 8px;
+    }
+    .hero .subtitle {
+      font-size: 1.3rem;
+      color: #a0a0a0;
+      margin-bottom: 40px;
+      line-height: 1.8;
+    }
+    .hero .badges { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 50px; }
+    .hero .badges img { height: 22px; }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      max-width: 900px;
+      width: 100%;
+      margin-bottom: 50px;
+    }
+    .feature {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 28px 20px;
+      text-align: center;
+    }
+    .feature .icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .feature h3 { font-size: 1.1rem; color: #feca57; margin-bottom: 8px; }
+    .feature p { font-size: 0.9rem; color: #888; line-height: 1.6; }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #e94560, #ff6b6b);
+      color: white;
+      padding: 16px 40px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(233,69,96,0.4);
+    }
+    .cta:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(233,69,96,0.5); }
+    .tech-stack {
+      margin-top: 50px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .tech-tag {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: #a0a0a0;
+    }
+    .footer { margin-top: 60px; color: #555; font-size: 0.85rem; text-align: center; }
+    .footer a { color: #888; text-decoration: none; }
+    .footer a:hover { color: #e94560; }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <h1>榫欓棬瀹㈡爤</h1>
+    <p class="subtitle">
+      鍩轰簬 OpenClaw 鐨勫 Agent 鍗忎綔绠＄悊绯荤粺<br>
+      Multi-Agent Collaboration System based on OpenClaw
+    </p>
+
+    <div class="badges">
+      <a href="https://github.com/LetheChen/openclaw-longmen-inn/stargazers"><img src="https://img.shields.io/github/stars/LetheChen/openclaw-longmen-inn?style=social" alt="stars"></a>
+      <a href="https://github.com/LetheChen/openclaw-longmen-inn/network/members"><img src="https://img.shields.io/github/forks/LetheChen/openclaw-longmen-inn?style=social" alt="forks"></a>
+      <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT">
+      <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python">
+      <img src="https://img.shields.io/badge/React-18+-61dafb.svg" alt="React">
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="icon">馃彲</div>
+        <h3>瑙掕壊鍗忎綔绯荤粺</h3>
+        <p>鎺屾煖銆佸簵灏忎簩銆佸ぇ鍘ㄣ€佽处鎴垮厛鐢熲€?澶氳鑹插悇鍙稿叾鑱岋紝AI Agent 楂樻晥鍗忎綔</p>
+      </div>
+      <div class="feature">
+        <div class="icon">鈿旓笍</div>
+        <h3>INN_RULES 瑙勫垯寮曟搸</h3>
+        <p>閫氳繃瑙勫垯鏂囦欢瀹氫箟鍗忎綔鏈哄埗锛岄槻姝㈣秺鏉冭秺鐣岋紝淇濋殰绯荤粺鏈夊簭杩愯浆</p>
+      </div>
+      <div class="feature">
+        <div class="icon">馃搳</div>
+        <h3>LEDGER 浠诲姟鐪嬫澘</h3>
+        <p>鍍?Trello 涓€鏍风殑浠诲姟鐪嬫澘锛屽疄鏃惰拷韪墍鏈夐」鐩繘灞曚笌鎴愬憳鐘舵€?/p>
+      </div>
+      <div class="feature">
+        <div class="icon">馃敡</div>
+        <h3>OpenClaw 鍘熺敓</h3>
+        <p>鍏呭垎鍒╃敤 OpenClaw Agent 妗嗘灦鑳藉姏锛屾敮鎸佽嚜瀹氫箟瑙掕壊涓庢妧鑳芥墿灞?/p>
+      </div>
+    </div>
+
+    <a class="cta" href="https://github.com/LetheChen/openclaw-longmen-inn">馃殌 鍓嶅線 GitHub</a>
+
+    <div class="tech-stack">
+      <span class="tech-tag">OpenClaw</span>
+      <span class="tech-tag">Python</span>
+      <span class="tech-tag">FastAPI</span>
+      <span class="tech-tag">React</span>
+      <span class="tech-tag">TypeScript</span>
+      <span class="tech-tag">Zustand</span>
+      <span class="tech-tag">Ant Design</span>
+      <span class="tech-tag">WebSocket</span>
+      <span class="tech-tag">SQLite</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>鍩轰簬 <a href="https://github.com/openclaw/openclaw">OpenClaw Agent Framework</a> 鏋勫缓 路 MIT License</p>
+    <p style="margin-top:8px;">LetheChen / openclaw-longmen-inn</p>
+  </div>
+
+</body>
+</html>
