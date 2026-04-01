@@ -1,71 +1,692 @@
-﻿<!DOCTYPE html><html lang="zh-CN"><head>  <meta charset="UTF-8">  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>&#x9F8D;&#x95E8;&#x5BA2;&#x6808; - &#x591A;Agent&#x534F;&#x4F5C;&#x7BA1;&#x7406;&#x7CFB;&#x7EDF;</title>  <meta name="description" content="&#x9F8D;&#x95E8;&#x5BA2;&#x6808;&#x662F;&#x4E00;&#x4E2A;&#x57FA;&#x4E8E;OpenClaw&#x6846;&#x67B6;&#x7684;&#x591A;Agent&#x534F;&#x4F5C;&#x7CFB;&#x7EDF;&#xFF0C;&#x7075;&#x611F;&#x6765;&#x81EA;&#x4E2D;&#x56FD;&#x4F20;&#x7EDF;&#x5BA2;&#x6808;&#x6587;&#x5316;&#x3002;&#x901A;&#x8FC7;&#x89D2;&#x8272;&#x5206;&#x5DE5;&#x548C;&#x89C4;&#x5219;&#x7EA6;&#x675F;&#xFF0C;&#x5B9E;&#x73B0;AI&#x667A;&#x80FD;&#x4F53;&#x4E4B;&#x95F4;&#x7684;&#x9AD8;&#x6548;&#x534F;&#x4F5C;&#x3002">  <meta name="keywords" content="OpenClaw, &#x591A;Agent&#x534F;&#x4F5C;, AI&#x667A;&#x80FD;&#x4F53;, &#x4EFB;&#x52A1;&#x7BA1;&#x7406;, Agent&#x6846;&#x67B6;, FastAPI, React, TypeScript">  <meta property="og:title" content="&#x9F8D;&#x95E8;&#x5BA2;&#x6808; - &#x591A;Agent&#x534F;&#x4F5C;&#x7BA1;&#x7406;&#x7CFB;&#x7EDF;">  <meta property="og:description" content="&#x57FA;&#x4E8E;&#x4E2D;&#x56FD;&#x4F20;&#x7EDF;&#x5BA2;&#x6808;&#x6587;&#x5316;&#xFF0C;&#x6253;&#x9020;&#x591A;Agent&#x534F;&#x4F5C;&#x7684;AI&#x667A;&#x80FD;&#x4F53;&#x56E2;&#x961F;">  <meta property="og:type" content="website">  <link rel="preconnect" href="https://fonts.googleapis.com">  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">  <style>    :root{--primary:#e94560;--gold:#feca57;--dark-bg:#0d1117;--card-bg:#161b22;--card-border:#30363d;--text-primary:#e6edf3;--text-secondary:#8b949e;--text-muted:#6e7681;--accent-blue:#58a6ff;--accent-green:#3fb950}    *{margin:0;padding:0;box-sizing:border-box}    html{scroll-behavior:smooth}    body{background:var(--dark-bg);color:var(--text-primary);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;overflow-x:hidden}    a{color:var(--accent-blue);text-decoration:none;transition:color .2s}a:hover{color:var(--primary)}    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,17,23,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--card-border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:60px}    .nav-brand{font-size:1.2rem;font-weight:700;color:var(--gold);font-family:"Noto Serif SC",serif;letter-spacing:2px}    .nav-links{display:flex;gap:28px;list-style:none}    .nav-links a{color:var(--text-secondary);font-size:.9rem;font-weight:500}    .nav-links a:hover{color:var(--text-primary)}    .nav-cta{background:var(--primary);color:#fff!important;padding:8px 20px;border-radius:20px;font-weight:600}    .nav-cta:hover{background:#c73e54;color:#fff!important}    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 60px;background:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(233,69,96,.18) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 60%,rgba(254,202,87,.07) 0%,transparent 50%),var(--dark-bg);position:relative}    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(233,69,96,.12);border:1px solid rgba(233,69,96,.3);color:var(--primary);padding:6px 16px;border-radius:20px;font-size:.85rem;font-weight:500;margin-bottom:28px;animation:fadeInDown .6s ease}    .hero h1{font-size:clamp(3rem,9vw,5.5rem);font-weight:800;background:linear-gradient(135deg,var(--gold) 0%,#ff9f43 40%,var(--primary) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:"Noto Serif SC",serif;letter-spacing:8px;margin-bottom:20px;animation:fadeInUp .8s ease}    .hero-sub{font-size:1.2rem;color:var(--text-secondary);max-width:640px;margin-bottom:40px;line-height:1.9;animation:fadeInUp .8s ease .1s both}    .hero-badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:48px;animation:fadeInUp .8s ease .2s both}    .hero-badges img{height:22px;border-radius:4px}    .hero-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;animation:fadeInUp .8s ease .3s both}    .btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--primary),#ff6b6b);color:#fff;padding:14px 32px;border-radius:50px;font-size:1rem;font-weight:700;box-shadow:0 4px 24px rgba(233,69,96,.35);transition:all .25s}    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(233,69,96,.5);color:#fff}    .btn-secondary{display:inline-flex;align-items:center;gap:8px;background:var(--card-bg);color:var(--text-primary);padding:14px 32px;border-radius:50px;font-size:1rem;font-weight:600;border:1px solid var(--card-border);transition:all .25s}    .btn-secondary:hover{border-color:var(--accent-blue);color:var(--accent-blue);transform:translateY(-2px)}    .scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:var(--text-muted);font-size:.8rem;animation:bounce 2.5s infinite;display:flex;flex-direction:column;align-items:center;gap:4px}    .section{padding:100px 24px;max-width:1200px;margin:0 auto}    .section-label{display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-size:.85rem;font-weight:600;letter-spacing:2px;margin-bottom:12px}    .section-title{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;font-family:"Noto Serif SC",serif;color:var(--text-primary);margin-bottom:16px}    .section-desc{color:var(--text-secondary);max-width:600px;font-size:1.05rem;line-height:1.8;margin-bottom:56px}    .reveal{opacity:0;transform:translateY(32px);transition:all .7s cubic-bezier(.25,.8,.25,1)}    .reveal.visible{opacity:1;transform:translateY(0)}    .concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}    .concept-visual{background:linear-gradient(135deg,rgba(233,69,96,.07),rgba(254,202,87,.07));border:1px solid var(--card-border);border-radius:20px;padding:36px}    .concept-vtitle{font-size:.8rem;color:var(--text-muted);margin-bottom:16px;font-family:"Noto Serif SC",serif;letter-spacing:1px}    .kanban-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}    .kanban-col{background:rgba(255,255,255,.02);border:1px solid var(--card-border);border-radius:8px;padding:10px 6px}    .kanban-col-title{font-size:.7rem;font-weight:600;color:var(--text-muted);text-align:center;margin-bottom:8px;letter-spacing:1px}    .kanban-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:5px;padding:7px 8px;margin-bottom:5px;font-size:.72rem;color:var(--text-secondary);text-align:left}    .kanban-card.high{border-left:3px solid var(--primary)}    .kanban-card.med{border-left:3px solid var(--gold)}    .kanban-card.low{border-left:3px solid var(--accent-green)}    .ranking-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px 12px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px}    .ranking-medal{font-size:1.1rem}    .ranking-name{flex:1;font-size:.85rem;font-weight:600;color:var(--text-primary)}    .ranking-score{font-size:.8rem;font-weight:700;color:var(--gold)}    .concept-text h3{font-size:1.4rem;font-weight:700;color:var(--gold);margin-bottom:16px;font-family:"Noto Serif SC",serif}    .concept-text p{color:var(--text-secondary);margin-bottom:20px;font-size:1rem;line-height:1.8}    .rules-box{background:rgba(254,202,87,.05);border:1px solid rgba(254,202,87,.15);border-radius:12px;padding:20px}    .rules-box h4{color:var(--gold);font-size:.9rem;margin-bottom:12px}    .rules-box ol{padding-left:18px;color:var(--text-secondary);font-size:.88rem}    .rules-box ol li{margin-bottom:6px}    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}    .feature-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:32px 28px;transition:all .3s;position:relative;overflow:hidden}    .feature-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--gold));opacity:0;transition:opacity .3s}    .feature-card:hover{border-color:rgba(233,69,96,.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.3)}    .feature-card:hover::before{opacity:1}    .feature-icon{font-size:2.5rem;margin-bottom:16px;display:block}    .feature-card h3{font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:10px}    .feature-card p{color:var(--text-secondary);font-size:.9rem;line-height:1.7}    .roles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}    .role-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;display:flex;gap:18px;transition:all .3s;cursor:default}    .role-card:hover{border-color:rgba(233,69,96,.4);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.25)}    .role-avatar{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0;font-family:"Noto Serif SC",serif;font-weight:700}    .role-card:nth-child(1) .role-avatar{background:linear-gradient(135deg,#e94560,#ff6b6b);color:#fff}    .role-card:nth-child(2) .role-avatar{background:linear-gradient(135deg,#feca57,#ff9f43);color:#1a1a2e}    .role-card:nth-child(3) .role-avatar{background:linear-gradient(135deg,#58a6ff,#3fb950);color:#fff}    .role-card:nth-child(4) .role-avatar{background:linear-gradient(135deg,#bc8cff,#ff6b6b);color:#fff}    .role-card:nth-child(5) .role-avatar{background:linear-gradient(135deg,#ffa657,#e94560);color:#fff}    .role-card:nth-child(6) .role-avatar{background:linear-gradient(135deg,#3fb950,#58a6ff);color:#fff}    .role-card:nth-child(7) .role-avatar{background:linear-gradient(135deg,#ff6b6b,#feca57);color:#1a1a2e}    .role-name{font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:2px}    .role-title{font-size:.78rem;color:var(--text-muted);margin-bottom:8px}    .role-desc{font-size:.86rem;color:var(--text-secondary);line-height:1.6;margin-bottom:10px}    .role-tags{display:flex;gap:5px;flex-wrap:wrap}    .role-tag{background:rgba(255,255,255,.04);border:1px solid var(--card-border);color:var(--text-muted);padding:2px 9px;border-radius:10px;font-size:.7rem}    .role-forbid{margin-top:10px;padding:10px;background:rgba(233,69,96,.05);border:1px solid rgba(233,69,96,.12);border-radius:8px;font-size:.76rem;color:var(--text-muted)}    .role-forbid strong{color:var(--primary)}    .screenshots-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}    .screenshot-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;overflow:hidden;transition:all .3s}    .screenshot-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.4);border-color:rgba(233,69,96,.3)}    .screenshot-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#1a1a2e}    .screenshot-label{padding:14px 18px;font-size:.88rem;font-weight:600;color:var(--text-secondary);border-top:1px solid var(--card-border)}    .tech-section{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:56px 48px;text-align:center}    .tech-grid{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:36px}    .tech-item{background:rgba(255,255,255,.03);border:1px solid var(--card-border);border-radius:12px;padding:14px 22px;display:flex;align-items:center;gap:10px;transition:all .25s}    .tech-item:hover{border-color:var(--accent-blue);transform:translateY(-2px)}    .tech-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}    .tech-name{font-weight:600;font-size:.9rem;color:var(--text-primary)}    .tech-role{font-size:.75rem;color:var(--text-muted)}    .workflow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin-top:48px}    .wf-step{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:150px}    .wf-icon{width:68px;height:68px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin-bottom:10px}    .wf-step:nth-child(1) .wf-icon{background:linear-gradient(135deg,#feca57,#ff9f43)}    .wf-step:nth-child(3) .wf-icon{background:linear-gradient(135deg,#58a6ff,#3fb950)}    .wf-step:nth-child(5) .wf-icon{background:linear-gradient(135deg,#bc8cff,#ff6b6b)}    .wf-step:nth-child(7) .wf-icon{background:linear-gradient(135deg,#e94560,#ff6b6b)}    .wf-step:nth-child(9) .wf-icon{background:linear-gradient(135deg,#ffa657,#e94560)}    .wf-step:nth-child(11) .wf-icon{background:linear-gradient(135deg,#3fb950,#58a6ff)}    .wf-label{font-weight:700;font-size:.95rem;color:var(--text-primary);margin-bottom:2px}    .wf-sub{font-size:.75rem;color:var(--text-muted);margin-bottom:6px}    .wf-desc{font-size:.76rem;color:var(--text-secondary);line-height:1.5}    .wf-arrow{font-size:1.4rem;color:var(--card-border);padding:0 8px;flex-shrink:0}    .arch-section{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:48px;text-align:center;margin-top:48px}    .arch-flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap}    .arch-node{background:rgba(255,255,255,.03);border:1px solid var(--card-border);border-radius:14px;padding:18px 22px;min-width:120px;text-align:center;transition:all .25s}    .arch-node:hover{border-color:var(--accent-blue);transform:translateY(-2px)}    .arch-icon{font-size:1.9rem;margin-bottom:8px}    .arch-name{font-weight:700;font-size:.9rem;color:var(--text-primary)}    .arch-role{font-size:.72rem;color:var(--text-muted);margin-top:2px}    .arch-arrow{font-size:1.4rem;color:var(--card-border);padding:0 8px}    .start-tabs{display:flex;gap:8px;margin-bottom:20px}    .start-tab{padding:10px 22px;border-radius:10px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--text-secondary);cursor:pointer;font-size:.9rem;font-weight:500;transition:all .2s}    .start-tab.active{background:var(--primary);border-color:var(--primary);color:#fff}    .start-content{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:32px}    .code-block{background:#0d1117;border:1px solid var(--card-border);border-radius:10px;padding:18px 22px;font-family:"Fira Code","JetBrains Mono",Consolas,monospace;font-size:.86rem;color:#c9d1d9;line-height:1.8;overflow-x:auto;margin-bottom:14px;white-space:pre}    .code-block .c{color:#6e7681}.code-block .k{color:#ff7b72}.code-block .s{color:#a5d6ff}    .code-output{background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.15);border-radius:10px;padding:14px 18px;font-size:.84rem;color:var(--accent-green);margin-bottom:14px}    .start-note{background:rgba(254,202,87,.05);border:1px solid rgba(254,202,87,.15);border-radius:10px;padding:14px 18px;font-size:.86rem;color:var(--text-secondary);margin-top:14px}    .start-note strong{color:var(--gold)}    .cta-section{text-align:center;padding:100px 24px;background:radial-gradient(ellipse 60% 40% at 50% 100%,rgba(233,69,96,.1) 0%,transparent 60%),var(--dark-bg)}    .cta-section h2{font-size:clamp(2rem,5vw,3rem);font-weight:700;font-family:"Noto Serif SC",serif;background:linear-gradient(135deg,var(--gold),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px}    .cta-section p{color:var(--text-secondary);font-size:1.1rem;max-width:500px;margin:0 auto 40px}    .cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}    footer{border-top:1px solid var(--card-border);padding:40px 24px;text-align:center;color:var(--text-muted);font-size:.85rem}    footer a{color:var(--text-muted)}footer a:hover{color:var(--primary)}    .footer-links{display:flex;gap:24px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}    @keyframes fadeInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}    @keyframes fadeInDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}    @media(max-width:768px){nav{padding:0 20px}.nav-links{display:none}.section{padding:60px 20px}.concept-grid{grid-template-columns:1fr;gap:32px}.workflow{flex-direction:column}.wf-arrow{transform:rotate(90deg)}.tech-section{padding:40px 20px}.arch-section{padding:32px 20px}.arch-flow{flex-direction:column;gap:12px}.arch-arrow{transform:rotate(90deg)}}  </style></head><body><nav>  <div class="nav-brand">&#x1F3EF; &#x9F8D;&#x95E8;&#x5BA2;&#x6808;</div>  <ul class="nav-links">    <li><a href="#concept">&#x6838;&#x5FC3;&#x7406;&#x5FF5;</a></li>    <li><a href="#features">&#x529F;&#x80FD;&#x7279;&#x6027;</a></li>    <li><a href="#roles">&#x89D2;&#x8272;&#x4ECB;&#x7ECD;</a></li>    <li><a href="#screenshots">&#x622A;&#x56FE;&#x9884;&#x89C8;</a></li>    <li><a href="#start">&#x5FEB;&#x901F;&#x5F00;&#x59CB;</a></li>    <li><a href="https://github.com/LetheChen/openclaw-longmen-inn" class="nav-cta">&#x2B50; GitHub</a></li>  </ul></nav><section class="hero">  <div class="hero-badge">&#x1F38E; &#x57FA;&#x4E8E;&#x4E2D;&#x56FD;&#x4F20;&#x7EDF;&#x5BA2;&#x6808;&#x6587;&#x5316;</div>  <h1>&#x9F8D;&#x95E8;&#x5BA2;&#x6808;</h1>  <p class="hero-sub">&#x591A; Agent &#x534F;&#x4F5C;&#x7BA1;&#x7406;&#x7CFB;&#x7EDF; &middot; Multi-Agent Collaboration System<br>&#x57FA;&#x4E8E; OpenClaw &#x6846;&#x67B6;&#xFF0C;&#x901A;&#x8FC7;&#x89D2;&#x8272;&#x5206;&#x5DE5;&#x4E0E;&#x89C4;&#x5219;&#x7EA6;&#x675F;&#xFF0C;&#x5B9E;&#x73B0; AI &#x667A;&#x80FD;&#x4F53;&#x4E4B;&#x95F4;&#x7684;&#x9AD8;&#x6548;&#x534F;&#x4F5C;</p>  <div class="hero-badges">    <img src="https://img.shields.io/github/stars/LetheChen/openclaw-longmen-inn?style=social" alt="stars">    <img src="https://img.shields.io/github/forks/LetheChen/openclaw-longmen-inn?style=social" alt="forks">    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT">    <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python">    <img src="https://img.shields.io/badge/React-18+-61dafb.svg" alt="React">    <img src="https://img.shields.io/badge/FastAPI-0.104+-009688.svg" alt="FastAPI">  </div>  <div class="hero-actions">    <a href="https://github.com/LetheChen/openclaw-longmen-inn" class="btn-primary">&#x1F680; &#x524D;&#x5F80; GitHub</a>    <a href="#start" class="btn-secondary">&#x26A1; &#x5FEB;&#x901F;&#x5F00;&#x59CB;</a>  </div>  <div class="scroll-hint"><span>&#x5411;&#x4E0B;&#x6ED1;&#x52A8;</span><span style="font-size:1.2rem">&#x2193;</span></div></section><section class="section" id="concept">  <div class="reveal">    <div class="section-label">&#x1F4A1; &#x6838;&#x5FC3;&#x7406;&#x5FF5;</div>    <div class="section-title">&#x50CF;&#x7ECF;&#x8425;&#x5BA2;&#x6808;&#x4E00;&#x6837;&#x7ECF;&#x8425; AI &#x56E2;&#x961F;</div>    <p class="section-desc">&#x9F8D;&#x95E8;&#x5BA2;&#x6808;&#x5C06;&#x4E2D;&#x56FD;&#x4F20;&#x7EDF;&#x5BA2;&#x6808;&#x6587;&#x5316;&#x4E0E;&#x73B0;&#x4EE3;&#x591A; Agent &#x534F;&#x4F5C;&#x7CFB;&#x7EDF;&#x76F8;&#x7ED3;&#x5408;&#xFF0C;&#x6BCF;&#x4E2A; AI &#x89D2;&#x8272;&#x90FD;&#x6709;&#x72EC;&#x7279;&#x7684;&#x804C;&#x8D23;&#x8FB9;&#x754C;&#x3001;&#x534F;&#x4F5C;&#x89C4;&#x5219;&#x548C;&#x6FC0;&#x52B1;&#x673A;&#x5236;&#xFF0C;&#x8BA9;&#x56E2;&#x961F;&#x534F;&#x4F5C;&#x4E95;&#x7136;&#x6709;&#x5E8F;&#x3002;</p>  </div>  <div class="concept-grid reveal">    <div class="concept-visual">      <div class="concept-vtitle">&#x1F4CB; &#x4EFB;&#x52A1;&#x770B;&#x677F; + &#x1F3C6; &#x9F8D;&#x95E8;&#x4EE4;&#x6392;&#x884C;&#x699C;</div>      <div class="kanban-cols">        <div class="kanban-col"><div class="kanban-col-title">&#x1F4CB; &#x5F85;&#x529E;</div>          <div class="kanban-card high">AI &#x65E5;&#x62A5;&#x6536;&#x96C6;</div><div class="kanban-card med">API &#x6587;&#x6863;&#x7F16;&#x5199;</div><div class="kanban-card low">README &#x7FFB;&#x8BD1;</div>        </div>        <div class="kanban-col"><div class="kanban-col-title">&#x26A1; &#x8FDB;&#x884C;&#x4E2D;</div>          <div class="kanban-card high">&#x91C7;&#x8D2D;&#x6D41;&#x7A0B;&#x4F18;&#x5316;</div><div class="kanban-card med">&#x524D;&#x7AEF;&#x7EC4;&#x4EF6;&#x5F00;&#x53D1;</div>        </div>        <div class="kanban-col"><div class="kanban-col-title">&#x2705; &#x5DF2;&#x5B8C;&#x6210;</div>          <div class="kanban-card low">&#x6570;&#x636E;&#x5E93;&#x8FC1;&#x79FB;</div><div class="kanban-card low">&#x6743;&#x9650;&#x6A21;&#x5757;&#x8BBE;&#x8BA1;</div>        </div>      </div>      <div style="margin-top:16px;border-top:1px solid var(--card-border);padding-top:16px;">        <div class="concept-vtitle">&#x1F3C6; &#x9F8D;&#x95E8;&#x4EE4;&#x6392;&#x884C;&#x699C;</div>        <div class="ranking-row"><span class="ranking-medal">&#x1F947;</span><span class="ranking-name">&#x94C1;&#x7B97;&#x76D6;&#x8001;&#x65B9;</span><span class="ranking-score">128 &#x4EE4;</span></div>        <div class="ranking-row"><span class="ranking-medal">&#x1F948;</span><span class="ranking-name">&#x795E;&#x53A8;&#x5C0F;&#x798F;&#x8D35;</span><span class="ranking-score">96 &#x4EE4;</span></div>        <div class="ranking-row"><span class="ranking-medal">&#x1F949;</span><span class="ranking-name">&#x5FEB;&#x624B;&#x963F;&#x8D35;</span><span class="ranking-score">84 &#x4EE4;</span></div>      </div>    </div>    <div class="concept-text">      <h3>&#x89C4;&#x5219;&#x5373;&#x79E6;&#x5E8F;&#xFF0C;&#x534F;&#x4F5C;&#x521B;&#x4EF7;&#x503C;</h3>      <p>&#x9F8D;&#x95E8;&#x5BA2;&#x6808;&#x901A;&#x8FC7; <code>INN_RULES.md</code> &#x5B9A;&#x4E49;&#x5BA2;&#x6808;&#x603B;&#x89C4;&#xFF0C;&#x660E;&#x786E;&#x6BCF;&#x4E2A;&#x89D2;&#x8272;&#x7684;&#x804C;&#x8D23;&#x8FB9;&#x754C;&#x3001;&#x7EDD;&#x5BF9;&#x7981;&#x4EE4;&#x4E0E;&#x534F;&#x4F5C;&#x6D41;&#x7A0B;&#x3002;AI &#x89D2;&#x8272;&#x5728;&#x89C4;&#x5219;&#x7EA6;&#x675F;&#x4E0B;&#x5404;&#x53F1;&#x5179;&#x8054;&#xFF0C;&#x6709;&#x5E8F;&#x534F;&#x4F5C;&#x3002;</p>      <div class="rules-box">        <h4>&#x1F4DD; &#x5BA2;&#x6808;&#x4E94;&#x6761;&#x94C1;&#x89C4;</h4>        <ol>          <li><strong>&#x5F00;&#x5DE5;&#x5148;&#x770B;&#x8D26;</strong> &mdash; &#x6BCF;&#x65E5;&#x4E0A;&#x7EBF;&#x5148;&#x67E5;&#x9605; LEDGER.md&#xFF0C;&#x660E;&#x786E;&#x6302;&#x724C;&#x4EFB;&#x52A1;</li>          <li><strong>&#x5404;&#x53F1;&#x5179;&#x8054;</strong> &mdash; &#x4E25;&#x683C;&#x9075;&#x5B88;&#x89D2;&#x8272;&#x804C;&#x8D23;&#xFF0C;&#x4E0D;&#x8D8A;&#x6743;&#x3001;&#x4E0D;&#x8D8A;&#x754C;</li>          <li><strong>&#x8BB0;&#x5FC6;&#x4F20;&#x627F;</strong> &mdash; &#x6BCF;&#x6B21;&#x4EA4;&#x73ED;&#x66F4;&#x65B0; MEMORY_LOG.md&#xFF0C;&#x63A5;&#x7EED;&#x5DE5;&#x4F5C;</li>          <li><strong>&#x51ED;&#x6361;&#x5F52;&#x6863;</strong> &mdash; &#x4EA7;&#x51FA;&#x7269;&#x5B58;&#x5165; deliverables/&#xFF0C;&#x8BB0;&#x5F55;&#x51ED;&#x6361;</li>          <li><strong>&#x9F8D;&#x95E8;&#x4EE4;&#x8BB0;&#x529F;</strong> &mdash; &#x5DE5;&#x4F5C;&#x91CF;&#x8BA4;&#x5B9A;&#x4EE5;&#x8D26;&#x623F;&#x5148;&#x751F;&#x8BB0;&#x5F55;&#x4E3A;&#x51C6;</li>        </ol>      </div>    </div>  </div></section><section class="section" id="features">  <div class="reveal">    <div class="section-label">&#x2728; &#x529F;&#x80FD;&#x7279;&#x6027;</div>    <div class="section-title">&#x4E3A;&#x4EC0;&#x4E48;&#x9009;&#x62E9;&#x9F8D;&#x95E8;&#x5BA2;&#x6808;&#xFF1F;</div>    <p class="section-desc">&#x4ECE;&#x4EFB;&#x52A1;&#x7BA1;&#x7406;&#x5230;&#x591A;&#x89D2;&#x8272;&#x534F;&#x4F5C;&#xFF0C;&#x63D0;&#x4F9B;&#x5B8C;&#x6574;&#x7684;&#x591A; Agent &#x534F;&#x4F5C;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#x3002;</p>  </div>  <div class="features-grid reveal">    <div class="feature-card"><span class="feature-icon">&#x1F3EF;</span><h3>7 &#x5927;&#x89D2;&#x8272;&#x5404;&#x53F1;&#x5179;&#x8054;</h3><p>&#x8001;&#x677F;&#x5A18;&#x603B;&#x63A7;&#x534F;&#x8C03;&#x3001;&#x5927;&#x6388;&#x69DB;&#x6218;&#x7565;&#x89C4;&#x5212;&#x3001;&#x5E97;&#x5C0F;&#x4E8C;&#x8C03;&#x5EA6;&#x8DDF;&#x8E2A;&#x3001;&#x53A8;&#x5B50;&#x7F16;&#x7801;&#x5B9E;&#x73B0;&#x3001;&#x753B;&#x5E08; UI &#x8BBE;&#x8BA1;&#x3001;&#x8D26;&#x623F;&#x5148;&#x751F;&#x8D28;&#x63A7;&#x3001;&#x8BF4;&#x4E66;&#x5148;&#x751F;&#x6587;&#x6863;&#x8F93;&#x51FA;&#xFF0C;&#x804C;&#x8D23;&#x8FB9;&#x754C;&#x6E05;&#x6670;&#x3002;</p></div>    <div class="feature-card"><span class="feature-icon">&#x2694;&#xFE0F;</span><h3>INN_RULES &#x89C4;&#x5219;&#x5F15;&#x64CE;</h3><p>&#x901A;&#x8FC7;&#x89C4;&#x5219;&#x6587;&#x4EF6;&#x5B9A;&#x4E49;&#x534F;&#x4F5C;&#x673A;&#x5236;&#xFF0C;&#x9632;&#x6B62;&#x8D8A;&#x6743;&#x8D8A;&#x754C;&#x3002;&#x660E;&#x786E;&#x7EDD;&#x5BF9;&#x7981;&#x4EE4;&#xFF0C;&#x4FDD;&#x969C;&#x7CFB;&#x7EDF;&#x6709;&#x5E8F;&#x8FD0;&#x8F6C;&#xFF0C;&#x65B0;&#x89D2;&#x8272;&#x4E5F;&#x80FD;&#x5FEB;&#x901F;&#x878D;&#x5165;&#x56E2;&#x961F;&#x3002;</p></div>    <div class="feature-card"><span class="feature-icon">&#x1F4CA;</span><h3>LEDGER &#x4EFB;&#x52A1;&#x770B;&#x677F;</h3><p>&#x5B9E;&#x65F6;&#x8DDF;&#x8E2A;&#x4EFB;&#x52A1;&#x72B6;&#x6001;&#x4E0E;&#x6210;&#x5458;&#x8868;&#x73B0;&#xFF0C;&#x50CF; Trello &#x4E00;&#x6837;&#x76F4;&#x89C2;&#x3002;&#x4EFB;&#x52A1;&#x521B;&#x5EFA;&#x3001;&#x5206;&#x914D;&#x3001;&#x72B6;&#x6001;&#x6D41;&#x8F6C;&#x5168;&#x6D41;&#x7A0B;&#x53EF;&#x89C6;&#x5316;&#x3002;</p></div>    <div class="feature-card"><span class="feature-icon">&#x1F3C6;</span><h3>&#x9F8D;&#x95E8;&#x4EE4;&#x79EF;&#x5206;&#x6FC0;&#x52B1;</h3><p>&#x5DE5;&#x4F5C;&#x91CF;&#x79EF;&#x5206;&#x7CFB;&#x7EDF;&#x91CF;&#x5316;&#x8D21;&#x732E;&#xFF0C;&#x8D26;&#x623F;&#x5148;&#x751F;&#x516C;&#x6B63;&#x8BB0;&#x529F;&#x3002;&#x6392;&#x884C;&#x699C;&#x5C55;&#x793A;&#xFF0C;&#x6FC0;&#x53D1;&#x56E2;&#x961F;&#x7ADE;&#x4E89;&#x4E0E;&#x534F;&#x4F5C;&#x52A8;&#x529B;&#x3002;</p></div>    <div class="feature-card"><span class="feature-icon">&#x1F50C;</span><h3>OpenClaw &#x539F;&#x751F;&#x96C6;&#x6210;</h3><p>&#x6DF1;&#x5EA6;&#x96C6;&#x6210; OpenClaw Agent &#x6846;&#x67B6;&#xFF0C;&#x652F;&#x6301;&#x81EA;&#x5B9A;&#x4E49;&#x89D2;&#x8272;&#x4E0E;&#x6280;&#x80FD;&#x6269;&#x5C55;&#x3001;&#x5DE5;&#x4F5C;&#x6D41;&#x81EA;&#x52A8;&#x5316;&#xFF0C;&#x5F00;&#x7BB1;&#x5373;&#x7528;&#x3002;</p></div>    <div class="feature-card"><span class="feature-icon">&#x1F4F8;</span><h3>&#x5B9E;&#x65F6;&#x53EF;&#x89C6;&#x5316;&#x76D1;&#x63A7;</h3><p>Dashboard &#x603B;&#x89C8;&#x3001;&#x4EFB;&#x52A1;&#x770B;&#x677F;&#x3001;Agent &#x72B6;&#x6001;&#x3001;&#x9F8D;&#x95E8;&#x4EE4;&#x6392;&#x884C;&#xFF0C;&#x6240;&#x6709;&#x6570;&#x636E;&#x5B9E;&#x65F6;&#x66F4;&#x65B0;&#xFF0C;&#x4E00;&#x76EE;&#x4E86;&#x7136;&#x3002;</p></div>    <div class="feature-card"><span class="feature-icon">&#x1F916;</span><h3>AI &#x9A71;&#x52A8;&#x7684;&#x5DE5;&#x4F5C;&#x6D41;</h3><p>&#x667A;&#x80FD;&#x4EFB;&#x52A1;&#x62C6;&#x89E3;&#x3001;&#x81EA;&#x52A8;&#x5206;&#x914D;&#x4E0E;&#x8DDF;&#x8E2A;&#x3001;AI &#x65E5;&#x62A5;&#x81EA;&#x52A8;&#x751F;&#x6210;&#xFF0C;&#x8BA9;&#x91CD;&#x590D;&#x6027;&#x5DE5;&#x4F5C;&#x81EA;&#x52A8;&#x5316;&#x3002;</p></div>    <div class="feature-card"><span class="feature-icon">&#x1F50D;</span><h3>&#x5168;&#x7A0B;&#x53EF;&#x8FFD;&#x6EAF;&#x7BA1;&#x7406;</h3><p>&#x6574;&#x4E2A;&#x9879;&#x76EE;&#x8FDB;&#x5EA6;&#x3001;&#x4EFB;&#x52A1;&#x72B6;&#x6001;&#x3001;&#x4EA4;&#x4ED8;&#x7269;&#x7ED3;&#x679C;&#x5168;&#x7A0B;&#x53EF;&#x8FFD;&#x6EAF;&#xFF0C;&#x4EC5;&#x901A;&#x8FC7;&#x4E00;&#x4E2A;&#x9875;&#x9762;&#x5C31;&#x80FD;&#x77E5;&#x5168;&#x5C40;&#x3002;</p></div>  </div></section><section class="section" id="roles">  <div class="reveal">    <div class="section-label">&#x1F3AD; &#x89D2;&#x8272;&#x4ECB;&#x7ECD;</div>    <div class="section-title">&#x4E03;&#x4F4D;&#x4F19;&#x8BA1;&#xFF0C;&#x5404;&#x53F1;&#x5179;&#x8054;</div>    <p class="section-desc">&#x6BCF;&#x4E2A;&#x89D2;&#x8272;&#x90FD;&#x6709;&#x6E05;&#x6670;&#x7684;&#x804C;&#x8D23;&#x8FB9;&#x754C;&#x3001;&#x534F;&#x4F5C;&#x89C4;&#x5219;&#x4E0E;&#x6C9F;&#x901A;&#x98CE;&#x683C;&#xFF0C;&#x786E;&#x4FDD;&#x56E2;&#x961F;&#x534F;&#x4F5C;&#x9AD8;&#x6548;&#x6709;&#x5E8F;&#x3002;</p>  </div>  <div class="roles-grid reveal">    <div class="role-card">      <div class="role-avatar">&#x1F43E;</div>      <div class="role-info">        <div class="role-name">&#x8001;&#x677F;&#x5A18; &middot; &#x51E4;&#x8001;&#x677F;</div>        <div class="role-title">main &middot; &#x603B;&#x63A7;&#x534F;&#x8C03;</div>        <div class="role-desc">&#x603B;&#x63A5;&#x5168;&#x5C40;&#xFF0C;&#x67E5;&#x7F3A;&#x8865;&#x6F0C;&#x3002;&#x505A;&#x8C03;&#x5EA6;&#x3001;&#x7BA1;&#x5E94;&#x6025;&#x3001;&#x63A7;&#x5168;&#x573A;&#xFF0C;&#x662F;&#x6574;&#x4E2A;&#x5BA2;&#x6808;&#x7684;&#x6838;&#x5FC3;&#x7F6E;&#x6760;&#x3002;</div>        <div class="role-tags"><span class="role-tag">&#x603B;&#x63A7;</span><span class="role-tag">&#x534F;&#x8C03;</span><span class="role-tag">&#x5141;&#x5E95;</span><span class="role-tag">&#x4F2A;&#x88C1;</span></div>        <div class="role-forbid"><strong>&#x7981;&#x4EE4;&#xFF1A;</strong>&#x65E0;&#x4E8B;&#x4E0D;&#x5E72;&#x9884;&#x4F19;&#x8BA1;&#x7684;&#x5177;&#x4F53;&#x5DE5;&#x4F5C;&#xFF0C;&#x4E0D;&#x6C38;&#x4E45;&#x66FF;&#x4EE3;&#x67D0;&#x4E2A;&#x7279;&#x5B9A;&#x89D2;&#x8272;</div>      </div>    </div>    <div class="role-card">      <div class="role-avatar">&#x1F98A;</div>      <div class="role-info">        <div class="role-name">&#x5927;&#x6388;&#x69DB; &middot; &#x8BF8;&#x845B;&#x6388;&#x69DB;</div>        <div class="role-title">innkeeper &middot; &#x6218;&#x7565;&#x89C4;&#x5212;</div>        <div class="role-desc">&#x6D1B;&#x5BDF;&#x5148;&#x673A;&#xFF0C;&#x5B9A;&#x5934;&#x65B9;&#x5411;&#x3002;&#x60C5;&#x62A5;&#x63A7;&#x96C6;&#x3001;&#x9700;&#x6C42;&#x5206;&#x6790;&#x3001;PRD &#x8F93;&#x51FA;&#xFF0C;&#x786E;&#x4FDD;&#x9879;&#x76EE;&#x59CB;&#x7EC8;&#x5728;&#x6B63;&#x786E;&#x65B9;&#x5411;&#x4E0A;&#x524D;&#x884C;&#x3002;</div>        <div class="role-tags"><span class="role-tag">&#x6218;&#x7565;&#x51B3;&#x7B56;</span><span class="role-tag">PRD</span><span class="role-tag">&#x6280;&#x672F;&#x9009;&#x578B;</span></div>        <div class="role-forbid"><strong>&#x7981;&#x4EE4;&#xFF1A;</strong>&#x4E0D;&#x4EB2;&#x81EA;&#x5199;&#x4EE3;&#x7801;&#xFF0C;&#x4E0D;&#x7ED5;&#x8FC7;&#x5E97;&#x5C0F;&#x4E8C;&#x6D3E;&#x53D1;&#x4EFB;&#x52A1;</div>      </div>    </div>    <div class="role-card">      <div class="role-avatar">&#x1F3C3;</div>      <div class="role-info">        <div class="role-name">&#x5E97;&#x5C0F;&#x4E8C; &middot; &#x5FEB;&#x624B;&#x963F;&#x8D35;</div>        <div class="role-title">waiter &middot; &#x4EFB;&#x52A1;&#x8C03;&#x5EA6;</div>        <div class="role-desc">&#x627F;&#x4E0A;&#x542F;&#x4E0B;&#xFF0C;&#x8DD1;&#x817F;&#x50AC;&#x529E;&#x3002;&#x63A5;&#x6536; PRD&#xFF0C;&#x62C6;&#x89E3;&#x4EFB;&#x52A1;&#xFF0C;&#x8DDF;&#x8E2A;&#x8FDB;&#x5EA6;&#xFF0C;&#x758F;&#x901A;&#x963B;&#x585E;&#uFF0C;&#x63A8;&#x52A8;&#x6D41;&#x7A0B;&#x98D9;&#x7545;&#x8FD0;&#x8F6C;&#u3002;</div>        <div class="role-tags"><span class="role-tag">&#x4EFB;&#x52A1;&#x62C6;&#x89E3;</span><span class="role-tag">&#x8FDB;&#x5EA6;&#x8DDF;&#x8E2A;</span><span class="role-tag">&#x534F;&#x8C03;</span></div>        <div class="role-forbid"><strong>&#x7981;&#x4EE4;&#xFF1A;</strong>&#x4E0D;&#x64C5;&#x81EA;&#x4FEE;&#x6539; PRD&#xFF0C;&#x4E0D;&#x66FF;&#x4F19;&#x8BA1;&#x505A;&#x6280;&#x672F;&#x51B3;&#x7B56;</div>      </div>    </div>    <div class="role-card">      <div class="role-avatar">&#x1F468;&#x200D;&#x1F373;</div>      <div class="role-info">        <div class="role-name">&#x53A8;&#x5B50; &middot; &#x795E;&#x53A8;&#x5C0F;&#x798F;&#x8D35;</div>        <div class="role-title">chef &middot; &#x7F16;&#x7801;&#x5B9E;&#x73B0;</div>        <div class="role-desc">&#x7060;&#x4E0A;&#x529F;&#x592B;&#xFF0C;&#x4EE3;&#x7801;&#x5B9E;&#x73B0;&#x3002;&#x63A5;&#x4EFB;&#x52A1;&#x3001;&#x5199;&#x4EE3;&#x7801;&#x3001;&#x89E3; Bug&#x3001;&#x662F;&#x5BA2;&#x6808;&#x4EA7;&#x51FA;&#x4EE3;&#x7801;&#x7684;&#x6838;&#x5FC3;&#x529B;&#x91CF;&#u3002;</div>        <div class="role-tags"><span class="role-tag">&#x7F16;&#x7801;</span><span class="role-tag">&#x6D4B;&#x8BD5;</span><span class="role-tag">&#x8C03;&#x8BD5;</span><span class="role-tag">CI/CD</span></div>        <div class="role-forbid"><strong>&#x7981;&#x4EE4;&#xFF1A;</strong>&#x4E0D;&#x64C5;&#x81EA;&#x4FEE;&#x6539;&#x9700;&#x6C42;&#xFF0C;&#x4E0D;&#x63D0;&#x4EA4;&#x672A;&#x7ECF;&#x81EA;&#x6D4B;&#x7684;&#x4EE3;&#x7801;</div>      </div>    </div>    <div class="role-card">      <div class="role-avatar">&#x1F3A8;</div>      <div class="role-info">        <div class="role-name">&#x753B;&#x5E08; &middot; &#x58A8;&#x67D3;&#x5148;&#x751F;</div>        <div class="role-title">painter &middot; UI &#x8BBE;&#x8BA1;</div>        <div class="role-desc">&#x5C06;&#x62BD;&#x8C61;&#x9700;&#x6C42;&#x8F6C;&#x5316;&#x4E3A;&#x7F8E;&#x89C2;&#x7684;&#x89C6;&#x89C9;&#x754C;&#x9762;&#uFF0C;&#x8BBE;&#x8BA1;&#x7528;&#x6237;&#x4EA4;&#x4E92;&#x6D41;&#x7A0B;&#xFF0C;&#x5236;&#x5B9A;&#x5E76;&#x7EF4;&#x62A4;&#x89C6;&#x89C9;&#x89C4;&#x8303;&#u3002;</div>        <div class="role-tags"><span class="role-tag">UI&#x8BBE;&#x8BA1;</span><span class="role-tag">&#x539F;&#x578B;</span><span class="role-tag">UX</span><span class="role-tag">&#x89C4;&#x8303;</span></div>        <div class="role-forbid"><strong>&#x7981;&#x4EE4;&#xFF1A;</strong>&#x4E0D;&#x76F4;&#x63A5;&#x7F16;&#x5199;&#x524D;&#x7AEF;&#x4EE3;&#x7801;&#xFF0C;&#x4E0D;&#x4EA4;&#x4ED8;&#x672A;&#x6807;&#x6CE8;&#x7684;&#x8BBE;&#x8BA1;&#x7A3F;</div>      </div>    </div>    <div class="role-card">      <div class="role-avatar">&#x1F9EE;</div>      <div class="role-info">        <div class="role-name">&#x8D26;&#x623F;&#x5148;&#x751F; &middot; &#x94C1;&#x7B97;&#x76D6;&#x8001;&#x65B9;</div>        <div class="role-title">accountant &middot; &#x8D28;&#x91CF;&#x628A;&#x63A7;</div>        <div class="role-desc">&#x67E5;&#x9A8C;&#x79E0;&#x6838;&#xFF0C;&#x8BB0;&#x8D26;&#x53D1;&#x8D4F;&#x3002;&#x5BA1;&#x67E5;&#x4EE3;&#x7801;&#x3001;&#x9A8C;&#x6536;&#x529F;&#x80FD;&#u3001;&#x8BB0;&#x5F55;&#x9F8D;&#x95E8;&#x4EE4;&#u3001;&#x7BA1;&#x7406;&#x4EA4;&#x4ED8;&#uFF0C;&#x786E;&#x4FDD;&#x8D28;&#x91CF;&#x65E0;&#x5C0F;&#u3002;</div>        <div class="role-tags"><span class="role-tag">&#x4EE3;&#x7801;&#x5BA1;&#x67E5;</span><span class="role-tag">QA</span><span class="role-tag">&#x9F8D;&#x95E8;&#x4EE4;</span><span class="role-tag">&#x4EA4;&#x4ED8;</span></div>        <div class="role-forbid"><strong>&#x7981;&#x4EE4;&#xFF1A;</strong>&#x4E0D;&#x64C5;&#x81EA;&#x4FEE;&#x6539;&#x4EE3;&#x7801;&#xFF0C;&#x4E0D;&#x7AC8;&#x6539;&#x9F8D;&#x95E8;&#x4EE4;&#x8BB0;&#x5F55;</div>      </div>    </div>    <div class="role-card">      <div class="role-avatar">&#x270D;&#xFE0F;</div>      <div class="role-info">        <div class="role-name">&#x8BF4;&#x4E66;&#x5148;&#x751F; &middot; &#x5999;&#x7B14;&#x751F;&#x82B1;</div>        <div class="role-title">storyteller &middot; &#x6587;&#x6863;&#x8F93;&#x51FA;</div>        <div class="role-desc">&#x5999;&#x7B14;&#x751F;&#x82B1;&#xFF0C;&#x8BB0;&#x5F55;&#x4F20;&#x627F;&#x3002;&#x64D0;&#x5199;&#x6280;&#x672F;&#x6587;&#x6863;&#u3001;&#x7528;&#x6237;&#x624B;&#x518C;&#u3001;&#x9879;&#x76EE;&#x62A5;&#x544A;&#x4E0E;&#u54C1;&#x724C;&#x6587;&#x6848;&#uFF0C;&#x4F20;&#x64AD;&#x77E5;&#x8BC6;&#u4E0E;&#x4EF7;&#x503C;&#u3002;</div>        <div class="role-tags"><span class="role-tag">&#x6587;&#x6863;</span><span class="role-tag">&#x62A5;&#x544A;</span><span class="role-tag">&#x6587;&#x6848;</span><span class="role-tag">&#x77E5;&#x8BC6;&#x5E93;</span></div>        <div class="role-forbid"><strong>&#x7981;&#x4EE4;&#xFF1A;</strong>&#x4E0D;&#x7F16;&#x5199;&#x672A;&#x7ECF;&#x786E;&#x8BA4;&#x7684;&#x6280;&#x672F;&#x7EC6;&#x8282;&#uFF0C;&#x4E0D;&#x626D;&#x66F2;&#x4EA7;&#x54C1;&#x9700;&#x6C42;</div>      </div>    </div>  </div></section><section class="section" id="screenshots">  <div class="reveal">    <div class="section-label">&#x1F4FC; &#x622A;&#x56FE;&#x9884;&#x89C8;</div>    <div class="section-title">&#x76F4;&#x89C2;&#u53EF;&#x89C6;&#x5316;&#x7BA1;&#x7406;</div>    <p class="section-desc">Dashboard &#x603B;&#x89C8;&#x3001;&#x4EFB;&#x52A1;&#x770B;&#x677F;&#x3001;Agent &#x72B6;&#x6001;&#u3001;&#x6392;&#x884C;&#x699C;&#xFF0C;&#x6240;&#x6709;&#x6570;&#x636E;&#x5B9E;&#x65F6;&#x66F4;&#x65B0;&#uFF0C;&#x5C3D;&#x5728;&#x6387;&#x63A7;&#u3002;</p>  </div>  <div class="screenshots-grid reveal">    <div class="screenshot-card"><img class="screenshot-img" src="../screenshots/dashboard.png" alt="Dashboard" loading="lazy" onerror="this.style.display='none'"><div class="screenshot-label">&#x1F4CA; Dashboard &#x603B;&#x89C8;</div></div>    <div class="screenshot-card"><img class="screenshot-img" src="../screenshots/tasks.png" alt="&#x4EFB;&#x52A1;&#x7BA1;&#x7406;" loading="lazy" onerror="this.style.display='none'"><div class="screenshot-label">&#x1F4CB; &#x4EFB;&#x52A1;&#x770B;&#x677F;</div></div>    <div class="screenshot-card"><img class="screenshot-img" src="../screenshots/agents.png" alt="Agent &#x7BA1;&#x7406;" loading="lazy" onerror="this.style.display='none'"><div class="screenshot-label">&#x1F916; Agent &#x7BA1;&#x7406;</div></div>    <div class="screenshot-card"><img class="screenshot-img" src="../screenshots/projects.png" alt="&#x9879;&#x76EE;&#x7BA1;&#x7406;" loading="lazy" onerror="this.style.display='none'"><div class="screenshot-label">&#x1F4C1; &#x9879;&#x76EE;&#x7BA1;&#x7406;</div></div>    <div class="screenshot-card"><img class="screenshot-img" src="../screenshots/ranking.png" alt="&#x9F8D;&#x95E8;&#x4EE4;&#x6392;&#x884C;&#x699C;" loading="lazy" onerror="this.style.display='none'"><div class="screenshot-label">&#x1F3C6; &#x9F8D;&#x95E8;&#x4EE4;&#x6392;&#x884C;&#x699C;</div></div>  </div></section><section class="section">  <div class="reveal">    <div class="section-label">&#x1F6E0;&#xFE0F; &#x6280;&#x672F;&#x6808;</div>    <div class="section-title">&#x73B0;&#x4EE3;&#x5316;&#x6280;&#x672F;&#x9009;&#x578B;</div>    <p class="section-desc">&#x524D;&#x540E;&#x7AEF;&#x5206;&#x79BB;&#x67B6;&#x6784;&#xFF0C;&#x9009;&#x7528;&#x4E16;&#x754C;&#x4E3B;&#x6D41;&#x6280;&#x672F;&#x6808;&#xFF0C;&#u4FDD;&#x8BC1;&#x7CFB;&#x7EDF;&#x7684;&#x53EF;&#x6269;&#x5C55;&#x6027;&#x4E0E;&#u53EF;&#x7EF4;&#u62A4;&#x6027;&#u3002;</p>  </div>  <div class="tech-section reveal">    <div class="tech-grid">      <div class="tech-item"><div class="tech-icon" style="background:#3776ab;">&#x1F40D;</div><div><div class="tech-name">Python 3.10+</div><div class="tech-role">&#x540E;&#x7AEF;&#x8BED;&#x8A00;</div></div></div>      <div class="tech-item"><div class="tech-icon" style="background:#009688;">&#x26A1;</div><div><div class="tech-name">FastAPI 0.104+</div><div class="tech-role">Web &#x6846;&#x67B6;</div></div></div>      <div class="tech-item"><div class="tech-icon" style="background:#61dafb;">&#x269B;&#xFE0F;</div><div><div class="tech-name">React 18+</div><div class="tech-role">&#x524D;&#x7AEF;&#x6846;&#x67B6;</div></div></div>      <div class="tech-item"><div class="tech-icon" style="background:#3178c6;">&#x1F535;</div><div><div class="tech-name">TypeScript</div><div class="tech-role">&#x7C7B;&#x578B;&#x5B89;&#x5168;</div></div></div>      <div class="tech-item"><div class="tech-icon" style="background:#1673b1;">&#x1F4E6;</div><div><div class="tech-name">Ant Design 5.x</div><div class="tech-role">UI &#x7EC4;&#x4EF6;&#x5E93;</div></div></div>    <div class="tech-name">Zustand 4.x</div><div class="tech-role">&#x72B6;&#x6001;&#x7BA1;&#x7406;</div></div></div>
-      <div class="tech-item"><div class="tech-icon" style="background:#003a6b;">&#x1F4DC;</div><div><div class="tech-name">SQLite / PostgreSQL</div><div class="tech-role">&#x6570;&#x636E;&#x5E93;</div></div></div>
-      <div class="tech-item"><div class="tech-icon" style="background:#010911;">&#x1F50C;</div><div><div class="tech-name">WebSocket</div><div class="tech-role">&#x5B9E;&#x65F6;&#x901A;&#x4FE1;</div></div></div>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>龙门客栈 - 多Agent协作管理系统</title>
+  <meta name="description" content="龙门客栈是一个基于OpenClaw框架的多Agent协作系统，灵感来自中国传统客栈文化。通过角色分工和规则约束，实现AI智能体之间的高效协作。">
+  <meta name="keywords" content="OpenClaw, 多Agent协作, AI智能体, 任务管理, Agent框架, FastAPI, React, TypeScript">
+  <meta property="og:title" content="龙门客栈 - 多Agent协作管理系统">
+  <meta property="og:description" content="基于中国传统客栈文化，打造多Agent协作的AI智能体团队">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #e94560;
+      --primary-dark: #c73e54;
+      --gold: #feca57;
+      --gold-dark: #e8b238;
+      --dark-bg: #0d1117;
+      --card-bg: #161b22;
+      --card-border: #30363d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+      --accent-blue: #58a6ff;
+      --accent-green: #3fb950;
+      --accent-purple: #bc8cff;
+      --accent-orange: #ffa657;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: var(--accent-blue); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--primary); }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(13,17,23,0.88); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0 40px; display: flex; align-items: center;
+      justify-content: space-between; height: 60px;
+    }
+    .nav-brand { font-size: 1.2rem; font-weight: 700; color: var(--gold); font-family: "Noto Serif SC", serif; letter-spacing: 2px; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-cta { background: var(--primary); color: white !important; padding: 8px 20px; border-radius: 20px; font-weight: 600; }
+    .nav-cta:hover { background: var(--primary-dark); color: white !important; }
+
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 100px 24px 60px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -5%, rgba(233,69,96,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 60%, rgba(254,202,87,0.07) 0%, transparent 50%),
+        var(--dark-bg);
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(233,69,96,0.12); border: 1px solid rgba(233,69,96,0.3);
+      color: var(--primary); padding: 6px 16px; border-radius: 20px;
+      font-size: 0.85rem; font-weight: 500; margin-bottom: 28px;
+      animation: fadeInDown 0.6s ease;
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 9vw, 5.5rem); font-weight: 800;
+      background: linear-gradient(135deg, var(--gold) 0%, #ff9f43 40%, var(--primary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      font-family: "Noto Serif SC", serif; letter-spacing: 8px; margin-bottom: 20px;
+      animation: fadeInUp 0.8s ease;
+    }
+    .hero-sub {
+      font-size: 1.2rem; color: var(--text-secondary); max-width: 640px;
+      margin-bottom: 40px; line-height: 1.9; animation: fadeInUp 0.8s ease 0.1s both;
+    }
+    .hero-badges { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 48px; animation: fadeInUp 0.8s ease 0.2s both; }
+    .hero-badges img { height: 22px; border-radius: 4px; }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; animation: fadeInUp 0.8s ease 0.3s both; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--primary), #ff6b6b); color: white;
+      padding: 14px 32px; border-radius: 50px; font-size: 1rem; font-weight: 700;
+      box-shadow: 0 4px 24px rgba(233,69,96,0.35); transition: all 0.25s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(233,69,96,0.5); color: white; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--card-bg); color: var(--text-primary);
+      padding: 14px 32px; border-radius: 50px; font-size: 1rem; font-weight: 600;
+      border: 1px solid var(--card-border); transition: all 0.25s;
+    }
+    .btn-secondary:hover { border-color: var(--accent-blue); color: var(--accent-blue); transform: translateY(-2px); }
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      color: var(--text-muted); font-size: 0.8rem; animation: bounce 2.5s infinite;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+
+    .section { padding: 100px 24px; max-width: 1200px; margin: 0 auto; }
+    .section-label { display: inline-flex; align-items: center; gap: 6px; color: var(--primary); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; margin-bottom: 12px; }
+    .section-title { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; font-family: "Noto Serif SC", serif; color: var(--text-primary); margin-bottom: 16px; }
+    .section-desc { color: var(--text-secondary); max-width: 600px; font-size: 1.05rem; line-height: 1.8; margin-bottom: 56px; }
+
+    .reveal { opacity: 0; transform: translateY(32px); transition: all 0.7s cubic-bezier(0.25,0.8,0.25,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Concept */
+    .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .concept-visual {
+      background: linear-gradient(135deg, rgba(233,69,96,0.07), rgba(254,202,87,0.07));
+      border: 1px solid var(--card-border); border-radius: 20px; padding: 36px;
+    }
+    .concept-visual-title { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; letter-spacing: 1px; font-family: "Noto Serif SC", serif; }
+    .kanban-cols { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .kanban-col { background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 8px; padding: 10px 6px; }
+    .kanban-col-title { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-align: center; margin-bottom: 8px; letter-spacing: 1px; }
+    .kanban-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 5px; padding: 7px 8px; margin-bottom: 5px; font-size: 0.72rem; color: var(--text-secondary); text-align: left; }
+    .kanban-card.high { border-left: 3px solid var(--primary); }
+    .kanban-card.med { border-left: 3px solid var(--gold); }
+    .kanban-card.low { border-left: 3px solid var(--accent-green); }
+    .ranking-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; padding: 8px 12px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; }
+    .ranking-medal { font-size: 1.1rem; }
+    .ranking-name { flex: 1; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+    .ranking-score { font-size: 0.8rem; font-weight: 700; color: var(--gold); }
+    .concept-text h3 { font-size: 1.4rem; font-weight: 700; color: var(--gold); margin-bottom: 16px; font-family: "Noto Serif SC", serif; }
+    .concept-text p { color: var(--text-secondary); margin-bottom: 20px; font-size: 1rem; line-height: 1.8; }
+    .rules-box { background: rgba(254,202,87,0.05); border: 1px solid rgba(254,202,87,0.15); border-radius: 12px; padding: 20px; }
+    .rules-box h4 { color: var(--gold); font-size: 0.9rem; margin-bottom: 12px; }
+    .rules-box ol { padding-left: 18px; color: var(--text-secondary); font-size: 0.88rem; }
+    .rules-box ol li { margin-bottom: 6px; }
+
+    /* Features */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 20px; }
+    .feature-card {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px;
+      padding: 32px 28px; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--gold)); opacity: 0; transition: opacity 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(233,69,96,0.3); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon { font-size: 2.5rem; margin-bottom: 16px; display: block; }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+    .feature-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; }
+
+    /* Roles */
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px,1fr)); gap: 16px; }
+    .role-card {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px;
+      padding: 24px; display: flex; gap: 18px; transition: all 0.3s; cursor: default;
+    }
+    .role-card:hover { border-color: rgba(233,69,96,0.4); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+    .role-avatar {
+      width: 60px; height: 60px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.7rem; flex-shrink: 0; font-family: "Noto Serif SC", serif; font-weight: 700;
+    }
+    .role-card:nth-child(1) .role-avatar { background: linear-gradient(135deg, #e94560, #ff6b6b); color: white; }
+    .role-card:nth-child(2) .role-avatar { background: linear-gradient(135deg, #feca57, #ff9f43); color: #1a1a2e; }
+    .role-card:nth-child(3) .role-avatar { background: linear-gradient(135deg, #58a6ff, #3fb950); color: white; }
+    .role-card:nth-child(4) .role-avatar { background: linear-gradient(135deg, #bc8cff, #ff6b6b); color: white; }
+    .role-card:nth-child(5) .role-avatar { background: linear-gradient(135deg, #ffa657, #e94560); color: white; }
+    .role-card:nth-child(6) .role-avatar { background: linear-gradient(135deg, #3fb950, #58a6ff); color: white; }
+    .role-card:nth-child(7) .role-avatar { background: linear-gradient(135deg, #ff6b6b, #feca57); color: #1a1a2e; }
+    .role-info { flex: 1; }
+    .role-name { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+    .role-title { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px; }
+    .role-desc { font-size: 0.86rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 10px; }
+    .role-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .role-tag { background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); color: var(--text-muted); padding: 2px 9px; border-radius: 10px; font-size: 0.7rem; }
+    .role-forbid { margin-top: 10px; padding: 10px; background: rgba(233,69,96,0.05); border: 1px solid rgba(233,69,96,0.12); border-radius: 8px; font-size: 0.76rem; color: var(--text-muted); }
+    .role-forbid strong { color: var(--primary); }
+
+    /* Screenshots */
+    .screenshots-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 20px; }
+    .screenshot-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; transition: all 0.3s; }
+    .screenshot-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); border-color: rgba(233,69,96,0.3); }
+    .screenshot-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: #1a1a2e; }
+    .screenshot-label { padding: 14px 18px; font-size: 0.88rem; font-weight: 600; color: var(--text-secondary); border-top: 1px solid var(--card-border); }
+
+    /* Tech */
+    .tech-section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 56px 48px; text-align: center; }
+    .tech-grid { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 36px; }
+    .tech-item { background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px 22px; display: flex; align-items: center; gap: 10px; transition: all 0.25s; }
+    .tech-item:hover { border-color: var(--accent-blue); transform: translateY(-2px); }
+    .tech-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .tech-name { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+    .tech-role { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* Workflow */
+    .workflow { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; margin-top: 48px; }
+    .wf-step { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 150px; }
+    .wf-icon { width: 68px; height: 68px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.9rem; margin-bottom: 10px; }
+    .wf-step:nth-child(1) .wf-icon { background: linear-gradient(135deg, #feca57, #ff9f43); }
+    .wf-step:nth-child(3) .wf-icon { background: linear-gradient(135deg, #58a6ff, #3fb950); }
+    .wf-step:nth-child(5) .wf-icon { background: linear-gradient(135deg, #bc8cff, #ff6b6b); }
+    .wf-step:nth-child(7) .wf-icon { background: linear-gradient(135deg, #e94560, #ff6b6b); }
+    .wf-step:nth-child(9) .wf-icon { background: linear-gradient(135deg, #ffa657, #e94560); }
+    .wf-step:nth-child(11) .wf-icon { background: linear-gradient(135deg, #3fb950, #58a6ff); }
+    .wf-label { font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 2px; }
+    .wf-sub { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+    .wf-desc { font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5; }
+    .wf-arrow { font-size: 1.4rem; color: var(--card-border); padding: 0 8px; flex-shrink: 0; }
+
+    /* Quick Start */
+    .start-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .start-tab { padding: 10px 22px; border-radius: 10px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+    .start-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+    .start-content { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 32px; }
+    .code-block { background: #0d1117; border: 1px solid var(--card-border); border-radius: 10px; padding: 18px 22px; font-family: "Fira Code","JetBrains Mono",Consolas,monospace; font-size: 0.86rem; color: #c9d1d9; line-height: 1.8; overflow-x: auto; margin-bottom: 14px; white-space: pre; }
+    .code-block .c { color: #6e7681; }
+    .code-block .k { color: #ff7b72; }
+    .code-block .s { color: #a5d6ff; }
+    .code-output { background: rgba(63,185,80,0.06); border: 1px solid rgba(63,185,80,0.15); border-radius: 10px; padding: 14px 18px; font-size: 0.84rem; color: var(--accent-green); margin-bottom: 14px; }
+    .start-note { background: rgba(254,202,87,0.05); border: 1px solid rgba(254,202,87,0.15); border-radius: 10px; padding: 14px 18px; font-size: 0.86rem; color: var(--text-secondary); margin-top: 14px; }
+    .start-note strong { color: var(--gold); }
+
+    /* Architecture */
+    .arch-section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 48px; text-align: center; margin-top: 48px; }
+    .arch-title { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; font-family: "Noto Serif SC", serif; }
+    .arch-flow { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
+    .arch-node { background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px 22px; min-width: 120px; text-align: center; transition: all 0.25s; }
+    .arch-node:hover { border-color: var(--accent-blue); transform: translateY(-2px); }
+    .arch-node .arch-icon { font-size: 1.9rem; margin-bottom: 8px; }
+    .arch-node .arch-name { font-weight: 700; font-size: 0.9rem; color: var(--text-primary); }
+    .arch-node .arch-role { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .arch-arrow { font-size: 1.4rem; color: var(--card-border); padding: 0 8px; }
+
+    /* CTA */
+    .cta-section { text-align: center; padding: 100px 24px; background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(233,69,96,0.1) 0%, transparent 60%), var(--dark-bg); }
+    .cta-section h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; font-family: "Noto Serif SC", serif; background: linear-gradient(135deg, var(--gold), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 16px; }
+    .cta-section p { color: var(--text-secondary); font-size: 1.1rem; max-width: 500px; margin: 0 auto 40px; }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--card-border); padding: 40px 24px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+    footer a { color: var(--text-muted); }
+    footer a:hover { color: var(--primary); }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+    /* Animations */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .section { padding: 60px 20px; }
+      .concept-grid { grid-template-columns: 1fr; gap: 32px; }
+      .workflow { flex-direction: column; }
+      .wf-arrow { transform: rotate(90deg); }
+      .tech-section { padding: 40px 20px; }
+      .arch-section { padding: 32px 20px; }
+      .arch-flow { flex-direction: column; gap: 12px; }
+      .arch-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">🏯 龙门客栈</div>
+  <ul class="nav-links">
+    <li><a href="#concept">核心理念</a></li>
+    <li><a href="#features">功能特性</a></li>
+    <li><a href="#roles">角色介绍</a></li>
+    <li><a href="#screenshots">截图预览</a></li>
+    <li><a href="#start">快速开始</a></li>
+    <li><a href="https://github.com/LetheChen/openclaw-longmen-inn" class="nav-cta">⭐ GitHub</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">🏮 基于中国传统客栈文化</div>
+  <h1>龙门客栈</h1>
+  <p class="hero-sub">
+    多 Agent 协作管理系统 · Multi-Agent Collaboration System<br>
+    基于 OpenClaw 框架，通过角色分工与规则约束，实现 AI 智能体之间的高效协作
+  </p>
+  <div class="hero-badges">
+    <img src="https://img.shields.io/github/stars/LetheChen/openclaw-longmen-inn?style=social" alt="stars">
+    <img src="https://img.shields.io/github/forks/LetheChen/openclaw-longmen-inn?style=social" alt="forks">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT">
+    <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python">
+    <img src="https://img.shields.io/badge/React-18+-61dafb.svg" alt="React">
+    <img src="https://img.shields.io/badge/FastAPI-0.104+-009688.svg" alt="FastAPI">
+  </div>
+  <div class="hero-actions">
+    <a href="https://github.com/LetheChen/openclaw-longmen-inn" class="btn-primary">
+      🚀 前往 GitHub
+    </a>
+    <a href="#start" class="btn-secondary">
+      ⚡ 快速开始
+    </a>
+  </div>
+  <div class="scroll-hint">
+    <span>向下滚动</span><span style="font-size:1.2rem">↓</span>
+  </div>
+</section>
+
+<!-- Concept -->
+<section class="section" id="concept">
+  <div class="reveal">
+    <div class="section-label">💡 核心理念</div>
+    <div class="section-title">像经营客栈一样经营 AI 团队</div>
+    <p class="section-desc">
+      龙门客栈将中国传统客栈文化与现代多 Agent 协作系统相结合，每个 AI 角色都有独特的职责边界、协作规则和激励机制，让团队协作井然有序。
+    </p>
+  </div>
+
+  <div class="concept-grid reveal">
+    <div class="concept-visual">
+      <div class="concept-visual-title">📋 任务看板 + 🏆 龙门令积分</div>
+      <div class="kanban-cols">
+        <div class="kanban-col">
+          <div class="kanban-col-title">📋 待办</div>
+          <div class="kanban-card high">AI 日报收集</div>
+          <div class="kanban-card med">API 文档编写</div>
+          <div class="kanban-card low">README 翻译</div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-col-title">⚡ 进行中</div>
+          <div class="kanban-card high">采购流程优化</div>
+          <div class="kanban-card med">前端组件开发</div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-col-title">✅ 已完成</div>
+          <div class="kanban-card low">数据库迁移</div>
+          <div class="kanban-card low">权限模块设计</div>
+        </div>
+      </div>
+      <div style="margin-top: 16px; border-top: 1px solid var(--card-border); padding-top: 16px;">
+        <div class="concept-visual-title">🏆 龙门令排行榜</div>
+        <div class="ranking-row"><span class="ranking-medal">🥇</span><span class="ranking-name">铁算盘老方</span><span class="ranking-score">128 令</span></div>
+        <div class="ranking-row"><span class="ranking-medal">🥈</span><span class="ranking-name">神厨小福贵</span><span class="ranking-score">96 令</span></div>
+        <div class="ranking-row"><span class="ranking-medal">🥉</span><span class="ranking-name">快手阿贵</span><span class="ranking-score">84 令</span></div>
+      </div>
+    </div>
+
+    <div class="concept-text">
+      <h3>规则即秩序，协作创价值</h3>
+      <p>龙门客栈通过 <code style="background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;">INN_RULES.md</code> 定义客栈总规，明确每个角色的职责边界、绝对禁令与协作流程。AI 角色在规则约束下各司其职，有序协作。</p>
+      <div class="rules-box">
+        <h4>📜 客栈五条铁规</h4>
+        <ol>
+          <li><strong>开工先看账</strong> — 每日上线先查阅 LEDGER.md，明确挂牌任务</li>
+          <li><strong>各司其职</strong> — 严格遵守角色职责，不越权、不越界</li>
+          <li><strong>记忆传承</strong> — 每次交班更新 MEMORY_LOG.md，接续工作</li>
+          <li><strong>凭据归档</strong> — 产出物存入 deliverables/，记录凭据</li>
+          <li><strong>龙门令记功</strong> — 工作量认定以账房先生记录为准</li>
+        </ol>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="section">
+<!-- Features -->
+<section class="section" id="features">
   <div class="reveal">
-    <div class="section-label">&#x1F504; &#x534F;&#x4F5C;&#x6D41;&#x7A0B;</div>
-    <div class="section-title">&#x89C4;&#x8303;&#x9AD8;&#x6548;&#x7684;&#x56E2;&#x961F;&#x534F;&#x4F5C;</div>
-    <p class="section-desc">&#x4ECE;&#x9700;&#x6C42;&#x5230;&#x4EA4;&#x4ED8;&#xFF0C;&#x6BCF;&#x4E00;&#x6B65;&#x90FD;&#x6709;&#x660E;&#x786E;&#x7684;&#x89D2;&#x8272;&#x8D1F;&#x8D23;&#xFF0C;&#x5168;&#x7A0B;&#x53EF;&#x8FFD;&#x6EAF;&#x3002;</p>
+    <div class="section-label">✨ 功能特性</div>
+    <div class="section-title">为什么选择龙门客栈？</div>
+    <p class="section-desc">从任务管理到多角色协作，提供完整的多 Agent 协作解决方案。</p>
   </div>
-  <div class="workflow reveal">
-    <div class="wf-step"><div class="wf-icon">&#x1F98A;</div><div class="wf-label">&#x5927;&#x6388;&#x69DB;</div><div class="wf-sub">&#x6218;&#x7565;&#x89C4;&#x5212;</div><div class="wf-desc">&#x60C5;&#x62A5;&#x63A7;&#x96C6;&#xFF0C;&#x8F93;&#x51FA; PRD&#xFF0C;&#x5B9A;&#x6280;&#x672F;&#x9009;&#x578B;</div></div>
-    <div class="wf-arrow">&#x2192;</div>
-    <div class="wf-step"><div class="wf-icon">&#x1F3C3;</div><div class="wf-label">&#x5E97;&#x5C0F;&#x4E8C;</div><div class="wf-sub">&#x4EFB;&#x52A1;&#x8C03;&#x5EA6;</div><div class="wf-desc">&#x62C6;&#x89E3;&#x4EFB;&#x52A1;&#xFF0C;&#x5206;&#x914D;&#x4F19;&#x8BA1;&#xFF0C;&#x8DDF;&#x8E2A;&#x8FDB;&#x5EA6;</div></div>
-    <div class="wf-arrow">&#x2192;</div>
-    <div class="wf-step"><div class="wf-icon">&#x1F468;&#x200D;&#x1F373;</div><div class="wf-label">&#x53A8;&#x5B50;</div><div class="wf-sub">&#x7F16;&#x7801;&#x5B9E;&#x73B0;</div><div class="wf-desc">&#x7F16;&#x7801;&#x3001;&#x6D4B;&#x8BD5;&#xFF0C;&#x8C03;&#x8BD5;&#xFF0C;&#x63D0;&#x4EA4;&#x4EE3;&#x7801;</div></div>
-    <div class="wf-arrow">&#x2192;</div>
-    <div class="wf-step"><div class="wf-icon">&#x1F9EE;</div><div class="wf-label">&#x8D26;&#x623F;&#x5148;&#x751F;</div><div class="wf-sub">&#x8D28;&#x91CF;&#x628A;&#x63A7;</div><div class="wf-desc">&#x4EE3;&#x7801;&#x5BA1;&#x67E5;&#xFF0C;&#x9A8C;&#x6536;&#x6D4B;&#x8BD5;&#xFF0C;&#x8BB0;&#x5F55;&#x9F8D;&#x95E8;&#x4EE4;</div></div>
-    <div class="wf-arrow">&#x2192;</div>
-    <div class="wf-step"><div class="wf-icon">&#x270D;&#xFE0F;</div><div class="wf-label">&#x8BF4;&#x4E66;&#x5148;&#x751F;</div><div class="wf-sub">&#x6587;&#x6863;&#x8F93;&#x51FA;</div><div class="wf-desc">&#x64D0;&#x5199;&#x6587;&#x6863;&#xFF0C;&#x6574;&#x7406;&#x4EA4;&#x4ED8;&#x7269;</div></div>
-    <div class="wf-arrow">&#x2192;</div>
-    <div class="wf-step"><div class="wf-icon">&#x1F43E;</div><div class="wf-label">&#x8001;&#x677F;&#x5A18;</div><div class="wf-sub">&#x603B;&#x63A7;&#x534F;&#x8C03;</div><div class="wf-desc">&#x76D1;&#x63A7;&#x5168;&#x5C40;&#xFF0C;&#x534F;&#x8C03;&#x95EE;&#x9898;&#xFF0C;&#x5145;&#x5E95;&#x5904;&#x7406;</div></div>
+
+  <div class="features-grid reveal">
+    <div class="feature-card">
+      <span class="feature-icon">🏯</span>
+      <h3>7 大角色各司其职</h3>
+      <p>老板娘总控协调、大掌柜战略规划、店小二调度跟踪、厨子编码实现、画师 UI 设计、账房先生质控、说书先生文档输出，职责边界清晰。</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⚔️</span>
+      <h3>INN_RULES 规则引擎</h3>
+      <p>通过规则文件定义协作机制，防止越权越界。明确绝对禁令，保障系统有序运转，新角色也能快速融入团队。</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📊</span>
+      <h3>LEDGER 任务看板</h3>
+      <p>实时追踪任务状态与成员表现，像 Trello 一样直观。任务创建、分配、状态流转全流程可视化。</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏆</span>
+      <h3>龙门令积分激励</h3>
+      <p>工作量积分系统量化贡献，账房先生公正记功。排行榜展示，激发团队竞争与协作动力。</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔌</span>
+      <h3>OpenClaw 原生集成</h3>
+      <p>深度集成 OpenClaw Agent 框架，支持自定义角色与技能扩展、工作流自动化，开箱即用。</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📸</span>
+      <h3>实时可视化监控</h3>
+      <p>Dashboard 总览、任务看板、Agent 状态、龙门令排行，所有数据实时更新，一目了然。</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🤖</span>
+      <h3>AI 驱动的工作流</h3>
+      <p>智能任务拆解、自动分配与跟踪、AI 日报自动生成，让重复性工作自动化。</p>
+    </div>
   </div>
 </section>
 
+<!-- Roles -->
+<section class="section" id="roles">
+  <div class="reveal">
+    <div class="section-label">🎭 角色介绍</div>
+    <div class="section-title">七位伙计，各司其职</div>
+    <p class="section-desc">每个角色都有清晰的职责边界、协作规则与沟通风格，确保团队协作高效有序。</p>
+  </div>
+
+  <div class="roles-grid reveal">
+    <div class="role-card">
+      <div class="role-avatar">🐾</div>
+      <div class="role-info">
+        <div class="role-name">老板娘 · 凤老板</div>
+        <div class="role-title">main · 总控协调</div>
+        <div class="role-desc">总揽全局，查缺补漏。做调度、管应急、控全场，是整个客栈的核心枢纽。</div>
+        <div class="role-tags">
+          <span class="role-tag">总控</span><span class="role-tag">协调</span><span class="role-tag">兜底</span><span class="role-tag">仲裁</span>
+        </div>
+        <div class="role-forbid"><strong>禁令：</strong>无事不干预伙计工作，不永久替代特定角色</div>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-avatar">🦊</div>
+      <div class="role-info">
+        <div class="role-name">大掌柜 · 诸葛掌柜</div>
+        <div class="role-title">innkeeper · 战略规划</div>
+        <div class="role-desc">洞察先机，定夺方向。情报搜集、需求分析、PRD 输出，确保项目始终在正确方向上前行。</div>
+        <div class="role-tags">
+          <span class="role-tag">战略决策</span><span class="role-tag">PRD</span><span class="role-tag">技术选型</span>
+        </div>
+        <div class="role-forbid"><strong>禁令：</strong>不亲自写代码，不绕过店小二派发任务</div>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-avatar">🏃</div>
+      <div class="role-info">
+        <div class="role-name">店小二 · 快手阿贵</div>
+        <div class="role-title">waiter · 任务调度</div>
+        <div class="role-desc">承上启下，跑腿催办。接收 PRD，拆解任务，跟踪进度，疏通阻塞，推动流程顺畅运转。</div>
+        <div class="role-tags">
+          <span class="role-tag">任务拆解</span><span class="role-tag">进度跟踪</span><span class="role-tag">协调</span>
+        </div>
+        <div class="role-forbid"><strong>禁令：</strong>不擅自修改 PRD，不替伙计做技术决策</div>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-avatar">👨‍🍳</div>
+      <div class="role-info">
+        <div class="role-name">厨子 · 神厨小福贵</div>
+        <div class="role-title">chef · 编码实现</div>
+        <div class="role-desc">灶上功夫，代码实现。接任务、写代码、解 Bug，是客栈产出代码的核心力量。</div>
+        <div class="role-tags">
+          <span class="role-tag">编码</span><span class="role-tag">测试</span><span class="role-tag">调试</span><span class="role-tag">CI/CD</span>
+        </div>
+        <div class="role-forbid"><strong>禁令：</strong>不擅自修改需求，不提交未经自测的代码</div>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-avatar">🎨</div>
+      <div class="role-info">
+        <div class="role-name">画师 · 墨染先生</div>
+        <div class="role-title">painter · UI 设计</div>
+        <div class="role-desc">将抽象需求转化为美观的视觉界面，设计用户交互流程，制定并维护视觉规范。</div>
+        <div class="role-tags">
+          <span class="role-tag">UI设计</span><span class="role-tag">原型</span><span class="role-tag">UX</span><span class="role-tag">规范</span>
+        </div>
+        <div class="role-forbid"><strong>禁令：</strong>不直接编写前端代码，不交付未标注的设计稿</div>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-avatar">🧮</div>
+      <div class="role-info">
+        <div class="role-name">账房先生 · 铁算盘老方</div>
+        <div class="role-title">accountant · 质量把控</div>
+        <div class="role-desc">查验稽核，记账发赏。审查代码、验收功能、记录龙门令、管理交付，确保质量无虞。</div>
+        <div class="role-tags">
+          <span class="role-tag">代码审查</span><span class="role-tag">QA</span><span class="role-tag">龙门令</span><span class="role-tag">交付</span>
+        </div>
+        <div class="role-forbid"><strong>禁令：</strong>不擅自修改代码，不篡改龙门令记录</div>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-avatar">✍️</div>
+      <div class="role-info">
+        <div class="role-name">说书先生 · 妙笔生花</div>
+        <div class="role-title">storyteller · 文档输出</div>
+        <div class="role-desc">妙笔生花，记录传承。撰写技术文档、用户手册、项目报告与品牌文案，传播知识与价值。</div>
+        <div class="role-tags">
+          <span class="role-tag">文档</span><span class="role-tag">报告</span><span class="role-tag">文案</span><span class="role-tag">知识库</span>
+        </div>
+        <div class="role-forbid"><strong>禁令：</strong>不编写未经确认的技术细节，不扭曲产品需求</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Screenshots -->
+<section class="section" id="screenshots">
+  <div class="reveal">
+    <div class="section-label">📸 界面预览</div>
+    <div class="section-title">直观可视化管理</div>
+    <p class="section-desc">Dashboard 总览、任务看板、Agent 状态、排行榜，所有数据实时更新，尽在掌控。</p>
+  </div>
+
+  <div class="screenshots-grid reveal">
+    <div class="screenshot-card">
+      <img class="screenshot-img" src="../screenshots/dashboard.png" alt="Dashboard" loading="lazy" onerror="this.style.display='none'">
+      <div class="screenshot-label">📊 Dashboard 总览</div>
+    </div>
+    <div class="screenshot-card">
+      <img class="screenshot-img" src="../screenshots/tasks.png" alt="任务管理" loading="lazy" onerror="this.style.display='none'">
+      <div class="screenshot-label">📋 任务看板</div>
+    </div>
+    <div class="screenshot-card">
+      <img class="screenshot-img" src="../screenshots/agents.png" alt="Agent 管理" loading="lazy" onerror="this.style.display='none'">
+      <div class="screenshot-label">🤖 Agent 管理</div>
+    </div>
+    <div class="screenshot-card">
+      <img class="screenshot-img" src="../screenshots/projects.png" alt="项目管理" loading="lazy" onerror="this.style.display='none'">
+      <div class="screenshot-label">📁 项目管理</div>
+    </div>
+    <div class="screenshot-card">
+      <img class="screenshot-img" src="../screenshots/ranking.png" alt="龙门令排行榜" loading="lazy" onerror="this.style.display='none'">
+      <div class="screenshot-label">🏆 龙门令排行榜</div>
+    </div>
+  </div>
+</section>
+
+<!-- Tech Stack -->
+<section class="section">
+  <div class="reveal">
+    <div class="section-label">🛠️ 技术栈</div>
+    <div class="section-title">现代化技术选型</div>
+    <p class="section-desc">前后端分离架构，选用业界主流技术栈，保证系统的可扩展性与可维护性。</p>
+  </div>
+  <div class="tech-section reveal">
+    <div class="tech-grid">
+      <div class="tech-item"><div class="tech-icon" style="background:#3776ab;">🐍</div><div><div class="tech-name">Python 3.10+</div><div class="tech-role">后端语言</div></div></div>
+      <div class="tech-item"><div class="tech-icon" style="background:#009688;">⚡</div><div><div class="tech-name">FastAPI 0.104+</div><div class="tech-role">Web 框架</div></div></div>
+      <div class="tech-item"><div class="tech-icon" style="background:#61dafb;">⚛️</div><div><div class="tech-name">React 18+</div><div class="tech-role">前端框架</div></div></div>
+      <div class="tech-item"><div class="tech-icon" style="background:#3178c6;">🔷</div><div><div class="tech-name">TypeScript</div><div class="tech-role">类型安全</div></div></div>
+      <div class="tech-item"><div class="tech-icon" style="background:#1673b1;">📦</div><div><div class="tech-name">Ant Design 5.x</div><div class="tech-role">UI 组件库</div></div></div>
+      <div class="tech-item"><div class="tech-icon" style="background:#764abc;">🔮</div><div><div class="tech-name">Zustand 4.x</div><div class="tech-role">状态管理</div></div></div>
+      <div class="tech-item"><div class="tech-icon" style="background:#003a6b;">🗄️</div><div><div class="tech-name">SQLite / PostgreSQL</div><div class="tech-role">数据库</div></div></div>
+      <div class="tech-item"><div class="tech-icon" style="background:#010911;">🔌</div><div><div class="tech-name">WebSocket</div><div class="tech-role">实时通信</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Workflow -->
+<section class="section">
+  <div class="reveal">
+    <div class="section-label">🔄 协作流程</div>
+    <div class="section-title">规范高效的团队协作</div>
+    <p class="section-desc">从需求到交付，每一步都有明确的角色负责，全程可追溯。</p>
+  </div>
+
+  <div class="workflow reveal">
+    <div class="wf-step">
+      <div class="wf-icon">🦊</div>
+      <div class="wf-label">大掌柜</div>
+      <div class="wf-sub">战略规划</div>
+      <div class="wf-desc">情报搜集，输出 PRD，定技术选型</div>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">🏃</div>
+      <div class="wf-label">店小二</div>
+      <div class="wf-sub">任务调度</div>
+      <div class="wf-desc">拆解任务，分配伙计，跟踪进度</div>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">👨‍🍳</div>
+      <div class="wf-label">厨子</div>
+      <div class="wf-sub">编码实现</div>
+      <div class="wf-desc">编码、测试、调试、提交代码</div>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">🧮</div>
+      <div class="wf-label">账房先生</div>
+      <div class="wf-sub">质量把控</div>
+      <div class="wf-desc">代码审查，验收测试，记录龙门令</div>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">✍️</div>
+      <div class="wf-label">说书先生</div>
+      <div class="wf-sub">文档输出</div>
+      <div class="wf-desc">撰写文档，整理交付物</div>
+    </div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step">
+      <div class="wf-icon">🐾</div>
+      <div class="wf-label">老板娘</div>
+      <div class="wf-sub">总控协调</div>
+      <div class="wf-desc">监控全局，协调问题，兜底处理</div>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
 <div class="section" style="padding-top:0;">
   <div class="arch-section reveal">
-    <div class="arch-title">&#x1F3D7;&#xFE0F; &#x7CFB;&#x7EDF;&#x67B6;&#x6784;</div>
+    <div class="arch-title">🏗️ 系统架构</div>
     <div class="arch-flow">
-      <div class="arch-node"><div class="arch-icon">&#x1F98A;</div><div class="arch-name">&#x5927;&#x6388;&#x69DB;</div><div class="arch-role">PRD &#x8F93;&#x51FA;</div></div>
-      <div class="arch-arrow">&#x2192;</div>
-      <div class="arch-node"><div class="arch-icon">&#x1F3C3;</div><div class="arch-name">&#x5E97;&#x5C0F;&#x4E8C;</div><div class="arch-role">&#x4EFB;&#x52A1;&#x8C03;&#x5EA6;</div></div>
-      <div class="arch-arrow">&#x2192;</div>
-      <div class="arch-node"><div class="arch-icon">&#x1F468;&#x200D;&#x1F373;&#x1F9EE;&#x1F3A8;&#x270D;&#xFE0F;</div><div class="arch-name">&#x6267;&#x884C;&#x5C42;</div><div class="arch-role">&#x53A8;&#x5B50;/&#x753B;&#x5E08;/&#x8D26;&#x623F;/&#x8BF4;&#x4E66;</div></div>
-      <div class="arch-arrow">&#x2192;</div>
-      <div class="arch-node"><div class="arch-icon">&#x1F4DC;</div><div class="arch-name">&#x6570;&#x636E;&#x5E93;</div><div class="arch-role">SQLite / PostgreSQL</div></div>
-      <div class="arch-arrow">&#x2192;</div>
-      <div class="arch-node"><div class="arch-icon">&#x1F4CA;</div><div class="arch-name">&#x524D;&#x7AEF;&#x770B;&#x677F;</div><div class="arch-role">React + Ant Design</div></div>
+      <div class="arch-node">
+        <div class="arch-icon">🦊</div>
+        <div class="arch-name">大掌柜</div>
+        <div class="arch-role">PRD 输出</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node">
+        <div class="arch-icon">🏃</div>
+        <div class="arch-name">店小二</div>
+        <div class="arch-role">任务调度</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node">
+        <div class="arch-icon">👨‍🍳🧮🎨✍️</div>
+        <div class="arch-name">执行层</div>
+        <div class="arch-role">厨子/画师/账房/说书</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node">
+        <div class="arch-icon">🗄️</div>
+        <div class="arch-name">数据库</div>
+        <div class="arch-role">SQLite / PostgreSQL</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node">
+        <div class="arch-icon">📊</div>
+        <div class="arch-name">前端看板</div>
+        <div class="arch-role">React + Ant Design</div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- Quick Start -->
 <section class="section" id="start">
   <div class="reveal">
-    <div class="section-label">&#x26A1; &#x5FEB;&#x901F;&#x5F00;&#x59CB;</div>
-    <div class="section-title">&#x4E94;&#x5206;&#x949F;&#x542F;&#x52A8;&#x4F60;&#x7684;&#x5BA2;&#x6808;</div>
-    <p class="section-desc">&#x4E00;&#x884C;&#x547D;&#x4EE4;&#x5373;&#x53EF;&#x5B8C;&#x6210;&#x73AF;&#x5883;&#x68C0;&#x67E5;&#x3001;&#x4F9D;&#x8D56;&#x5B89;&#x88C5;&#x3001;&#x6570;&#x636E;&#x5E93;&#x521D;&#x59CB;&#x5316;&#x4E0E;&#x670D;&#x52A1;&#x542F;&#x52A8;&#x3002;</p>
+    <div class="section-label">⚡ 快速开始</div>
+    <div class="section-title">五分钟启动你的客栈</div>
+    <p class="section-desc">一行命令即可完成环境检查、依赖安装、数据库初始化与服务启动。</p>
   </div>
+
   <div class="start-content reveal">
     <div class="start-tabs">
-      <button class="start-tab active" onclick="document.getElementById('ps-code').style.display='block';document.getElementById('bash-code').style.display='none';this.parentElement.querySelectorAll('.start-tab').forEach(t=&gt;t.classList.remove('active'));this.classList.add('active')">PowerShell (Windows)</button>
-      <button class="start-tab" onclick="document.getElementById('bash-code').style.display='block';document.getElementById('ps-code').style.display='none';this.parentElement.querySelectorAll('.start-tab').forEach(t=&gt;t.classList.remove('active'));this.classList.add('active')">Bash (macOS / Linux)</button>
+      <button class="start-tab active" onclick="document.getElementById('ps-code').style.display='block';document.getElementById('bash-code').style.display='none';this.parentElement.querySelectorAll('.start-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">PowerShell (Windows)</button>
+      <button class="start-tab" onclick="document.getElementById('bash-code').style.display='block';document.getElementById('ps-code').style.display='none';this.parentElement.querySelectorAll('.start-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Bash (macOS / Linux)</button>
     </div>
-    <div id="ps-code" class="code-block"><span class="c"># 1. 克降仓库</span>
+
+    <div id="ps-code" class="code-block"><span class="c"># 1. 克隆仓库</span>
 <span class="k">git</span> clone https://github.com/LetheChen/openclaw-longmen-inn.git
 <span class="k">cd</span> openclaw-longmen-inn/projects/longmen-inn-system
 
-<span class="c"># 2. 一键启动</span>
+<span class="c"># 2. 一键启动（自动安装依赖、初始化数据库、启动服务）</span>
 .\start-services.ps1
 
 <span class="c"># 3. 访问服务</span>
-<span class="c"># 前端界面 &rarr; http://localhost:8080</span>
-<span class="c"># 后端 API  &rarr; http://localhost:8000</span>
-<span class="c"># API 文档 &rarr; http://localhost:8000/docs</span></div>
-    <div id="bash-code" class="code-block" style="display:none;"><span class="c"># 1. 克降仓库</span>
+<span class="c"># 前端界面 → http://localhost:8080</span>
+<span class="c"># 后端 API  → http://localhost:8000</span>
+<span class="c"># API 文档 → http://localhost:8000/docs</span></div>
+
+    <div id="bash-code" class="code-block" style="display:none;"><span class="c"># 1. 克隆仓库</span>
 <span class="k">git</span> clone https://github.com/LetheChen/openclaw-longmen-inn.git
 <span class="k">cd</span> openclaw-longmen-inn/projects/longmen-inn-system
 
@@ -73,57 +694,65 @@
 <span class="k">cd</span> backend
 <span class="k">pip</span> install -r requirements.txt
 <span class="k">python</span> init_db.py --seed
-<span class="k">python</span> -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload &amp;
+<span class="k">python</span> -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload <span class="c">&</span>
 
-<span class="c"># 3. 启动前端</span>
+<span class="c"># 3. 启动前端（新终端）</span>
 <span class="k">cd</span> ../frontend
 <span class="k">npm</span> install
 <span class="k">npm</span> run dev</div>
+
     <div class="code-output">
-&#x2705; 检查 Python 和 Node.js 环境<br>
-&#x2705; 安装后端 Python 依赖<br>
-&#x2705; 安装前端 npm 依赖<br>
-&#x2705; 初始化 SQLite 数据库（含示例数据）<br>
-&#x2705; 启动 FastAPI 后端服务（端口 8000）<br>
-&#x2705; 启动 React 前端服务（端口 8080）
+✅ 检查 Python 和 Node.js 环境<br>
+✅ 安装后端 Python 依赖<br>
+✅ 安装前端 npm 依赖<br>
+✅ 初始化 SQLite 数据库（含示例数据）<br>
+✅ 启动 FastAPI 后端服务 (端口 8000)<br>
+✅ 启动 React 前端服务 (端口 8080)
     </div>
+
     <div class="start-note">
-      <strong>&#x1F4A1; 提示：</strong>首次运行会自动初始化示例数据。API 文档使用 Swagger UI，可直接在浏览器中测试所有接口。如需停止服务，按 <kbd style="background:var(--card-bg);border:1px solid var(--card-border);padding:1px 6px;border-radius:4px;">Ctrl+C</kbd>。
+      <strong>💡 提示：</strong>首次运行会自动初始化示例数据。API 文档使用 Swagger UI，可直接在浏览器中测试所有接口。如需停止服务，按 <kbd style="background:var(--card-bg);border:1px solid var(--card-border);padding:1px 6px;border-radius:4px;">Ctrl+C</kbd>。
     </div>
   </div>
 </section>
 
+<!-- CTA -->
 <section class="cta-section">
   <div class="reveal">
     <h2>准备好加入龙门客栈了吗？</h2>
-    <p>Star &#x2B50; 本项目，第一时间获取更新。 Issues 和 Pull Request 同样欢迎！</p>
+    <p>Star ⭐ 本项目，第一时间获取更新。 Issues 和 Pull Request 同样欢迎！</p>
     <div class="cta-buttons">
-      <a href="https://github.com/LetheChen/openclaw-longmen-inn" class="btn-primary">&#x1F680; 前往 GitHub</a>
-      <a href="https://github.com/LetheChen/openclaw-longmen-inn/issues" class="btn-secondary">&#x1F41B; 提交 Issue</a>
+      <a href="https://github.com/LetheChen/openclaw-longmen-inn" class="btn-primary">🚀 前往 GitHub</a>
+      <a href="https://github.com/LetheChen/openclaw-longmen-inn/issues" class="btn-secondary">🐛 提交 Issue</a>
     </div>
   </div>
 </section>
 
+<!-- Footer -->
 <footer>
   <div class="footer-links">
     <a href="https://github.com/LetheChen/openclaw-longmen-inn">GitHub</a>
     <a href="https://docs.openclaw.ai">OpenClaw 文档</a>
-    <a href="https://clawhub.ai">ClawHub 技能市场</a>
+    <a href="https://clawhub.com">ClawHub 技能市场</a>
     <a href="https://github.com/LetheChen/openclaw-longmen-inn/stargazers">Star 历史</a>
   </div>
   <div class="footer-copy">
-    &#x1F3EF; 龙门客栈 &middot; 基于 <a href="https://github.com/openclaw/openclaw">OpenClaw Agent Framework</a> 构建 &middot; MIT License<br>
+    🏯 龙门客栈 · 基于 <a href="https://github.com/openclaw/openclaw">OpenClaw Agent Framework</a> 构建 · MIT License<br>
     <span style="margin-top:8px;display:block;">LetheChen / openclaw-longmen-inn</span>
   </div>
 </footer>
 
 <script>
+  // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry =&gt; {
-      if (entry.isIntersecting) { entry.target.classList.add('visible'); }
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el =&gt; observer.observe(el));
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 
 </body>
